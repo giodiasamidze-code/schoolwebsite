@@ -100,11 +100,27 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar: Copyright */}
-        <div className="footer-bottom-row">
+        {/* Bottom Bar: Copyright & Staff Links */}
+        <div className="footer-bottom-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
           <p className="footer-copyright-note">
             &copy; 2026 სოლომონ აკადემია. ყველა უფლება დაცულია.
           </p>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <button
+              type="button"
+              onClick={() => navigate('/register')}
+              style={{ background: 'none', border: 'none', color: 'var(--text-muted, #94a3b8)', fontSize: '0.82rem', cursor: 'pointer', textDecoration: 'underline' }}
+            >
+              მასწავლებლის შესვლა / რეგისტრაცია
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/register#admin')}
+              style={{ background: 'none', border: 'none', color: 'var(--text-muted, #94a3b8)', fontSize: '0.82rem', cursor: 'pointer', textDecoration: 'underline' }}
+            >
+              ადმინისტრაცია
+            </button>
+          </div>
         </div>
       </div>
     </footer>

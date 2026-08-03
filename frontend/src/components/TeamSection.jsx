@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Briefcase, GraduationCap, Award, Calendar, Quote } from 'lucide-react';
+import { supabase } from '../lib/supabaseClient';
 
 export default function TeamSection() {
   const [activeSubject, setActiveSubject] = useState('all');
   const [selectedTeacher, setSelectedTeacher] = useState(null);
+  const [dynamicTeachers, setDynamicTeachers] = useState([]);
 
   const subjectCategories = [
     { id: 'all', label: 'ყველა საგანი' },
@@ -123,9 +125,37 @@ export default function TeamSection() {
     }
   ];
 
+  useEffect(() => {
+    async function loadTeachers() {
+      try {
+        const { data, error } = await supabase.from('teachers').select('*');
+        if (!error && data && data.length > 0) {
+          const mapped = data.map((t) => ({
+            id: t.id,
+            name: t.full_name,
+            role: `${t.subject} პედაგოგი`,
+            subject: t.subject,
+            category: 'stem',
+            image: t.photo_url || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400&h=400',
+            education: t.education || 'უმაღლესი განათლება',
+            experience: t.experience_years || 'მრავალწლიანი გამოცდილება',
+            certifications: t.certifications || 'სერტიფიცირებული პედაგოგი',
+            yearsAtSchool: t.years_at_school || '1 წელი'
+          }));
+          setDynamicTeachers(mapped);
+        }
+      } catch (err) {
+        console.error('Error fetching teachers from Supabase:', err);
+      }
+    }
+    loadTeachers();
+  }, []);
+
+  const allTeachersList = [...dynamicTeachers, ...teachers];
+
   const filteredTeachers = activeSubject === 'all'
-    ? teachers
-    : teachers.filter(t => t.category === activeSubject);
+    ? allTeachersList
+    : allTeachersList.filter(t => t.category === activeSubject);
 
   return (
     <section className="team-section bg-cream-dark" id="teachers">

@@ -5,9 +5,13 @@ import StatsBar from './components/StatsBar';
 import ProgramsSection from './components/ProgramsSection';
 import TeamSection from './components/TeamSection';
 import ActivitiesFeed from './components/ActivitiesFeed';
+import NewsSection from './components/NewsSection';
 import AdmissionsSection from './components/AdmissionsSection';
 import Footer from './components/Footer';
 import RegistrationPage from './components/RegistrationPage';
+import TeacherDashboard from './components/TeacherDashboard';
+import AdminDashboard from './components/AdminDashboard';
+import ParentAccountPage from './components/ParentAccountPage';
 import { useAuth } from './components/AuthContext';
 
 export default function App() {
@@ -18,6 +22,12 @@ export default function App() {
       <Header />
       {path === '/register' ? (
         <RegistrationPage />
+      ) : path === '/teacher-dashboard' ? (
+        <TeacherDashboard />
+      ) : path === '/admin-dashboard' ? (
+        <AdminDashboard />
+      ) : path === '/parent-account' ? (
+        <ParentAccountPage />
       ) : (
         <main>
           <Hero />
@@ -25,6 +35,7 @@ export default function App() {
           <ProgramsSection />
           <TeamSection />
           <ActivitiesFeed />
+          <NewsSection />
           <AdmissionsSection />
         </main>
       )}

@@ -1,28 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Menu, X, GraduationCap } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const { path, navigate, user, logout } = useAuth();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const { path, navigate, user, role, logout } = useAuth();
 
   const navItems = [
     { label: 'პროგრამები', href: '#programs' },
     { label: 'მასწავლებლები', href: '#teachers' },
     { label: 'სკოლის ცხოვრება', href: '#school-life' },
+    { label: 'სიახლეები', href: '#news' },
     { label: 'მიღება', href: '#admissions' },
     { label: 'კონტაქტი', href: '#contact' }
   ];
@@ -31,7 +19,7 @@ export default function Header() {
     e.preventDefault();
     setIsOpen(false);
 
-    if (path === '/register') {
+    if (path !== '/') {
       navigate('/');
       setTimeout(() => {
         if (href === '#') {
@@ -69,7 +57,7 @@ export default function Header() {
   };
 
   return (
-    <header className={`header ${isScrolled ? 'header-scrolled' : ''}`}>
+    <header className="header">
       <div className="header-container">
         {/* Logo */}
         <a href="#" className="logo" onClick={(e) => handleNavClick(e, '#')}>
@@ -91,8 +79,23 @@ export default function Header() {
           ))}
 
           {user ? (
-            <div className="auth-profile-nav">
-              <span className="user-welcome">სალამი, {user.name.split(' ')[0]}</span>
+            <div className="auth-profile-nav" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              {role === 'admin' && (
+                <button onClick={() => navigate('/admin-dashboard')} className="btn btn-primary btn-sm" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'var(--accent-primary)' }}>
+                  ადმინ პანელი
+                </button>
+              )}
+              {role === 'teacher' && (
+                <button onClick={() => navigate('/teacher-dashboard')} className="btn btn-secondary btn-sm" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
+                  ჩემი გვერდი
+                </button>
+              )}
+              {role === 'parent' && (
+                <button onClick={() => navigate('/parent-account')} className="btn btn-secondary btn-sm" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
+                  ჩემი ანგარიში
+                </button>
+              )}
+              <span className="user-welcome">სალამი, {(user.name || user.email || '').split(' ')[0]}</span>
               <button onClick={logout} className="btn-logout-link">გამოსვლა</button>
             </div>
           ) : (
@@ -134,11 +137,11 @@ export default function Header() {
 
           {user ? (
             <div className="mobile-auth-profile">
-              <span className="mobile-user-welcome">სალამი, {user.name}</span>
+              <span className="mobile-user-welcome">სალამი, {user.name || user.email}</span>
               <button onClick={() => { setIsOpen(false); logout(); }} className="mobile-logout-btn">გამოსვლა</button>
             </div>
           ) : (
-            <button onClick={() => { setIsOpen(false); navigate('/register'); }} className="mobile-login-btn">რეგისტრაცია</button>
+            <button onClick={() => { setIsOpen(false); navigate('/register'); }} className="mobile-login-btn">რეგისტრაცია / შესვლა</button>
           )}
 
           <a

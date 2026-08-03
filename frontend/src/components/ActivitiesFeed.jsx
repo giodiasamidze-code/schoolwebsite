@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar as CalendarIcon, MessageSquare, Send, Heart } from 'lucide-react';
+import { supabase } from '../lib/supabaseClient';
 
 export default function ActivitiesFeed() {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -33,6 +34,36 @@ export default function ActivitiesFeed() {
       ]
     }
   ]);
+
+  useEffect(() => {
+    async function loadActivities() {
+      try {
+        const { data, error } = await supabase
+          .from('activities')
+          .select('*, teachers(full_name)')
+          .order('created_at', { ascending: false });
+
+        if (!error && data && data.length > 0) {
+          const dbEvents = data.map((act) => ({
+            id: act.id,
+            category: act.class_stage || act.category || 'basic',
+            title: act.title,
+            date: new Date(act.created_at).toLocaleDateString('ka-GE', { day: 'numeric', month: 'long', year: 'numeric' }),
+            description: act.description,
+            media: act.media_url || '📌',
+            likes: act.likes || 0,
+            liked: false,
+            teacherName: act.teachers?.full_name,
+            comments: []
+          }));
+          setEvents(dbEvents);
+        }
+      } catch (err) {
+        console.error('Error loading activities from Supabase:', err);
+      }
+    }
+    loadActivities();
+  }, []);
 
   const categories = [
     { id: 'all', label: 'ყველა აქტივობა' },
@@ -127,6 +158,11 @@ export default function ActivitiesFeed() {
                 </span>
               </div>
               <h3 className="feed-title">{event.title}</h3>
+              {event.teacherName && (
+                <span style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', fontWeight: 600, display: 'block', marginBottom: '8px' }}>
+                  პედაგოგი: {event.teacherName}
+                </span>
+              )}
               <p className="feed-description">{event.description}</p>
 
               {/* Interaction Bar */}
