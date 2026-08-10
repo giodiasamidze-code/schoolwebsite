@@ -7,9 +7,7 @@ export default function Header() {
   const { path, navigate, user, role, logout } = useAuth();
 
   const navItems = [
-    { label: 'პროგრამები', href: '#programs' },
     { label: 'მასწავლებლები', href: '#teachers' },
-    { label: 'სკოლის ცხოვრება', href: '#school-life' },
     { label: 'სიახლეები', href: '#news' },
     { label: 'მიღება', href: '#admissions' },
     { label: 'კონტაქტი', href: '#contact' }
@@ -103,11 +101,11 @@ export default function Header() {
           )}
 
           <a
-            href="#booking-section"
+            href="#admissions"
             className="btn btn-primary btn-sm"
-            onClick={(e) => handleNavClick(e, '#booking-section')}
+            onClick={(e) => handleNavClick(e, '#admissions')}
           >
-            ვიზიტის დაჯავშნა
+            ონლაინ რეგისტრაცია
           </a>
         </nav>
 
@@ -145,11 +143,11 @@ export default function Header() {
           )}
 
           <a
-            href="#booking-section"
+            href="#admissions"
             className="btn btn-primary mobile-cta"
-            onClick={(e) => handleNavClick(e, '#booking-section')}
+            onClick={(e) => handleNavClick(e, '#admissions')}
           >
-            ვიზიტის დაჯავშნა
+            ონლაინ რეგისტრაცია
           </a>
         </nav>
       </div>

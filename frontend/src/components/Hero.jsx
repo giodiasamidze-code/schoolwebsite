@@ -36,18 +36,18 @@ export default function Hero() {
         </p>
         <div className="hero-actions">
           <a 
-            href="#booking-section" 
+            href="#admissions" 
             className="btn btn-primary"
-            onClick={(e) => handleScrollTo(e, '#booking-section')}
+            onClick={(e) => handleScrollTo(e, '#admissions')}
           >
-            ვიზიტის დაჯავშნა
+            ონლაინ რეგისტრაცია
           </a>
           <a 
-            href="#programs" 
+            href="#teachers" 
             className="btn btn-gold-outline"
-            onClick={(e) => handleScrollTo(e, '#programs')}
+            onClick={(e) => handleScrollTo(e, '#teachers')}
           >
-            საკლასო პროგრამები
+            პედაგოგები
           </a>
         </div>
       </div>

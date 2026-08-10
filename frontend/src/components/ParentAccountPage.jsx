@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { supabase } from '../lib/supabaseClient';
-import { FileText, Calendar, ArrowLeft, Clock, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
+import { FileText, ArrowLeft, Clock, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
 
 export default function ParentAccountPage() {
   const { user, navigate } = useAuth();
   const [applications, setApplications] = useState([]);
-  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchParentData = async () => {
     if (!user?.id) return;
@@ -20,15 +20,6 @@ export default function ParentAccountPage() {
         .order('created_at', { ascending: false });
 
       if (appData) setApplications(appData);
-
-      // 2. Fetch visit bookings
-      const { data: bookingData } = await supabase
-        .from('visit_bookings')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (bookingData) setBookings(bookingData);
     } catch (err) {
       console.error('Error fetching parent account data:', err);
     } finally {
@@ -73,19 +64,6 @@ export default function ParentAccountPage() {
     }
   };
 
-  const bookingStatusText = (status) => {
-    switch (status) {
-      case 'pending':
-        return { label: 'მოლოდინშია', color: '#b45309', bg: '#fef3c7', icon: Clock };
-      case 'confirmed':
-        return { label: 'ვიზიტი დადასტურებულია', color: '#15803d', bg: '#dcfce7', icon: CheckCircle2 };
-      case 'declined':
-        return { label: 'უარყოფილია', color: '#b91c1c', bg: '#fee2e2', icon: XCircle };
-      default:
-        return { label: status, color: '#475569', bg: '#f1f5f9', icon: Clock };
-    }
-  };
-
   return (
     <div className="parent-account-wrapper fade-in" style={{ padding: '40px 0 80px', background: 'var(--bg-primary)' }}>
       <div className="container">
@@ -100,18 +78,18 @@ export default function ParentAccountPage() {
               მშობლის პირადი ანგარიში
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-              სალამი, {user.name}! ადევნეთ თვალი თქვენი განაცხადებისა და ვიზიტების სტატუსს real-time რეჟიმში.
+              სალამი, {user.name}! ადევნეთ თვალი თქვენი ონლაინ განაცხადების სტატუსს real-time რეჟიმში.
             </p>
           </div>
 
-          <button onClick={fetchParentData} className="btn btn-secondary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <RefreshCw size={14} />
-            განახლება
+          <button onClick={fetchParentData} disabled={loading} className="btn btn-secondary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+            {loading ? 'იტვირთება...' : 'განახლება'}
           </button>
         </div>
 
-        {/* 1. Applications Section */}
-        <div style={{ marginBottom: '48px' }}>
+        {/* Applications Section */}
+        <div>
           <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', marginBottom: '20px', color: 'var(--text-dark)', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <FileText className="text-burgundy" size={24} />
             ჩემი ონლაინ განაცხადები ({applications.length})
@@ -154,7 +132,7 @@ export default function ParentAccountPage() {
                     {app.application_documents?.length > 0 && (
                       <div style={{ marginTop: '12px' }}>
                         <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>ატვირთული დოკუმენტაცია:</span>
-                        <div style={{ display: 'flex', gap: '12px' }}>
+                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                           {app.application_documents.map((doc) => (
                             <a
                               key={doc.id}
@@ -169,50 +147,6 @@ export default function ParentAccountPage() {
                         </div>
                       </div>
                     )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* 2. Visit Bookings Section */}
-        <div>
-          <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', marginBottom: '20px', color: 'var(--text-dark)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Calendar className="text-gold" size={24} />
-            ჩემი ვიზიტის ჯავშნები ({bookings.length})
-          </h3>
-
-          {bookings.length === 0 ? (
-            <div style={{ background: 'var(--bg-secondary)', padding: '24px', borderRadius: '8px', border: '1px solid var(--border-color)', textAlign: 'center', color: 'var(--text-muted)' }}>
-              თქვენ ჯერ არ გაქვთ დაჯავშნილი ინდივიდუალური ვიზიტი.
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {bookings.map((b) => {
-                const st = bookingStatusText(b.status);
-                const IconComponent = st.icon;
-
-                return (
-                  <div key={b.id} style={{ background: '#ffffff', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '20px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <span style={{ fontSize: '0.8rem', fontWeight: 700, padding: '4px 12px', borderRadius: '12px', background: st.bg, color: st.color, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                          <IconComponent size={14} />
-                          {st.label}
-                        </span>
-                        <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', color: 'var(--text-dark)', marginTop: '8px' }}>
-                          ვიზიტის თარიღი: <strong>{b.preferred_date}</strong> ({b.child_name})
-                        </h4>
-                        <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', margin: '4px 0 0' }}>
-                          საფეხური: {b.grade_stage || 'არ არის მითითებული'} | ტელეფონი: {b.phone}
-                        </p>
-                      </div>
-
-                      <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                        დაჯავშნილია: {new Date(b.created_at).toLocaleDateString('ka-GE')}
-                      </span>
-                    </div>
                   </div>
                 );
               })}

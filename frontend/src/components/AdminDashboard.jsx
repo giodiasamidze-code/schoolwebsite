@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { supabase } from '../lib/supabaseClient';
-import { UserCheck, FileText, Calendar, Newspaper, CheckCircle2, XCircle, Edit3, Trash2, Save, Upload, ArrowLeft, ShieldAlert } from 'lucide-react';
+import { UserCheck, FileText, Newspaper, CheckCircle2, XCircle, Edit3, Trash2, Save, Upload, ArrowLeft, ShieldAlert } from 'lucide-react';
 
 export default function AdminDashboard() {
   const { user, role, navigate } = useAuth();
   
-  // Dashboard Active Tab: 'edits', 'queue', 'timeline', 'news'
+  // Dashboard Active Tab: 'edits', 'queue', 'news'
   const [activeTab, setActiveTab] = useState('edits');
 
   // --- 1. Teacher Profile Edits State ---
@@ -15,16 +15,10 @@ export default function AdminDashboard() {
   const [rejectionNote, setRejectionNote] = useState('');
   const [editsStatus, setEditsStatus] = useState({ loading: false, message: '' });
 
-  // --- 2. Applications & Visit Bookings State ---
-  const [queueTab, setQueueTab] = useState('applications'); // 'applications' or 'bookings'
+  // --- 2. Applications State ---
   const [applications, setApplications] = useState([]);
-  const [visitBookings, setVisitBookings] = useState([]);
 
-  // --- 3. Admissions Timeline State ---
-  const [timelineSteps, setTimelineSteps] = useState([]);
-  const [timelineStatus, setTimelineStatus] = useState({ loading: false, message: '' });
-
-  // --- 4. News State ---
+  // --- 3. News State ---
   const [newsList, setNewsList] = useState([]);
   const [newsForm, setNewsForm] = useState({
     id: null,
@@ -42,8 +36,6 @@ export default function AdminDashboard() {
     if (role === 'admin') {
       fetchPendingEdits();
       fetchApplications();
-      fetchVisitBookings();
-      fetchTimelineSteps();
       fetchNews();
     }
   }, [role]);
@@ -130,7 +122,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // 2. Fetch Applications & Visit Bookings
+  // 2. Fetch Applications
   const fetchApplications = async () => {
     try {
       const { data, error } = await supabase
@@ -143,21 +135,6 @@ export default function AdminDashboard() {
       }
     } catch (err) {
       console.error('Error fetching applications:', err);
-    }
-  };
-
-  const fetchVisitBookings = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('visit_bookings')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (!error && data) {
-        setVisitBookings(data);
-      }
-    } catch (err) {
-      console.error('Error fetching visit bookings:', err);
     }
   };
 
@@ -175,59 +152,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleUpdateBookingStatus = async (bookingId, newStatus) => {
-    try {
-      const { error } = await supabase
-        .from('visit_bookings')
-        .update({ status: newStatus })
-        .eq('id', bookingId);
-
-      if (error) throw error;
-      await fetchVisitBookings();
-    } catch (err) {
-      console.error('Error updating booking status:', err);
-    }
-  };
-
-  // 3. Fetch & Update Admissions Timeline Steps
-  const fetchTimelineSteps = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('admissions_steps')
-        .select('*')
-        .order('step_number', { ascending: true });
-
-      if (!error && data && data.length > 0) {
-        setTimelineSteps(data);
-      }
-    } catch (err) {
-      console.error('Error fetching timeline steps:', err);
-    }
-  };
-
-  const handleSaveTimelineStep = async (step) => {
-    setTimelineStatus({ loading: true, message: '' });
-    try {
-      const { error } = await supabase
-        .from('admissions_steps')
-        .update({
-          title: step.title,
-          description: step.description,
-          deadline: step.deadline,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', step.id);
-
-      if (error) throw error;
-      setTimelineStatus({ loading: false, message: `ეტაპი #${step.step_number} წარმატებით განახლდა!` });
-      await fetchTimelineSteps();
-    } catch (err) {
-      console.error('Save timeline step error:', err);
-      setTimelineStatus({ loading: false, message: 'ეტაპის შენახვა ვერ მოხერხდა.' });
-    }
-  };
-
-  // 4. Fetch & Manage News
+  // 3. News Management
   const fetchNews = async () => {
     try {
       const { data, error } = await supabase
@@ -250,7 +175,6 @@ export default function AdminDashboard() {
     setNewsImageUploading(true);
     try {
       const filePath = `news/${Date.now()}_${file.name}`;
-
       const { error: uploadError } = await supabase.storage
         .from('news-images')
         .upload(filePath, file, { upsert: true });
@@ -274,10 +198,8 @@ export default function AdminDashboard() {
   const handleSaveNews = async (e) => {
     e.preventDefault();
     setNewsStatus({ loading: true, message: '' });
-
     try {
       if (isEditingNews && newsForm.id) {
-        // UPDATE news item
         const { error } = await supabase
           .from('news')
           .update({
@@ -291,7 +213,6 @@ export default function AdminDashboard() {
         if (error) throw error;
         setNewsStatus({ loading: false, message: 'სიახლე წარმატებით განახლდა!' });
       } else {
-        // INSERT new news item
         const { error } = await supabase
           .from('news')
           .insert([
@@ -300,12 +221,12 @@ export default function AdminDashboard() {
               content: newsForm.content,
               image_url: newsForm.image_url,
               is_published: newsForm.is_published,
-              published_at: new Date().toISOString()
+              author_id: user.id
             }
           ]);
 
         if (error) throw error;
-        setNewsStatus({ loading: false, message: 'ახალი სიახლე გამოქვეყნდა!' });
+        setNewsStatus({ loading: false, message: 'ახალი სიახლე წარმატებით დაემატა!' });
       }
 
       setNewsForm({ id: null, title: '', content: '', image_url: '', is_published: true });
@@ -313,7 +234,22 @@ export default function AdminDashboard() {
       await fetchNews();
     } catch (err) {
       console.error('Save news error:', err);
-      setNewsStatus({ loading: false, message: err.message || 'სიახლის შენახვა ვერ მოხერხდა.' });
+      setNewsStatus({ loading: false, message: 'სიახლის შენახვა ვერ მოხერხდა.' });
+    }
+  };
+
+  const handleDeleteNews = async (newsId) => {
+    if (!window.confirm('ნამდვილად გსურთ ამ სიახლის წაშლა?')) return;
+    try {
+      const { error } = await supabase
+        .from('news')
+        .delete()
+        .eq('id', newsId);
+
+      if (error) throw error;
+      await fetchNews();
+    } catch (err) {
+      console.error('Delete news error:', err);
     }
   };
 
@@ -331,34 +267,18 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleDeleteNews = async (newsId) => {
-    if (!window.confirm('ნამდვილად გსურთ ამ სიახლის წაშლა?')) return;
-
-    try {
-      const { error } = await supabase
-        .from('news')
-        .delete()
-        .eq('id', newsId);
-
-      if (error) throw error;
-      await fetchNews();
-    } catch (err) {
-      console.error('Delete news error:', err);
-    }
-  };
-
   if (!user || role !== 'admin') {
     return (
       <div className="container" style={{ padding: '80px 20px', textAlign: 'center' }}>
-        <ShieldAlert size={48} style={{ color: '#ef4444', margin: '0 auto 16px' }} />
+        <ShieldAlert size={48} className="text-burgundy" style={{ margin: '0 auto 16px' }} />
         <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', marginBottom: '16px' }}>
-          ადმინისტრაციული წვდომა შეზღუდულია
+          წვდომა შეზღუდულია
         </h2>
         <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>
-          ეს გვერდი განკუთვნილია მხოლოდ სკოლის დირექციისა და ადმინისტრაციისთვის.
+          ეს გვერდი განკუთვნილია მხოლოდ სკოლის ადმინისტრატორებისთვის.
         </p>
-        <button onClick={() => navigate('/register')} className="btn btn-primary">
-          ადმინისტრაციის შესვლა
+        <button onClick={() => navigate('/')} className="btn btn-primary">
+          მთავარ გვერდზე დაბრუნება
         </button>
       </div>
     );
@@ -381,7 +301,7 @@ export default function AdminDashboard() {
               სკოლის ადმინისტრაციული პანელი (დირექცია)
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-              მართეთ მასწავლებელთა მოდერაცია, განაცხადები, მიღების ეტაპები და სკოლის სიახლეები.
+              მართეთ მასწავლებელთა მოდერაცია, ონლაინ განაცხადები და სკოლის სიახლეები.
             </p>
           </div>
 
@@ -415,17 +335,7 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('queue')}
           >
             <FileText size={18} />
-            განაცხადები & ვიზიტები ({applications.length + visitBookings.length})
-          </button>
-
-          <button
-            type="button"
-            className={`btn ${activeTab === 'timeline' ? 'btn-primary' : 'btn-secondary'}`}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-            onClick={() => setActiveTab('timeline')}
-          >
-            <Calendar size={18} />
-            მიღების ეტაპების მართვა
+            ონლაინ განაცხადები ({applications.length})
           </button>
 
           <button
@@ -453,56 +363,58 @@ export default function AdminDashboard() {
             )}
 
             {pendingEdits.length === 0 ? (
-              <div style={{ background: 'var(--bg-secondary)', padding: '40px', borderRadius: '8px', border: '1px solid var(--border-color)', textAlign: 'center', color: 'var(--text-muted)' }}>
-                <CheckCircle2 size={36} style={{ color: '#16a34a', marginBottom: '8px' }} />
-                <p>მოდერაციის რიგი ცარიელია. ყველა ცვლილება განხილულია!</p>
+              <div style={{ background: 'var(--bg-secondary)', padding: '32px', borderRadius: '8px', border: '1px solid var(--border-color)', textAlign: 'center', color: 'var(--text-muted)' }}>
+                მოდერაციისთვის განაცხადები არ არის.
               </div>
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>
-                {pendingEdits.map((editItem) => {
-                  const live = editItem.teachers;
-                  const prop = editItem.proposed_data;
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {pendingEdits.map((edit) => {
+                  const teacher = edit.teachers;
+                  const proposed = edit.proposed_data;
+                  const isPending = edit.status === 'pending';
 
                   return (
                     <div
-                      key={editItem.id}
+                      key={edit.id}
                       style={{
                         background: '#ffffff',
                         border: '1px solid var(--border-color)',
                         borderRadius: '8px',
                         padding: '24px',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.04)'
+                        boxShadow: '0 2px 10px rgba(0,0,0,0.03)'
                       }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                         <div>
-                          <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 600, color: editItem.status === 'pending' ? '#c9751d' : editItem.status === 'approved' ? '#16a34a' : '#dc2626' }}>
-                            სტატუსი: {editItem.status === 'pending' ? 'განხილვის პროცესში' : editItem.status === 'approved' ? 'დამტკიცებული' : 'უარყოფილი'}
+                          <span style={{ fontSize: '0.8rem', fontWeight: 700, padding: '3px 10px', borderRadius: '12px', background: isPending ? '#fef3c7' : edit.status === 'approved' ? '#dcfce7' : '#fee2e2', color: isPending ? '#b45309' : edit.status === 'approved' ? '#15803d' : '#b91c1c', textTransform: 'uppercase' }}>
+                            სტატუსი: {isPending ? 'განხილვის მოლოდინში' : edit.status === 'approved' ? 'დადასტურებულია' : 'უარყოფილია'}
                           </span>
-                          <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: 'var(--text-dark)', margin: '4px 0 0' }}>
-                            {live.full_name} ({live.subject})
+                          <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.3rem', color: 'var(--text-dark)', marginTop: '8px' }}>
+                            {teacher?.full_name} ({teacher?.subject})
                           </h4>
-                          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                            გაგზავნილია: {new Date(editItem.submitted_at).toLocaleString('ka-GE')}
+                          <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                            გამოგზავნილია: {new Date(edit.submitted_at).toLocaleString('ka-GE')}
                           </span>
                         </div>
 
-                        {editItem.status === 'pending' && (
-                          <div style={{ display: 'flex', gap: '10px' }}>
+                        {isPending && (
+                          <div style={{ display: 'flex', gap: '8px' }}>
                             <button
                               type="button"
-                              onClick={() => handleApproveEdit(editItem)}
+                              onClick={() => handleApproveEdit(edit)}
+                              disabled={editsStatus.loading}
                               className="btn btn-primary btn-sm"
-                              style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#16a34a', borderColor: '#16a34a' }}
+                              style={{ background: '#16a34a', borderColor: '#16a34a', display: 'flex', alignItems: 'center', gap: '6px' }}
                             >
                               <CheckCircle2 size={16} />
-                              დამტკიცება
+                              დადასტურება
                             </button>
                             <button
                               type="button"
-                              onClick={() => setSelectedEdit(selectedEdit === editItem.id ? null : editItem.id)}
+                              onClick={() => setSelectedEdit(edit)}
+                              disabled={editsStatus.loading}
                               className="btn btn-secondary btn-sm"
-                              style={{ color: '#dc2626', borderColor: '#fca5a5' }}
+                              style={{ color: '#dc2626', borderColor: '#fca5a5', display: 'flex', alignItems: 'center', gap: '6px' }}
                             >
                               <XCircle size={16} />
                               უარყოფა
@@ -511,65 +423,82 @@ export default function AdminDashboard() {
                         )}
                       </div>
 
-                      {/* Rejection input toggle */}
-                      {selectedEdit === editItem.id && (
-                        <div style={{ background: '#fef2f2', padding: '16px', borderRadius: '6px', marginBottom: '16px' }}>
-                          <label className="form-label" style={{ color: '#991b1b' }}>უარყოფის მიზეზი / შენიშვნა პედაგოგს:</label>
-                          <textarea
-                            className="form-control"
-                            rows="2"
-                            placeholder="დაწერეთ შენიშვნა..."
-                            value={rejectionNote}
-                            onChange={(e) => setRejectionNote(e.target.value)}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => handleRejectEdit(editItem)}
-                            className="btn btn-primary btn-sm mt-2"
-                            style={{ background: '#dc2626', borderColor: '#dc2626' }}
-                          >
-                            უარყოფის დადასტურება
-                          </button>
-                        </div>
-                      )}
-
-                      {/* Side-by-Side Comparison: Current Live vs Proposed */}
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', background: 'var(--bg-secondary)', padding: '16px', borderRadius: '6px' }}>
-                        {/* Live */}
-                        <div style={{ borderRight: '1px solid var(--border-color)', paddingRight: '12px' }}>
-                          <strong style={{ fontSize: '0.9rem', color: '#64748b', display: 'block', marginBottom: '8px' }}>
-                            🔴 ამჟამინდელი საჯარო ვერსია:
-                          </strong>
-                          <p style={{ fontSize: '0.88rem', margin: '4px 0' }}><strong>სახელი:</strong> {live.full_name}</p>
-                          <p style={{ fontSize: '0.88rem', margin: '4px 0' }}><strong>საგანი:</strong> {live.subject}</p>
-                          <p style={{ fontSize: '0.88rem', margin: '4px 0' }}><strong>განათლება:</strong> {live.education || 'არ არის'}</p>
-                          <p style={{ fontSize: '0.88rem', margin: '4px 0' }}><strong>გამოცდილება:</strong> {live.experience_years || 'არ არის'}</p>
-                          <p style={{ fontSize: '0.88rem', margin: '4px 0' }}><strong>სერტიფიკატები:</strong> {live.certifications || 'არ არის'}</p>
-                        </div>
-
-                        {/* Proposed */}
+                      {/* Comparison: Current vs Proposed */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', background: 'var(--bg-secondary)', padding: '16px', borderRadius: '8px', fontSize: '0.88rem' }}>
                         <div>
-                          <strong style={{ fontSize: '0.9rem', color: 'var(--accent-primary)', display: 'block', marginBottom: '8px' }}>
-                            🟢 ახალი მოთხოვნილი ცვლილებები:
+                          <strong style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '8px', borderBottom: '1px solid var(--border-color)', paddingBottom: '4px' }}>
+                            მიმდინარე მონაცემები:
                           </strong>
-                          <p style={{ fontSize: '0.88rem', margin: '4px 0', color: prop.full_name !== live.full_name ? 'var(--accent-primary)' : 'inherit' }}>
-                            <strong>სახელი:</strong> {prop.full_name}
+                          <p><strong>სახელი:</strong> {teacher?.full_name}</p>
+                          <p><strong>საგანი:</strong> {teacher?.subject}</p>
+                          <p><strong>ბიო:</strong> {teacher?.bio || '—'}</p>
+                          <p><strong>განათლება:</strong> {teacher?.education || '—'}</p>
+                          <p><strong>გამოცდილება:</strong> {teacher?.experience_years || '—'}</p>
+                          <p><strong>სერტიფიკატები:</strong> {teacher?.certifications || '—'}</p>
+                          <p><strong>სტაჟი სკოლაში:</strong> {teacher?.years_at_school || '—'}</p>
+                        </div>
+
+                        <div>
+                          <strong style={{ color: 'var(--accent-primary)', display: 'block', marginBottom: '8px', borderBottom: '1px solid var(--border-color)', paddingBottom: '4px' }}>
+                            შემოთავაზებული ახალი ცვლილებები:
+                          </strong>
+                          <p style={{ color: proposed?.full_name !== teacher?.full_name ? 'var(--accent-primary)' : 'inherit' }}>
+                            <strong>სახელი:</strong> {proposed?.full_name}
                           </p>
-                          <p style={{ fontSize: '0.88rem', margin: '4px 0', color: prop.subject !== live.subject ? 'var(--accent-primary)' : 'inherit' }}>
-                            <strong>საგანი:</strong> {prop.subject}
+                          <p style={{ color: proposed?.subject !== teacher?.subject ? 'var(--accent-primary)' : 'inherit' }}>
+                            <strong>საგანი:</strong> {proposed?.subject}
                           </p>
-                          <p style={{ fontSize: '0.88rem', margin: '4px 0', color: prop.education !== live.education ? 'var(--accent-primary)' : 'inherit' }}>
-                            <strong>განათლება:</strong> {prop.education || 'არ არის'}
+                          <p style={{ color: proposed?.bio !== teacher?.bio ? 'var(--accent-primary)' : 'inherit' }}>
+                            <strong>ბიო:</strong> {proposed?.bio || '—'}
                           </p>
-                          <p style={{ fontSize: '0.88rem', margin: '4px 0', color: prop.experience_years !== live.experience_years ? 'var(--accent-primary)' : 'inherit' }}>
-                            <strong>გამოცდილება:</strong> {prop.experience_years || 'არ არის'}
+                          <p style={{ color: proposed?.education !== teacher?.education ? 'var(--accent-primary)' : 'inherit' }}>
+                            <strong>განათლება:</strong> {proposed?.education || '—'}
                           </p>
-                          <p style={{ fontSize: '0.88rem', margin: '4px 0', color: prop.certifications !== live.certifications ? 'var(--accent-primary)' : 'inherit' }}>
-                            <strong>სერტიფიკატები:</strong> {prop.certifications || 'არ არის'}
+                          <p style={{ color: proposed?.experience_years !== teacher?.experience_years ? 'var(--accent-primary)' : 'inherit' }}>
+                            <strong>გამოცდილება:</strong> {proposed?.experience_years || '—'}
+                          </p>
+                          <p style={{ color: proposed?.certifications !== teacher?.certifications ? 'var(--accent-primary)' : 'inherit' }}>
+                            <strong>სერტიფიკატები:</strong> {proposed?.certifications || '—'}
+                          </p>
+                          <p style={{ color: proposed?.years_at_school !== teacher?.years_at_school ? 'var(--accent-primary)' : 'inherit' }}>
+                            <strong>სტაჟი სკოლაში:</strong> {proposed?.years_at_school || '—'}
                           </p>
                         </div>
                       </div>
 
+                      {/* Rejection Note input if clicked */}
+                      {selectedEdit?.id === edit.id && (
+                        <div style={{ marginTop: '16px', padding: '16px', background: '#fee2e2', borderRadius: '8px', border: '1px solid #fecaca' }}>
+                          <label className="form-label" style={{ color: '#991b1b', fontWeight: 600 }}>
+                            უარყოფის მიზეზი (შენიშვნა მასწავლებლისთვის):
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="მაგ: გთხოვთ მიუთითოთ ზუსტი დიპლომის მონაცემები..."
+                            value={rejectionNote}
+                            onChange={(e) => setRejectionNote(e.target.value)}
+                            style={{ marginBottom: '12px' }}
+                          />
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleRejectEdit(edit)}
+                              className="btn btn-primary btn-sm"
+                              style={{ background: '#dc2626', borderColor: '#dc2626' }}
+                            >
+                              უარყოფის დადასტურება
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedEdit(null)}
+                              className="btn btn-secondary btn-sm"
+                            >
+                              გაუქმება
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -578,243 +507,84 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* SECTION 2: APPLICATIONS & VISIT BOOKINGS QUEUE */}
+        {/* SECTION 2: ONLINE APPLICATIONS QUEUE */}
         {activeTab === 'queue' && (
           <div>
-            <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-              <button
-                type="button"
-                className={`btn ${queueTab === 'applications' ? 'btn-primary' : 'btn-secondary'}`}
-                onClick={() => setQueueTab('applications')}
-              >
-                ონლაინ განაცხადები ({applications.length})
-              </button>
-              <button
-                type="button"
-                className={`btn ${queueTab === 'bookings' ? 'btn-primary' : 'btn-secondary'}`}
-                onClick={() => setQueueTab('bookings')}
-              >
-                ვიზიტის ჯავშნები ({visitBookings.length})
-              </button>
-            </div>
-
-            {/* Applications list */}
-            {queueTab === 'applications' && (
-              <div>
-                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', marginBottom: '16px', color: 'var(--text-dark)' }}>
-                  შემოსული ონლაინ განაცხადები
-                </h3>
-
-                {applications.length === 0 ? (
-                  <p style={{ color: 'var(--text-muted)' }}>განაცხადები ჯერ არ არის შემოსული.</p>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {applications.map((app) => (
-                      <div key={app.id} style={{ background: '#ffffff', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '20px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                          <div>
-                            <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '3px 10px', borderRadius: '12px', background: app.status === 'accepted' ? '#dcfce7' : app.status === 'rejected' ? '#fee2e2' : '#fef3c7', color: app.status === 'accepted' ? '#15803d' : app.status === 'rejected' ? '#b91c1c' : '#b45309' }}>
-                              სტატუსი: {app.status === 'submitted' ? 'შემოსულია' : app.status === 'under_review' ? 'განხილვაშია' : app.status === 'accepted' ? 'მიღებულია' : 'უარყოფილია'}
-                            </span>
-                            <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', color: 'var(--text-dark)', marginTop: '6px' }}>
-                              მოსწავლე: {app.student_full_name} ({app.grade_stage})
-                            </h4>
-                          </div>
-
-                          {/* Status Change Selector */}
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>სტატუსის შეცვლა:</span>
-                            <select
-                              className="form-control"
-                              style={{ padding: '4px 8px', fontSize: '0.85rem' }}
-                              value={app.status}
-                              onChange={(e) => handleUpdateAppStatus(app.id, e.target.value)}
-                            >
-                              <option value="submitted">შემოსული (submitted)</option>
-                              <option value="under_review">განხილვაში (under_review)</option>
-                              <option value="accepted">მიღებული (accepted)</option>
-                              <option value="rejected">უარყოფილი (rejected)</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', fontSize: '0.9rem', color: 'var(--text-dark)', background: 'var(--bg-secondary)', padding: '12px', borderRadius: '6px' }}>
-                          <div><strong>მშობელი:</strong> {app.parent_full_name}</div>
-                          <div><strong>პირადი N:</strong> {app.parent_id_number || 'არ არის'}</div>
-                          <div><strong>მისამართი:</strong> {app.parent_address || 'არ არის'}</div>
-                          <div><strong>თარიღი:</strong> {new Date(app.created_at).toLocaleDateString('ka-GE')}</div>
-                          <div><strong>დაბადების თარიღი:</strong> {app.student_date_of_birth || 'არ არის'}</div>
-                          <div><strong>შენიშვნა:</strong> {app.additional_notes || 'არ არის'}</div>
-                        </div>
-
-                        {/* Documents */}
-                        {app.application_documents?.length > 0 && (
-                          <div style={{ marginTop: '12px' }}>
-                            <strong style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>ატვირთული დოკუმენტები:</strong>
-                            <div style={{ display: 'flex', gap: '12px', marginTop: '6px' }}>
-                              {app.application_documents.map((doc) => (
-                                <a
-                                  key={doc.id}
-                                  href={doc.file_url}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  style={{ fontSize: '0.82rem', color: 'var(--accent-primary)', textDecoration: 'underline' }}
-                                >
-                                  📄 {doc.document_type}
-                                </a>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Visit Bookings list */}
-            {queueTab === 'bookings' && (
-              <div>
-                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', marginBottom: '16px', color: 'var(--text-dark)' }}>
-                  შემოსული ვიზიტის ჯავშნები
-                </h3>
-
-                {visitBookings.length === 0 ? (
-                  <p style={{ color: 'var(--text-muted)' }}>ვიზიტის ჯავშნები ჯერ არ არის შემოსული.</p>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {visitBookings.map((b) => (
-                      <div key={b.id} style={{ background: '#ffffff', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '20px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div>
-                            <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '3px 10px', borderRadius: '12px', background: b.status === 'confirmed' ? '#dcfce7' : b.status === 'declined' ? '#fee2e2' : '#fef3c7', color: b.status === 'confirmed' ? '#15803d' : b.status === 'declined' ? '#b91c1c' : '#b45309' }}>
-                              სტატუსი: {b.status === 'pending' ? 'მოლოდინში' : b.status === 'confirmed' ? 'დადასტურებულია' : 'უარყოფილია'}
-                            </span>
-                            <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', color: 'var(--text-dark)', marginTop: '6px' }}>
-                              სახელი: {b.child_name} ({b.phone})
-                            </h4>
-                            <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', margin: '4px 0 0' }}>
-                              სასურველი თარიღი: <strong>{b.preferred_date}</strong> | საფეხური: {b.grade_stage || 'არ არის'}
-                            </p>
-                          </div>
-
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <button
-                              type="button"
-                              onClick={() => handleUpdateBookingStatus(b.id, 'confirmed')}
-                              className="btn btn-primary btn-sm"
-                              style={{ background: '#16a34a', borderColor: '#16a34a' }}
-                            >
-                              დადასტურება
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleUpdateBookingStatus(b.id, 'declined')}
-                              className="btn btn-secondary btn-sm"
-                              style={{ color: '#dc2626' }}
-                            >
-                              უარყოფა
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* SECTION 3: ADMISSIONS TIMELINE MANAGEMENT */}
-        {activeTab === 'timeline' && (
-          <div>
-            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', marginBottom: '8px', color: 'var(--text-dark)' }}>
-              მიღების ეტაპების მართვა
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', marginBottom: '20px', color: 'var(--text-dark)' }}>
+              შემოსული ონლაინ განაცხადები
             </h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '24px' }}>
-              აქ განახლებული ინფორმაცია დაუყოვნებლივ გამოჩნდება სკოლის მთავარი გვერდის "მიღება" სექციაში.
-            </p>
 
-            {timelineStatus.message && (
-              <div className="form-feedback success" style={{ marginBottom: '20px' }}>
-                {timelineStatus.message}
+            {applications.length === 0 ? (
+              <div style={{ background: 'var(--bg-secondary)', padding: '32px', borderRadius: '8px', border: '1px solid var(--border-color)', textAlign: 'center', color: 'var(--text-muted)' }}>
+                განაცხადები ჯერ არ არის შემოსული.
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {applications.map((app) => (
+                  <div key={app.id} style={{ background: '#ffffff', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                      <div>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '3px 10px', borderRadius: '12px', background: app.status === 'accepted' ? '#dcfce7' : app.status === 'rejected' ? '#fee2e2' : '#fef3c7', color: app.status === 'accepted' ? '#15803d' : app.status === 'rejected' ? '#b91c1c' : '#b45309' }}>
+                          სტატუსი: {app.status === 'submitted' ? 'შემოსულია' : app.status === 'under_review' ? 'განხილვაშია' : app.status === 'accepted' ? 'მიღებულია' : 'უარყოფილია'}
+                        </span>
+                        <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: 'var(--text-dark)', marginTop: '6px' }}>
+                          მოსწავლე: {app.student_full_name} ({app.grade_stage})
+                        </h4>
+                      </div>
+
+                      {/* Status Change Selector */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>სტატუსის შეცვლა:</span>
+                        <select
+                          className="form-control"
+                          style={{ padding: '4px 8px', fontSize: '0.85rem' }}
+                          value={app.status}
+                          onChange={(e) => handleUpdateAppStatus(app.id, e.target.value)}
+                        >
+                          <option value="submitted">შემოსული (submitted)</option>
+                          <option value="under_review">განხილვაში (under_review)</option>
+                          <option value="accepted">მიღებული (accepted)</option>
+                          <option value="rejected">უარყოფილი (rejected)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', fontSize: '0.9rem', color: 'var(--text-dark)', background: 'var(--bg-secondary)', padding: '12px', borderRadius: '6px' }}>
+                      <div><strong>მშობელი:</strong> {app.parent_full_name}</div>
+                      <div><strong>პირადი N:</strong> {app.parent_id_number || 'არ არის'}</div>
+                      <div><strong>მისამართი:</strong> {app.parent_address || 'არ არის'}</div>
+                      <div><strong>თარიღი:</strong> {new Date(app.created_at).toLocaleDateString('ka-GE')}</div>
+                      <div><strong>დაბადების თარიღი:</strong> {app.student_date_of_birth || 'არ არის'}</div>
+                      <div><strong>შენიშვნა:</strong> {app.additional_notes || 'არ არის'}</div>
+                    </div>
+
+                    {/* Documents */}
+                    {app.application_documents?.length > 0 && (
+                      <div style={{ marginTop: '12px' }}>
+                        <strong style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>ატვირთული დოკუმენტები:</strong>
+                        <div style={{ display: 'flex', gap: '12px', marginTop: '6px', flexWrap: 'wrap' }}>
+                          {app.application_documents.map((doc) => (
+                            <a
+                              key={doc.id}
+                              href={doc.file_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              style={{ fontSize: '0.82rem', color: 'var(--accent-primary)', textDecoration: 'underline' }}
+                            >
+                              📄 {doc.document_type}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             )}
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {timelineSteps.map((step, idx) => (
-                <div key={step.id || idx} style={{ background: '#ffffff', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '20px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                    <span style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--accent-primary)' }}>
-                      0{step.step_number}
-                    </span>
-                    <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.15rem', color: 'var(--text-dark)', margin: 0 }}>
-                      {step.title}
-                    </h4>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr', gap: '16px' }}>
-                    <div className="form-group" style={{ margin: 0 }}>
-                      <label className="form-label">სათაური</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={step.title}
-                        onChange={(e) => {
-                          const updated = [...timelineSteps];
-                          updated[idx].title = e.target.value;
-                          setTimelineSteps(updated);
-                        }}
-                      />
-                    </div>
-
-                    <div className="form-group" style={{ margin: 0 }}>
-                      <label className="form-label">აღწერა</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={step.description}
-                        onChange={(e) => {
-                          const updated = [...timelineSteps];
-                          updated[idx].description = e.target.value;
-                          setTimelineSteps(updated);
-                        }}
-                      />
-                    </div>
-
-                    <div className="form-group" style={{ margin: 0 }}>
-                      <label className="form-label">ვადა / თარიღი</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={step.deadline}
-                        onChange={(e) => {
-                          const updated = [...timelineSteps];
-                          updated[idx].deadline = e.target.value;
-                          setTimelineSteps(updated);
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleSaveTimelineStep(step)}
-                    className="btn btn-primary btn-sm mt-3"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-                  >
-                    <Save size={14} />
-                    ეტაპის შენახვა
-                  </button>
-                </div>
-              ))}
-            </div>
           </div>
         )}
 
-        {/* SECTION 4: NEWS MANAGEMENT */}
+        {/* SECTION 3: NEWS MANAGEMENT */}
         {activeTab === 'news' && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
             

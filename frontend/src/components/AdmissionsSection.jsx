@@ -1,23 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, CheckCircle2, ChevronDown, ChevronUp, Clock, Info, Upload, FileCheck, X } from 'lucide-react';
+import { FileText, CheckCircle2, Info, Upload, FileCheck, X } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { supabase } from '../lib/supabaseClient';
 
 export default function AdmissionsSection() {
   const { user, pendingFormSubmit, setPendingFormSubmit, requireAuth } = useAuth();
-  
-  // Accordion State
-  const [openFaq, setOpenFaq] = useState(null);
-
-  // Booking Form State
-  const [bookingForm, setBookingForm] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    date: '',
-    grade: ''
-  });
-  const [bookingStatus, setBookingStatus] = useState({ loading: false, success: null, message: '' });
 
   // Application Form State
   const [appForm, setAppForm] = useState({
@@ -41,14 +28,9 @@ export default function AdmissionsSection() {
     residence_permit: { file: null, progress: 0, status: 'idle', url: '', fileName: '' }
   });
 
-  // Pre-fill forms with logged-in user profile info
+  // Pre-fill form with logged-in user profile info
   useEffect(() => {
     if (user) {
-      setBookingForm((prev) => ({
-        ...prev,
-        phone: prev.phone || user.phone || '',
-        email: prev.email || user.email || ''
-      }));
       setAppForm((prev) => ({
         ...prev,
         parentName: prev.parentName || user.name || user.full_name || '',
@@ -89,59 +71,6 @@ export default function AdmissionsSection() {
     }));
   };
 
-  // FAQ Data
-  const faqs = [
-    {
-      q: 'როდის იწყება რეგისტრაცია ახალი სასწავლო წლისთვის?',
-      a: 'რეგისტრაცია იწყება ყოველი წლის 1 აპრილიდან და გრძელდება 15 მაისამდე. ადგილები შეზღუდულია, ამიტომ გირჩევთ განაცხადი დროულად შეავსოთ.'
-    },
-    {
-      q: 'არის თუ არა შესაძლებელი სწავლის საფასურის ეტაპობრივი გადახდა?',
-      a: 'დიახ, სკოლა ხელს უწყობს მშობლებს და სწავლის საფასურის გადახდა შესაძლებელია 10 თანაბარ ყოველთვიურ ნაწილად ან ორ ეტაპად (სემესტრულად).'
-    },
-    {
-      q: 'რა ენებზე მიმდინარეობს სწავლება?',
-      a: 'სასწავლო პროცესი მიმდინარეობს ქართულ ენაზე ეროვნული სასწავლო გეგმის შესაბამისად, თუმცა ინგლისური ენის სწავლება გაძლიერებულია პირველივე კლასიდან. საშუალო საფეხურზე (IB) საგნების ნაწილი ინგლისურ ენაზე ისწავლება.'
-    },
-    {
-      q: 'სთავაზობს თუ არა სკოლა მოსწავლეებს ტრანსპორტირებას და კვებას?',
-      a: 'დიახ, სკოლას ემსახურება თანამედროვე სტანდარტების მქონე ტრანსპორტირების ქსელი. მოსწავლეებს ასევე ვთავაზობთ ეკოლოგიურად სუფთა პროდუქტებისგან მომზადებულ სამჯერად ბალანსირებულ კვებას.'
-    }
-  ];
-
-  // Timeline Data State
-  const [steps, setSteps] = useState([
-    { num: '01', title: 'განაცხადის შევსება', desc: 'ონლაინ სარეგისტრაციო ფორმის შევსება ჩვენს ვებგვერდზე.', deadline: '15 მაისი, 2026' },
-    { num: '02', title: 'საბუთების წარდგენა', desc: 'საჭირო დოკუმენტაციის ატვირთვა ან წარდგენა სკოლის საინფორმაციო ცენტრში.', deadline: '30 მაისი, 2026' },
-    { num: '03', title: 'გასაუბრება & შეფასება', desc: 'მოსწავლის აკადემიური და ფსიქო-ემოციური მზაობის შეფასება.', deadline: '15 ივნისი, 2026' },
-    { num: '04', title: 'შედეგების გამოცხადება', desc: 'მიღების შესახებ გადაწყვეტილების მშობლისთვის შეტყობინება.', deadline: '1 ივლისი, 2026' },
-    { num: '05', title: 'ხელშეკრულების გაფორმება', desc: 'სწავლის ხელშეკრულების გაფორმება და პირველი შენატანის განხორციელება.', deadline: '15 ივლ, 2026' }
-  ]);
-
-  useEffect(() => {
-    async function loadSteps() {
-      try {
-        const { data, error } = await supabase
-          .from('admissions_steps')
-          .select('*')
-          .order('step_number', { ascending: true });
-
-        if (!error && data && data.length > 0) {
-          const dbSteps = data.map((s) => ({
-            num: `0${s.step_number}`,
-            title: s.title,
-            desc: s.description,
-            deadline: s.deadline
-          }));
-          setSteps(dbSteps);
-        }
-      } catch (err) {
-        console.error('Error fetching admissions steps:', err);
-      }
-    }
-    loadSteps();
-  }, []);
-
   const checklist = [
     'მოსწავლის დაბადების მოწმობის ნოტარიულად დამოწმებული ასლი',
     'მშობლების/მეურვეების პირადობის მოწმობის ასლები',
@@ -161,56 +90,6 @@ export default function AdmissionsSection() {
     { item: 'ორმხრივი ტრანსპორტირება', price: '150 ₾ / თვეში' },
     { item: 'სასკოლო ფორმა და სახელმძღვანელოები', price: '400 ₾ / წლიური (ერთჯერადი)' }
   ];
-
-  // Submit visit booking to Supabase
-  const submitBookingData = async (formData) => {
-    setBookingStatus({ loading: true, success: null, message: '' });
-    try {
-      if (!user) {
-        throw new Error('ვიზიტის დასაჯავშნად გთხოვთ გაიაროთ ავტორიზაცია.');
-      }
-
-      const { error } = await supabase
-        .from('visit_bookings')
-        .insert([
-          {
-            user_id: user.id,
-            child_name: formData.name,
-            phone: formData.phone,
-            email: formData.email || null,
-            preferred_date: formData.date,
-            grade_stage: formData.grade || null,
-            status: 'pending'
-          }
-        ])
-        .select();
-
-      if (error) {
-        console.error('Supabase booking insert error:', error);
-        throw error;
-      }
-
-      setBookingStatus({
-        loading: false,
-        success: true,
-        message: 'ვიზიტი წარმატებით დაიჯავშნა! ჩვენი წარმომადგენელი მალე დაგიკავშირდებათ.'
-      });
-      setBookingForm({ name: '', phone: user?.phone || '', email: user?.email || '', date: '', grade: '' });
-    } catch (err) {
-      setBookingStatus({
-        loading: false,
-        success: false,
-        message: err.message || 'ჯავშნის გაგზავნისას დაფიქსირდა შეცდომა.'
-      });
-    }
-  };
-
-  const handleBookingSubmit = (e) => {
-    e.preventDefault();
-    requireAuth('booking', bookingForm, () => {
-      submitBookingData(bookingForm);
-    });
-  };
 
   // Submit online application to Supabase + Storage
   const submitAppData = async (formData) => {
@@ -344,11 +223,7 @@ export default function AdmissionsSection() {
   useEffect(() => {
     if (user && pendingFormSubmit) {
       const { formType, data } = pendingFormSubmit;
-      if (formType === 'booking') {
-        setBookingForm(data);
-        setPendingFormSubmit(null);
-        submitBookingData(data);
-      } else if (formType === 'application') {
+      if (formType === 'application') {
         setAppForm(data);
         setPendingFormSubmit(null);
         submitAppData(data);
@@ -378,26 +253,10 @@ export default function AdmissionsSection() {
         <span className="section-eyebrow">მიღება სკოლაში</span>
         <h2 className="section-title">მისაღები პროცედურა და რეგისტრაცია</h2>
         <p className="section-desc">
-          გაეცანით მისაღები პროცესის ეტაპებს, სწავლის ღირებულებას და შემოგვიერთდით ახალი სასწავლო წლისთვის.
+          გაეცანით საბუთების ჩამონათვალს, სწავლის ღირებულებას და შემოგვიერთდით ახალი სასწავლო წლისთვის.
         </p>
 
-        {/* 1. Timeline */}
-        <h3 className="sub-section-title">მიღების ეტაპები</h3>
-        <div className="timeline-grid">
-          {steps.map((step) => (
-            <div key={step.num} className="timeline-step">
-              <span className="timeline-num">{step.num}</span>
-              <h4 className="timeline-step-title">{step.title}</h4>
-              <p className="timeline-step-desc">{step.desc}</p>
-              <span className="timeline-deadline">
-                <Clock size={12} className="icon-mr" />
-                {step.deadline}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* 2. Documents & Pricing Layout */}
+        {/* 1. Documents & Pricing Layout */}
         <div className="doc-price-grid">
           {/* Document Checklist */}
           <div className="checklist-card">
@@ -460,94 +319,8 @@ export default function AdmissionsSection() {
           </div>
         </div>
 
-        {/* 3. Forms Layout */}
-        <div className="forms-grid" id="booking-section">
-          {/* Visit Booking Form */}
-          <div className="form-card-container">
-            <h3 className="form-card-heading">ვიზიტის დაჯავშნა</h3>
-            <p className="form-card-subheading">დაგეგმეთ ინდივიდუალური ტური სკოლაში და გაესაუბრეთ ადმინისტრაციას.</p>
-            
-            <form onSubmit={handleBookingSubmit}>
-              <div className="form-group">
-                <label className="form-label" htmlFor="booking-name">მოსწავლის / მშობლის სახელი *</label>
-                <input
-                  id="booking-name"
-                  type="text"
-                  required
-                  className="form-control"
-                  placeholder="თქვენი სახელი..."
-                  value={bookingForm.name}
-                  onChange={(e) => setBookingForm({ ...bookingForm, name: e.target.value })}
-                />
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label" htmlFor="booking-phone">ტელეფონი *</label>
-                  <input
-                    id="booking-phone"
-                    type="tel"
-                    required
-                    className="form-control"
-                    placeholder="მაგ: 599 12 34 56"
-                    value={bookingForm.phone}
-                    onChange={(e) => setBookingForm({ ...bookingForm, phone: e.target.value })}
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label" htmlFor="booking-email">ელ-ფოსტა</label>
-                  <input
-                    id="booking-email"
-                    type="email"
-                    className="form-control"
-                    placeholder="mail@example.com"
-                    value={bookingForm.email}
-                    onChange={(e) => setBookingForm({ ...bookingForm, email: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label" htmlFor="booking-date">ვიზიტის თარიღი *</label>
-                  <input
-                    id="booking-date"
-                    type="date"
-                    required
-                    className="form-control"
-                    value={bookingForm.date}
-                    onChange={(e) => setBookingForm({ ...bookingForm, date: e.target.value })}
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label" htmlFor="booking-grade">კლასი / საფეხური</label>
-                  <select
-                    id="booking-grade"
-                    className="form-control"
-                    value={bookingForm.grade}
-                    onChange={(e) => setBookingForm({ ...bookingForm, grade: e.target.value })}
-                  >
-                    <option value="">აირჩიეთ...</option>
-                    <option value="დაწყებითი">დაწყებითი სკოლა</option>
-                    <option value="საბაზო">საბაზო სკოლა</option>
-                    <option value="საშუალო">საშუალო სკოლა</option>
-                  </select>
-                </div>
-              </div>
-
-              <button type="submit" disabled={bookingStatus.loading} className="btn btn-primary w-full">
-                {bookingStatus.loading ? 'იგზავნება...' : 'ჯავშნის გაგზავნა'}
-              </button>
-
-              {bookingStatus.message && (
-                <div className={`form-feedback ${bookingStatus.success ? 'success' : 'error'}`}>
-                  {bookingStatus.message}
-                </div>
-              )}
-            </form>
-          </div>
-
-          {/* Online Application Form */}
+        {/* 2. Online Application Form */}
+        <div className="single-form-container">
           <div className="form-card-container">
             <h3 className="form-card-heading">ონლაინ განაცხადი & დოკუმენტების ატვირთვა</h3>
             <p className="form-card-subheading">დაიწყეთ რეგისტრაციის პროცესი ონლაინ განაცხადის შევსებით და დოკუმენტაციის ატვირთვით.</p>
@@ -778,27 +551,6 @@ export default function AdmissionsSection() {
                 </div>
               )}
             </form>
-          </div>
-        </div>
-
-        {/* 4. FAQ Section */}
-        <div className="faq-section-wrapper">
-          <h3 className="faq-main-title text-center">ხშირად დასმული კითხვები</h3>
-          <div className="faq-accordion">
-            {faqs.map((faq, idx) => (
-              <div key={idx} className="faq-item">
-                <button
-                  className="faq-question-btn"
-                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                >
-                  <span className="faq-question">{faq.q}</span>
-                  {openFaq === idx ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                </button>
-                <div className={`faq-answer-container ${openFaq === idx ? 'open' : ''}`}>
-                  <p className="faq-answer">{faq.a}</p>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
 

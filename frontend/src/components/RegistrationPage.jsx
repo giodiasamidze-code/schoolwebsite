@@ -33,7 +33,7 @@ export default function RegistrationPage() {
     if (auth.pendingFormSubmit) {
       auth.navigate('/');
       setTimeout(() => {
-        const targetId = auth.pendingFormSubmit?.formType === 'booking' ? '#booking-section' : '#admissions';
+        const targetId = '#admissions';
         const element = document.querySelector(targetId);
         if (element) {
           const offset = 80;
@@ -70,20 +70,31 @@ export default function RegistrationPage() {
 
     setLoading(true);
     try {
-      await auth.register({ email, password, fullName: name, phone });
+      const result = await auth.register({ email, password, fullName: name, phone });
+      
+      // If session is null, Supabase requires email confirmation
+      if (!result?.session) {
+        setSuccessMessage('✅ რეგისტრაცია მიღებულია! გთხოვთ შეამოწმოთ თქვენი ელ-ფოსტა (' + email + ') და დაადასტუროთ ანგარიში.');
+        return;
+      }
+
       setSuccessMessage('მშობლის რეგისტრაცია წარმატებით დასრულდა!');
       setTimeout(() => {
         handlePostAuthNavigation();
       }, 800);
     } catch (err) {
-      console.error('Registration error:', err);
-      let message = 'რეგისტრაციისას დაფიქსირდა შეცდომა. გთხოვთ სცადოთ ხელახლა.';
-      if (err.message?.includes('already registered')) {
-        message = 'მითითებული ელ-ფოსტით მომხმარებელი უკვე დარეგისტრირებულია.';
-      } else if (err.message?.includes('invalid')) {
+      console.error('Registration error full:', err);
+      let message = 'შეცდომა: ' + (err.message || 'უცნობი შეცდომა');
+      if (err.message?.includes('already registered') || err.message?.includes('User already registered')) {
+        message = 'ეს ელ-ფოსტა უკვე რეგისტრირებულია. სცადეთ "შესვლა" tab-ი.';
+      } else if (err.message?.includes('invalid') || err.message?.includes('Invalid')) {
         message = 'არასწორი ელ-ფოსტის ან პაროლის ფორმატი.';
+      } else if (err.message?.includes('rate limit') || err.message?.includes('over_email_send_rate_limit')) {
+        message = 'ძალიან ბევრი მცდელობა. გთხოვთ 1 საათის შემდეგ სცადოთ ხელახლა.';
+      } else if (err.message?.includes('already been registered')) {
+        message = 'ეს ელ-ფოსტა უკვე რეგისტრირებულია. სცადეთ "შესვლა" tab-ი.';
       }
-      setErrorMessage(err.message ? message : 'სისტემური შეცდომა.');
+      setErrorMessage(message);
     } finally {
       setLoading(false);
     }
@@ -117,7 +128,13 @@ export default function RegistrationPage() {
       setSuccessMessage('მასწავლებლის რეგისტრაცია წარმატებულია! გადამისამართება...');
     } catch (err) {
       console.error('Teacher registration error:', err);
-      setErrorMessage(err.message || 'მასწავლებლის რეგისტრაციის შეცდომა.');
+      let message = err.message || err.msg || (typeof err === 'string' ? err : JSON.stringify(err, Object.getOwnPropertyNames(err)));
+      if (err.message?.includes('already registered') || err.message?.includes('User already registered')) {
+        message = 'ეს ელ-ფოსტა უკვე გამოყენებულია. სხვა email სცადეთ ან "შესვლა" tab-ი.';
+      } else if (!message || message === '{}') {
+        message = 'Supabase-ის შეცდომა. შეამოწმეთ კონსოლი (F12) ან სცადეთ სხვა email-ით.';
+      }
+      setErrorMessage(message);
     } finally {
       setLoading(false);
     }
@@ -484,40 +501,7 @@ export default function RegistrationPage() {
           </form>
         )}
 
-        {/* // TEMPORARY DEV-ONLY — DELETE THIS ENTIRE BLOCK BEFORE PRODUCTION LAUNCH */}
-        {import.meta.env.DEV && (
-          <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '2px dashed var(--accent-gold, #c9751d)', textAlign: 'center' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#c9751d', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              ⚡ DEV-ONLY სწრაფი შესვლა (ტესტირება)
-            </span>
-            <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-              <button
-                type="button"
-                className="btn btn-secondary btn-sm"
-                style={{ flex: 1, fontSize: '0.8rem', padding: '6px' }}
-                onClick={() => auth.devQuickLogin('parent')}
-              >
-                👨‍👩‍👧 მშობელი
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary btn-sm"
-                style={{ flex: 1, fontSize: '0.8rem', padding: '6px' }}
-                onClick={() => auth.devQuickLogin('teacher')}
-              >
-                👨‍🏫 მასწავლებელი
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary btn-sm"
-                style={{ flex: 1, fontSize: '0.8rem', padding: '6px' }}
-                onClick={() => auth.devQuickLogin('admin')}
-              >
-                👔 დირექტორი
-              </button>
-            </div>
-          </div>
-        )}
+
       </div>
     </div>
   );

@@ -51,9 +51,8 @@ export default function Footer() {
           </div>
 
           <nav className="footer-nav-links">
-            <a href="#programs" className="footer-nav-item" onClick={(e) => handleNavClick(e, '#programs')}>პროგრამები</a>
             <a href="#teachers" className="footer-nav-item" onClick={(e) => handleNavClick(e, '#teachers')}>მასწავლებლები</a>
-            <a href="#school-life" className="footer-nav-item" onClick={(e) => handleNavClick(e, '#school-life')}>სკოლის ცხოვრება</a>
+            <a href="#news" className="footer-nav-item" onClick={(e) => handleNavClick(e, '#news')}>სიახლეები</a>
             <a href="#admissions" className="footer-nav-item" onClick={(e) => handleNavClick(e, '#admissions')}>მიღება</a>
           </nav>
         </div>

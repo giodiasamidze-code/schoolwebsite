@@ -1350,6 +1350,11 @@ section {
   margin-bottom: 5rem;
 }
 
+.single-form-container {
+  max-width: 860px;
+  margin: 0 auto 3rem;
+}
+
 .form-card-container {
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);

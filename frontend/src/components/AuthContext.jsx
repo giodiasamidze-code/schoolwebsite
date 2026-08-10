@@ -156,216 +156,46 @@ export function AuthProvider({ children }) {
   };
 
   const register = async ({ email, password, fullName, phone }) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          phone: phone,
-          role: 'parent'
-        },
-      },
+    // Call backend (service role) → auto-confirms email, no RLS issues
+    const res = await fetch('http://localhost:5001/api/register-parent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, fullName, phone })
     });
+    const result = await res.json();
+    if (!result.success) throw new Error(result.message);
 
+    // Auto-login after registration
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
+    if (data.user) await fetchProfile(data.user);
+    return { session: data.session, user: data.user };
+  };
 
-    if (data.user) {
-      const { error: profileError } = await supabase
-        .from('users')
-        .upsert({
-          id: data.user.id,
-          full_name: fullName,
-          phone: phone,
-          email: email,
-          role: 'parent'
-        });
 
-      if (profileError) {
-        console.error('Error creating user profile:', profileError);
-      }
+  const registerTeacher = async ({ email, password, fullName, phone, subject, inviteCode }) => {
+    // Call backend (service role) → validates invite code, auto-confirms email, creates teacher profile
+    const res = await fetch('http://localhost:5001/api/register-teacher', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, fullName, phone, subject, inviteCode })
+    });
+    const result = await res.json();
+    if (!result.success) throw new Error(result.message);
 
-      await fetchProfile(data.user);
-    }
+    // Auto-login after registration
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    if (data.user) await fetchProfile(data.user);
+    navigate('/teacher-dashboard');
     return data;
   };
 
-  const registerTeacher = async ({ email, password, fullName, phone, subject, inviteCode }) => {
-    const cleanCode = inviteCode.trim();
-    const { data: codeData, error: codeError } = await supabase
-      .from('invite_codes')
-      .select('*')
-      .eq('code', cleanCode)
-      .eq('is_active', true)
-      .is('used_by', null)
-      .maybeSingle();
 
-    if (codeError || !codeData) {
-      throw new Error('მოწოდებული მოწვევის კოდი (Invite Code) არასწორია ან უკვე გამოყენებულია.');
-    }
 
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          phone: phone || '',
-          role: 'teacher'
-        }
-      }
-    });
 
-    if (authError) throw authError;
 
-    if (authData.user) {
-      const userId = authData.user.id;
 
-      await supabase.from('users').upsert({
-        id: userId,
-        full_name: fullName,
-        phone: phone || '',
-        email: email,
-        role: 'teacher'
-      });
-
-      const { data: newTeacher, error: teacherError } = await supabase
-        .from('teachers')
-        .insert([
-          {
-            user_id: userId,
-            full_name: fullName,
-            subject: subject,
-            bio: '',
-            photo_url: '',
-            education: '',
-            experience_years: '',
-            certifications: '',
-            years_at_school: ''
-          }
-        ])
-        .select()
-        .single();
-
-      if (teacherError) {
-        console.error('Teacher profile creation error:', teacherError);
-        throw teacherError;
-      }
-
-      await supabase
-        .from('invite_codes')
-        .update({
-          is_active: false,
-          used_by: newTeacher.id
-        })
-        .eq('id', codeData.id);
-
-      await fetchProfile(authData.user);
-      navigate('/teacher-dashboard');
-    }
-
-    return authData;
-  };
-
-  // TEMPORARY DEV-ONLY — DELETE THIS ENTIRE BLOCK BEFORE PRODUCTION LAUNCH
-  const devQuickLogin = async (targetRole) => {
-    if (!import.meta.env.DEV) return;
-
-    const credentialsMap = {
-      parent: { email: 'test-parent@dev.local', password: 'TestPassword123!', fullName: 'ტესტ მშობელი', phone: '599111222' },
-      teacher: { email: 'test-teacher@dev.local', password: 'TestPassword123!', fullName: 'გიორგი პედაგოგი (Test)', phone: '599333444', subject: 'მათემატიკა' },
-      admin: { email: 'test-admin@dev.local', password: 'TestPassword123!', fullName: 'ელენე დირექტორი (Test)', phone: '599555666' }
-    };
-
-    const credentials = credentialsMap[targetRole];
-    if (!credentials) return;
-
-    try {
-      // 1. Try signing in first
-      let { data, error } = await supabase.auth.signInWithPassword({
-        email: credentials.email,
-        password: credentials.password
-      });
-
-      // 2. If user doesn't exist, sign up
-      if (error && (error.message.includes('Invalid login credentials') || error.message.includes('User not found'))) {
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-          email: credentials.email,
-          password: credentials.password,
-          options: {
-            data: {
-              full_name: credentials.fullName,
-              phone: credentials.phone,
-              role: targetRole
-            }
-          }
-        });
-        if (!signUpError) data = signUpData;
-      }
-
-      if (data?.user) {
-        const userId = data.user.id;
-
-        await supabase.from('users').upsert({
-          id: userId,
-          full_name: credentials.fullName,
-          phone: credentials.phone,
-          email: credentials.email,
-          role: targetRole
-        });
-
-        if (targetRole === 'teacher') {
-          await supabase.from('teachers').upsert({
-            user_id: userId,
-            full_name: credentials.fullName,
-            subject: credentials.subject,
-            bio: 'ტესტ მასწავლებლის ბიოგრაფია (Dev test account)',
-            education: 'თბილისის სახელმწიფო უნივერსიტეტი (მაგისტრი)',
-            experience_years: '7 წელი',
-            certifications: 'სერტიფიცირებული პედაგოგი',
-            years_at_school: '3 წელი'
-          }, { onConflict: 'user_id' });
-        }
-
-        await fetchProfile(data.user);
-
-        if (targetRole === 'admin') navigate('/admin-dashboard');
-        else if (targetRole === 'teacher') navigate('/teacher-dashboard');
-        else navigate('/parent-account');
-        return;
-      }
-    } catch (err) {
-      console.warn('Supabase fetch unavailable, applying instant dev state fallback:', err);
-    }
-
-    // Dev Fallback for instant UI review without live Supabase backend
-    setUser({
-      id: `dev-test-${targetRole}-id`,
-      email: credentials.email,
-      name: credentials.fullName,
-      phone: credentials.phone,
-      role: targetRole
-    });
-    setRole(targetRole);
-
-    if (targetRole === 'teacher') {
-      setTeacherProfile({
-        id: 'dev-test-teacher-id',
-        user_id: 'dev-test-teacher-id',
-        full_name: credentials.fullName,
-        subject: credentials.subject,
-        bio: 'ტესტ მასწავლებლის ბიოგრაფია (Dev test account)',
-        education: 'თბილისის სახელმწიფო უნივერსიტეტი (მაგისტრი)',
-        experience_years: '7 წელი',
-        certifications: 'სერტიფიცირებული პედაგოგი',
-        years_at_school: '3 წელი'
-      });
-    }
-
-    if (targetRole === 'admin') navigate('/admin-dashboard');
-    else if (targetRole === 'teacher') navigate('/teacher-dashboard');
-    else navigate('/parent-account');
-  };
 
   const logout = async () => {
     await supabase.auth.signOut();
@@ -406,7 +236,6 @@ export function AuthProvider({ children }) {
       login,
       register,
       registerTeacher,
-      devQuickLogin,
       logout,
       requireAuth
     }}>
