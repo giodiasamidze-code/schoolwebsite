@@ -157,7 +157,8 @@ export function AuthProvider({ children }) {
 
   const register = async ({ email, password, fullName, phone }) => {
     // Call backend (service role) → auto-confirms email, no RLS issues
-    const res = await fetch('http://localhost:5001/api/register-parent', {
+    const apiBase = import.meta.env.VITE_API_URL || '';
+    const res = await fetch(`${apiBase}/api/register-parent`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, fullName, phone })
@@ -175,7 +176,8 @@ export function AuthProvider({ children }) {
 
   const registerTeacher = async ({ email, password, fullName, phone, subject, inviteCode }) => {
     // Call backend (service role) → validates invite code, auto-confirms email, creates teacher profile
-    const res = await fetch('http://localhost:5001/api/register-teacher', {
+    const apiBase = import.meta.env.VITE_API_URL || '';
+    const res = await fetch(`${apiBase}/api/register-teacher`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, fullName, phone, subject, inviteCode })

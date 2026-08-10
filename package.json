@@ -1,0 +1,8 @@
+{
+  "name": "schoolwebsite",
+  "version": "1.0.0",
+  "description": "Solomon Academy - Georgian Private School Website",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}
