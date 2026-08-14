@@ -86,13 +86,7 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ success: false, message: 'Teacher profile შეცდომა: ' + teacherError.message });
     }
 
-    // 5. Mark invite code as used if DB code
-    if (codeId) {
-      await supabaseAdmin
-        .from('invite_codes')
-        .update({ is_active: false, used_by: newTeacher.id })
-        .eq('id', codeId);
-    }
+    // კოდი მრავალჯერადია — არ ვბლოკავთ გამოყენების შემდეგ
 
     return res.status(200).json({ success: true, userId, message: 'მასწავლებელი წარმატებით დარეგისტრირდა.' });
 
