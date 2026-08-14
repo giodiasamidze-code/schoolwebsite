@@ -398,7 +398,12 @@ export default function AdminDashboard() {
         body: JSON.stringify({ code: codeToInsert })
       });
 
-      const json = await res.json();
+      let json = {};
+      try {
+        json = await res.json();
+      } catch (parseErr) {
+        throw new Error('სერვერის პასუხის დამუშავება ვერ მოხერხდა.');
+      }
 
       if (!res.ok || !json.success) {
         throw new Error(json.message || 'კოდის შექმნა ვერ მოხერხდა.');
@@ -441,7 +446,12 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ generateBatch: 50 })
       });
-      const json = await res.json();
+      let json = {};
+      try {
+        json = await res.json();
+      } catch (parseErr) {
+        throw new Error('სერვერის პასუხის დამუშავება ვერ მოხერხდა.');
+      }
       if (!res.ok || !json.success) throw new Error(json.message);
       await fetchInviteCodes();
       showToast('🎉 50 ახალი კოდი წარმატებით დაემატა!', 'success');
@@ -462,7 +472,12 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: codeItem.id })
       });
-      const json = await res.json();
+      let json = {};
+      try {
+        json = await res.json();
+      } catch (parseErr) {
+        throw new Error('სერვერის პასუხის დამუშავება ვერ მოხერხდა.');
+      }
       if (!res.ok || !json.success) throw new Error(json.message);
       await fetchInviteCodes();
       showToast('კოდი წაიშალა.', 'info');

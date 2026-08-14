@@ -1,12 +1,12 @@
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
 const supabaseAdmin = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
+  process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || '',
   { auth: { autoRefreshToken: false, persistSession: false } }
 );
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -14,7 +14,7 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ success: false, message: 'Method not allowed' });
 
-  const { email, password, fullName, phone } = req.body;
+  const { email, password, fullName, phone } = req.body || {};
 
   if (!email || !password || !fullName || !phone) {
     return res.status(400).json({ success: false, message: 'ყველა სავალდებულო ველი შევსებული უნდა იყოს.' });
@@ -44,4 +44,4 @@ module.exports = async function handler(req, res) {
     console.error('Register parent error:', err);
     return res.status(500).json({ success: false, message: err.message || 'სერვერის შეცდომა.' });
   }
-};
+}
