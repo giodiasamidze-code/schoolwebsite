@@ -156,49 +156,48 @@ export default function TeacherDashboard() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: '#0e0b0b',
+        background: 'var(--bg-primary, #FAF6F0)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '24px'
       }}>
         <div style={{
-          background: 'rgba(255, 255, 255, 0.05)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          background: '#ffffff',
+          border: '1px solid var(--border-color, #E2DACF)',
           borderRadius: '20px',
           padding: '48px 36px',
           maxWidth: '480px',
           textAlign: 'center',
-          color: '#fff',
-          boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
-          backdropFilter: 'blur(20px)'
+          color: 'var(--text-dark, #2C2825)',
+          boxShadow: '0 16px 40px rgba(0,0,0,0.06)'
         }}>
           <div style={{
             width: '64px',
             height: '64px',
             borderRadius: '16px',
-            background: 'rgba(197, 160, 89, 0.15)',
-            border: '1px solid rgba(197, 160, 89, 0.3)',
+            background: 'rgba(128, 0, 32, 0.08)',
+            border: '1px solid rgba(128, 0, 32, 0.2)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 20px',
-            color: '#e5c478'
+            color: 'var(--accent-primary, #800020)'
           }}>
             <GraduationCap size={32} />
           </div>
-          <h2 style={{ fontFamily: 'var(--font-serif, Georgia, serif)', fontSize: '1.75rem', marginBottom: '12px', color: '#fff' }}>
+          <h2 style={{ fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)', fontSize: '1.75rem', marginBottom: '12px', color: 'var(--text-dark, #2C2825)' }}>
             ავტორიზაცია საჭიროა
           </h2>
-          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '28px' }}>
+          <p style={{ color: 'var(--text-muted, #6B625B)', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '28px' }}>
             ეს გვერდი განკუთვნილია მხოლოდ სოლომონ აკადემიის ავტორიზებული პედაგოგებისთვის.
           </p>
           <button
             onClick={() => navigate('/register')}
             style={{
               padding: '12px 28px',
-              background: 'linear-gradient(135deg, #800020, #a00028)',
-              color: '#fff',
+              background: 'var(--accent-primary, #800020)',
+              color: '#ffffff',
               border: 'none',
               borderRadius: '10px',
               fontWeight: 600,
@@ -216,8 +215,8 @@ export default function TeacherDashboard() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#0e0b0b',
-      color: '#f3ece3',
+      background: 'var(--bg-primary, #FAF6F0)',
+      color: 'var(--text-dark, #2C2825)',
       fontFamily: 'var(--font-sans, "Noto Sans Georgian", Inter, sans-serif)',
       display: 'flex',
       flexDirection: 'column'
@@ -234,7 +233,7 @@ export default function TeacherDashboard() {
           color: '#ffffff',
           padding: '14px 22px',
           borderRadius: '12px',
-          boxShadow: '0 12px 36px rgba(0,0,0,0.5)',
+          boxShadow: '0 12px 36px rgba(0,0,0,0.15)',
           display: 'flex',
           alignItems: 'center',
           gap: '10px',
@@ -250,17 +249,17 @@ export default function TeacherDashboard() {
 
       {/* TOP HEADER BAR */}
       <header style={{
-        background: 'rgba(22, 14, 14, 0.85)',
-        backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        background: '#ffffff',
+        borderBottom: '1px solid var(--border-color, #E2DACF)',
         position: 'sticky',
         top: 0,
-        zIndex: 100
+        zIndex: 100,
+        boxShadow: '0 2px 10px rgba(0,0,0,0.03)'
       }}>
         <div style={{
           maxWidth: '1280px',
           margin: '0 auto',
-          padding: '14px 24px',
+          padding: '16px 24px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -274,30 +273,29 @@ export default function TeacherDashboard() {
               width: '42px',
               height: '42px',
               borderRadius: '10px',
-              background: 'linear-gradient(135deg, #800020 0%, #b81434 100%)',
+              background: 'var(--accent-primary, #800020)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 16px rgba(128, 0, 32, 0.4)',
-              border: '1px solid rgba(255,255,255,0.15)'
+              boxShadow: '0 4px 12px rgba(128, 0, 32, 0.25)'
             }}>
-              <GraduationCap size={22} color="#f9f5f0" />
+              <GraduationCap size={22} color="#FAF6F0" />
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{
-                  fontFamily: 'var(--font-serif, Georgia, serif)',
+                  fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
                   fontWeight: 700,
-                  fontSize: '1.15rem',
-                  color: '#fff'
+                  fontSize: '1.2rem',
+                  color: 'var(--text-dark, #2C2825)'
                 }}>
                   სოლომონ აკადემია
                 </span>
                 <span style={{
-                  background: 'rgba(197, 160, 89, 0.15)',
-                  border: '1px solid rgba(197, 160, 89, 0.35)',
-                  color: '#e5c478',
-                  fontSize: '0.7rem',
+                  background: 'rgba(128, 0, 32, 0.08)',
+                  border: '1px solid rgba(128, 0, 32, 0.2)',
+                  color: 'var(--accent-primary, #800020)',
+                  fontSize: '0.72rem',
                   fontWeight: 700,
                   padding: '2px 8px',
                   borderRadius: '6px',
@@ -306,7 +304,7 @@ export default function TeacherDashboard() {
                   პედაგოგის კაბინეტი
                 </span>
               </div>
-              <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted, #6B625B)' }}>
                 მართეთ თქვენი საჯარო პედაგოგიური პროფილი
               </div>
             </div>
@@ -321,17 +319,17 @@ export default function TeacherDashboard() {
                 alignItems: 'center',
                 gap: '6px',
                 padding: '8px 14px',
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.12)',
+                background: 'var(--bg-secondary, #F3ECE3)',
+                border: '1px solid var(--border-color, #E2DACF)',
                 borderRadius: '8px',
-                color: 'rgba(255,255,255,0.85)',
+                color: 'var(--text-dark, #2C2825)',
                 fontSize: '0.85rem',
                 fontWeight: 500,
                 cursor: 'pointer',
                 transition: 'all 0.2s'
               }}
-              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.12)'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#E8DFD3'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'var(--bg-secondary, #F3ECE3)'}
             >
               <ExternalLink size={14} />
               მთავარ გვერდზე
@@ -341,16 +339,16 @@ export default function TeacherDashboard() {
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
-              padding: '6px 12px 6px 6px',
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              padding: '6px 14px 6px 6px',
+              background: 'var(--bg-secondary, #F3ECE3)',
+              border: '1px solid var(--border-color, #E2DACF)',
               borderRadius: '30px'
             }}>
               <div style={{
                 width: '32px',
                 height: '32px',
                 borderRadius: '50%',
-                background: teacherProfile?.photo_url ? `url(${teacherProfile.photo_url}) center/cover` : 'linear-gradient(135deg, #c5a059, #800020)',
+                background: teacherProfile?.photo_url ? `url(${teacherProfile.photo_url}) center/cover` : 'var(--accent-primary, #800020)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -361,10 +359,10 @@ export default function TeacherDashboard() {
                 {!teacherProfile?.photo_url && (teacherProfile?.full_name?.[0] || 'T')}
               </div>
               <div style={{ textAlign: 'left', lineHeight: '1.2' }}>
-                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#fff' }}>
+                <div style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-dark, #2C2825)' }}>
                   {teacherProfile?.full_name || user?.name || 'პედაგოგი'}
                 </div>
-                <div style={{ fontSize: '0.7rem', color: '#c5a059' }}>
+                <div style={{ fontSize: '0.72rem', color: 'var(--accent-primary, #800020)', fontWeight: 500 }}>
                   {teacherProfile?.subject || 'მასწავლებელი'}
                 </div>
               </div>
@@ -379,20 +377,20 @@ export default function TeacherDashboard() {
                 justifyContent: 'center',
                 width: '36px',
                 height: '36px',
-                background: 'rgba(220, 38, 38, 0.1)',
-                border: '1px solid rgba(220, 38, 38, 0.25)',
+                background: '#fee2e2',
+                border: '1px solid #fecaca',
                 borderRadius: '8px',
-                color: '#f87171',
+                color: '#b91c1c',
                 cursor: 'pointer',
                 transition: 'all 0.2s'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#dc2626';
+                e.currentTarget.style.background = '#ef4444';
                 e.currentTarget.style.color = '#ffffff';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(220, 38, 38, 0.1)';
-                e.currentTarget.style.color = '#f87171';
+                e.currentTarget.style.background = '#fee2e2';
+                e.currentTarget.style.color = '#b91c1c';
               }}
             >
               <LogOut size={16} />
@@ -402,79 +400,81 @@ export default function TeacherDashboard() {
       </header>
 
       {/* MAIN CONTAINER */}
-      <main style={{ maxWidth: '1280px', width: '100%', margin: '0 auto', padding: '32px 24px 80px', flex: 1 }}>
+      <main style={{ maxWidth: '1280px', width: '100%', margin: '0 auto', padding: '36px 24px 80px', flex: 1 }}>
 
         {/* MODERATION STATUS BANNER */}
         {latestPendingEdit && latestPendingEdit.status === 'pending' ? (
           <div style={{
-            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05))',
-            border: '1px solid rgba(245, 158, 11, 0.35)',
+            background: '#fffbeb',
+            border: '1px solid #fde68a',
             borderRadius: '14px',
             padding: '16px 20px',
             marginBottom: '28px',
             display: 'flex',
             alignItems: 'center',
-            gap: '14px'
+            gap: '14px',
+            boxShadow: '0 2px 8px rgba(245, 158, 11, 0.05)'
           }}>
             <div style={{
               width: '36px',
               height: '36px',
               borderRadius: '10px',
-              background: 'rgba(245, 158, 11, 0.2)',
+              background: '#fef3c7',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#fcd34d',
+              color: '#b45309',
               flexShrink: 0
             }}>
               <Clock size={20} />
             </div>
             <div>
-              <div style={{ fontWeight: 700, color: '#fcd34d', fontSize: '0.95rem' }}>
+              <div style={{ fontWeight: 700, color: '#92400e', fontSize: '0.95rem' }}>
                 ცვლილებები განხილვის პროცესშია
               </div>
-              <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.7)', marginTop: '2px' }}>
+              <div style={{ fontSize: '0.85rem', color: '#b45309', marginTop: '2px' }}>
                 თქვენ მიერ შეტანილი მონაცემები გადაეგზავნა ადმინისტრაციას. დადასტურებისთანავე განახლდება თქვენი საჯარო ბარათი.
               </div>
             </div>
           </div>
         ) : latestPendingEdit && latestPendingEdit.status === 'rejected' ? (
           <div style={{
-            background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05))',
-            border: '1px solid rgba(239, 68, 68, 0.35)',
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
             borderRadius: '14px',
             padding: '16px 20px',
             marginBottom: '28px',
             display: 'flex',
             alignItems: 'center',
-            gap: '14px'
+            gap: '14px',
+            boxShadow: '0 2px 8px rgba(239, 68, 68, 0.05)'
           }}>
             <div style={{
               width: '36px',
               height: '36px',
               borderRadius: '10px',
-              background: 'rgba(239, 68, 68, 0.2)',
+              background: '#fee2e2',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#fca5a5',
+              color: '#dc2626',
               flexShrink: 0
             }}>
               <AlertCircle size={20} />
             </div>
             <div>
-              <div style={{ fontWeight: 700, color: '#fca5a5', fontSize: '0.95rem' }}>
+              <div style={{ fontWeight: 700, color: '#991b1b', fontSize: '0.95rem' }}>
                 ადმინისტრაციის შენიშვნა
               </div>
-              <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.8)', marginTop: '2px' }}>
+              <div style={{ fontSize: '0.85rem', color: '#b91c1c', marginTop: '2px' }}>
                 {latestPendingEdit.rejection_note || 'გთხოვთ გადახედოთ მონაცემების სისწორეს და თავიდან გამოაგზავნოთ.'}
               </div>
             </div>
           </div>
         ) : (
           <div style={{
-            background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.03))',
-            border: '1px solid rgba(34, 197, 94, 0.25)',
+            background: '#f0fdf4',
+            border: '1px solid #bbf7d0',
             borderRadius: '14px',
             padding: '14px 20px',
             marginBottom: '28px',
@@ -482,21 +482,22 @@ export default function TeacherDashboard() {
             alignItems: 'center',
             justifyContent: 'space-between',
             flexWrap: 'wrap',
-            gap: '12px'
+            gap: '12px',
+            boxShadow: '0 2px 8px rgba(34, 197, 94, 0.05)'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <ShieldCheck size={20} color="#4ade80" />
+              <ShieldCheck size={20} color="#16a34a" />
               <div>
-                <span style={{ fontWeight: 600, color: '#4ade80', fontSize: '0.9rem' }}>
+                <span style={{ fontWeight: 600, color: '#15803d', fontSize: '0.9rem' }}>
                   პროფილი აქტიურია
                 </span>
-                <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', marginLeft: '8px' }}>
+                <span style={{ fontSize: '0.85rem', color: '#166534', marginLeft: '8px' }}>
                   — თქვენი ინფორმაცია საჯაროდ ჩანს სკოლის ვებსაიტზე
                 </span>
               </div>
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#c5a059' }}>
-              საგანი: <strong>{profileForm.subject || 'მითითებული არ არის'}</strong>
+            <div style={{ fontSize: '0.82rem', color: 'var(--accent-primary, #800020)', fontWeight: 600 }}>
+              საგანი: {profileForm.subject || 'მითითებული არ არის'}
             </div>
           </div>
         )}
@@ -511,22 +512,22 @@ export default function TeacherDashboard() {
 
           {/* LEFT COLUMN: EDIT FORM */}
           <div style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: '#ffffff',
+            border: '1px solid var(--border-color, #E2DACF)',
             borderRadius: '20px',
-            padding: '28px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
+            padding: '30px',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.04)'
           }}>
-            <div style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: '22px' }}>
               <h2 style={{
-                fontFamily: 'var(--font-serif, Georgia, serif)',
-                fontSize: '1.4rem',
-                color: '#fff',
+                fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
+                fontSize: '1.45rem',
+                color: 'var(--text-dark, #2C2825)',
                 margin: 0
               }}>
                 პროფილის რედაქტირება
               </h2>
-              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.82rem', marginTop: '4px' }}>
+              <p style={{ color: 'var(--text-muted, #6B625B)', fontSize: '0.86rem', marginTop: '4px' }}>
                 განაახლეთ თქვენი პედაგოგიური რეზიუმე და გამოცდილება
               </p>
             </div>
@@ -536,7 +537,7 @@ export default function TeacherDashboard() {
               {/* Name & Subject (2 columns) */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.75)', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-dark, #2C2825)', marginBottom: '6px' }}>
                     სახელი და გვარი *
                   </label>
                   <input
@@ -546,19 +547,19 @@ export default function TeacherDashboard() {
                     onChange={(e) => setProfileForm({ ...profileForm, full_name: e.target.value })}
                     style={{
                       width: '100%',
-                      padding: '10px 14px',
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.12)',
+                      padding: '11px 14px',
+                      background: 'var(--bg-primary, #FAF6F0)',
+                      border: '1px solid var(--border-color, #E2DACF)',
                       borderRadius: '10px',
-                      color: '#fff',
-                      fontSize: '0.88rem',
+                      color: 'var(--text-dark, #2C2825)',
+                      fontSize: '0.9rem',
                       outline: 'none'
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.75)', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-dark, #2C2825)', marginBottom: '6px' }}>
                     საგანი / მიმართულება *
                   </label>
                   <input
@@ -569,12 +570,12 @@ export default function TeacherDashboard() {
                     onChange={(e) => setProfileForm({ ...profileForm, subject: e.target.value })}
                     style={{
                       width: '100%',
-                      padding: '10px 14px',
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.12)',
+                      padding: '11px 14px',
+                      background: 'var(--bg-primary, #FAF6F0)',
+                      border: '1px solid var(--border-color, #E2DACF)',
                       borderRadius: '10px',
-                      color: '#fff',
-                      fontSize: '0.88rem',
+                      color: 'var(--text-dark, #2C2825)',
+                      fontSize: '0.9rem',
                       outline: 'none'
                     }}
                   />
@@ -583,7 +584,7 @@ export default function TeacherDashboard() {
 
               {/* Photo URL & Upload Button */}
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.75)', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-dark, #2C2825)', marginBottom: '6px' }}>
                   პროფილის ფოტოსურათი
                 </label>
                 <div style={{ display: 'flex', gap: '10px' }}>
@@ -594,22 +595,22 @@ export default function TeacherDashboard() {
                     onChange={(e) => setProfileForm({ ...profileForm, photo_url: e.target.value })}
                     style={{
                       flex: 1,
-                      padding: '10px 14px',
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.12)',
+                      padding: '11px 14px',
+                      background: 'var(--bg-primary, #FAF6F0)',
+                      border: '1px solid var(--border-color, #E2DACF)',
                       borderRadius: '10px',
-                      color: '#fff',
-                      fontSize: '0.88rem',
+                      color: 'var(--text-dark, #2C2825)',
+                      fontSize: '0.9rem',
                       outline: 'none'
                     }}
                   />
                   <label style={{
                     padding: '10px 16px',
-                    background: 'rgba(197, 160, 89, 0.2)',
-                    border: '1px solid rgba(197, 160, 89, 0.4)',
+                    background: 'var(--bg-secondary, #F3ECE3)',
+                    border: '1px solid var(--border-color, #E2DACF)',
                     borderRadius: '10px',
-                    color: '#e5c478',
-                    fontSize: '0.85rem',
+                    color: 'var(--accent-primary, #800020)',
+                    fontSize: '0.86rem',
                     fontWeight: 600,
                     cursor: 'pointer',
                     display: 'flex',
@@ -617,7 +618,7 @@ export default function TeacherDashboard() {
                     gap: '6px',
                     whiteSpace: 'nowrap'
                   }}>
-                    <Upload size={14} />
+                    <Upload size={15} />
                     {photoUploading ? 'იტვირთება...' : 'ატვირთვა'}
                     <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoUpload} />
                   </label>
@@ -626,7 +627,7 @@ export default function TeacherDashboard() {
 
               {/* Bio */}
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.75)', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-dark, #2C2825)', marginBottom: '6px' }}>
                   მოკლე ბიოგრაფია & მოტივაცია
                 </label>
                 <textarea
@@ -636,12 +637,12 @@ export default function TeacherDashboard() {
                   onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
                   style={{
                     width: '100%',
-                    padding: '10px 14px',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid rgba(255,255,255,0.12)',
+                    padding: '11px 14px',
+                    background: 'var(--bg-primary, #FAF6F0)',
+                    border: '1px solid var(--border-color, #E2DACF)',
                     borderRadius: '10px',
-                    color: '#fff',
-                    fontSize: '0.88rem',
+                    color: 'var(--text-dark, #2C2825)',
+                    fontSize: '0.9rem',
                     outline: 'none',
                     resize: 'vertical'
                   }}
@@ -650,7 +651,7 @@ export default function TeacherDashboard() {
 
               {/* Education */}
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.75)', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-dark, #2C2825)', marginBottom: '6px' }}>
                   განათლება (უნივერსიტეტი, ხარისხი)
                 </label>
                 <textarea
@@ -660,12 +661,12 @@ export default function TeacherDashboard() {
                   onChange={(e) => setProfileForm({ ...profileForm, education: e.target.value })}
                   style={{
                     width: '100%',
-                    padding: '10px 14px',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid rgba(255,255,255,0.12)',
+                    padding: '11px 14px',
+                    background: 'var(--bg-primary, #FAF6F0)',
+                    border: '1px solid var(--border-color, #E2DACF)',
                     borderRadius: '10px',
-                    color: '#fff',
-                    fontSize: '0.88rem',
+                    color: 'var(--text-dark, #2C2825)',
+                    fontSize: '0.9rem',
                     outline: 'none',
                     resize: 'vertical'
                   }}
@@ -675,7 +676,7 @@ export default function TeacherDashboard() {
               {/* Experience & Certifications (2 columns) */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.75)', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-dark, #2C2825)', marginBottom: '6px' }}>
                     პედაგოგიური გამოცდილება
                   </label>
                   <input
@@ -685,19 +686,19 @@ export default function TeacherDashboard() {
                     onChange={(e) => setProfileForm({ ...profileForm, experience_years: e.target.value })}
                     style={{
                       width: '100%',
-                      padding: '10px 14px',
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.12)',
+                      padding: '11px 14px',
+                      background: 'var(--bg-primary, #FAF6F0)',
+                      border: '1px solid var(--border-color, #E2DACF)',
                       borderRadius: '10px',
-                      color: '#fff',
-                      fontSize: '0.88rem',
+                      color: 'var(--text-dark, #2C2825)',
+                      fontSize: '0.9rem',
                       outline: 'none'
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.75)', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-dark, #2C2825)', marginBottom: '6px' }}>
                     სტაჟი აკადემიაში
                   </label>
                   <input
@@ -707,12 +708,12 @@ export default function TeacherDashboard() {
                     onChange={(e) => setProfileForm({ ...profileForm, years_at_school: e.target.value })}
                     style={{
                       width: '100%',
-                      padding: '10px 14px',
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.12)',
+                      padding: '11px 14px',
+                      background: 'var(--bg-primary, #FAF6F0)',
+                      border: '1px solid var(--border-color, #E2DACF)',
                       borderRadius: '10px',
-                      color: '#fff',
-                      fontSize: '0.88rem',
+                      color: 'var(--text-dark, #2C2825)',
+                      fontSize: '0.9rem',
                       outline: 'none'
                     }}
                   />
@@ -721,7 +722,7 @@ export default function TeacherDashboard() {
 
               {/* Certifications */}
               <div style={{ marginBottom: '24px' }}>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.75)', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-dark, #2C2825)', marginBottom: '6px' }}>
                   სერტიფიკატები და ჯილდოები
                 </label>
                 <textarea
@@ -731,12 +732,12 @@ export default function TeacherDashboard() {
                   onChange={(e) => setProfileForm({ ...profileForm, certifications: e.target.value })}
                   style={{
                     width: '100%',
-                    padding: '10px 14px',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid rgba(255,255,255,0.12)',
+                    padding: '11px 14px',
+                    background: 'var(--bg-primary, #FAF6F0)',
+                    border: '1px solid var(--border-color, #E2DACF)',
                     borderRadius: '10px',
-                    color: '#fff',
-                    fontSize: '0.88rem',
+                    color: 'var(--text-dark, #2C2825)',
+                    fontSize: '0.9rem',
                     outline: 'none',
                     resize: 'vertical'
                   }}
@@ -750,8 +751,8 @@ export default function TeacherDashboard() {
                 style={{
                   width: '100%',
                   padding: '14px',
-                  background: 'linear-gradient(135deg, #800020, #a00028)',
-                  color: '#fff',
+                  background: 'var(--accent-primary, #800020)',
+                  color: '#ffffff',
                   border: 'none',
                   borderRadius: '12px',
                   fontWeight: 700,
@@ -761,9 +762,11 @@ export default function TeacherDashboard() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  boxShadow: '0 4px 18px rgba(128, 0, 32, 0.4)',
+                  boxShadow: '0 4px 14px rgba(128, 0, 32, 0.25)',
                   transition: 'all 0.2s'
                 }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'var(--accent-primary-hover, #600018)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'var(--accent-primary, #800020)'}
               >
                 <Save size={18} />
                 {profileStatus.loading ? 'იგზავნება...' : 'ცვლილებების გაგზავნა მოდერაციაზე'}
@@ -776,47 +779,46 @@ export default function TeacherDashboard() {
           <div style={{ position: 'sticky', top: '90px' }}>
             <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Sparkles size={16} color="#c5a059" />
+                <Sparkles size={16} color="var(--accent-primary, #800020)" />
                 <h3 style={{
-                  fontFamily: 'var(--font-serif, Georgia, serif)',
-                  fontSize: '1.2rem',
-                  color: '#fff',
+                  fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
+                  fontSize: '1.25rem',
+                  color: 'var(--text-dark, #2C2825)',
                   margin: 0
                 }}>
                   საჯარო ბარათის გადახედვა
                 </h3>
               </div>
-              <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.45)' }}>
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted, #6B625B)', fontWeight: 500 }}>
                 Live Preview
               </span>
             </div>
 
-            {/* CARD */}
+            {/* CARD (Matches the elegant school modal / card) */}
             <div style={{
-              background: 'linear-gradient(145deg, rgba(30, 20, 20, 0.8), rgba(20, 14, 14, 0.9))',
-              border: '1px solid rgba(197, 160, 89, 0.35)',
+              background: '#ffffff',
+              border: '1px solid var(--border-color, #E2DACF)',
               borderRadius: '20px',
               overflow: 'hidden',
-              boxShadow: '0 12px 40px rgba(0,0,0,0.5)',
-              backdropFilter: 'blur(16px)'
+              boxShadow: '0 12px 36px rgba(0,0,0,0.06)'
             }}>
               
               {/* Card Header with Photo */}
               <div style={{
-                padding: '28px 24px 20px',
-                background: 'linear-gradient(180deg, rgba(128, 0, 32, 0.3) 0%, transparent 100%)',
+                padding: '28px 24px 22px',
+                background: 'linear-gradient(180deg, var(--bg-secondary, #F3ECE3) 0%, #ffffff 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '18px',
-                borderBottom: '1px solid rgba(255,255,255,0.06)'
+                borderBottom: '1px solid var(--border-color, #E2DACF)'
               }}>
                 <div style={{
-                  width: '72px',
-                  height: '72px',
+                  width: '74px',
+                  height: '74px',
                   borderRadius: '18px',
-                  background: profileForm.photo_url ? `url(${profileForm.photo_url}) center/cover` : 'linear-gradient(135deg, #800020, #c5a059)',
-                  border: '2px solid rgba(197, 160, 89, 0.6)',
-                  boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
+                  background: profileForm.photo_url ? `url(${profileForm.photo_url}) center/cover` : 'var(--accent-primary, #800020)',
+                  border: '2px solid var(--accent-secondary, #C5A059)',
+                  boxShadow: '0 6px 16px rgba(0,0,0,0.1)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -829,9 +831,9 @@ export default function TeacherDashboard() {
                 </div>
                 <div>
                   <h4 style={{
-                    fontFamily: 'var(--font-serif, Georgia, serif)',
+                    fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
                     fontSize: '1.35rem',
-                    color: '#fff',
+                    color: 'var(--text-dark, #2C2825)',
                     margin: '0 0 4px',
                     fontWeight: 700
                   }}>
@@ -841,10 +843,10 @@ export default function TeacherDashboard() {
                     display: 'inline-block',
                     padding: '3px 10px',
                     borderRadius: '6px',
-                    background: 'rgba(197, 160, 89, 0.2)',
-                    border: '1px solid rgba(197, 160, 89, 0.4)',
-                    color: '#e5c478',
-                    fontSize: '0.8rem',
+                    background: 'rgba(128, 0, 32, 0.08)',
+                    border: '1px solid rgba(128, 0, 32, 0.2)',
+                    color: 'var(--accent-primary, #800020)',
+                    fontSize: '0.82rem',
                     fontWeight: 600
                   }}>
                     {profileForm.subject || 'საგანი / მიმართულება'}
@@ -857,63 +859,63 @@ export default function TeacherDashboard() {
                 
                 {profileForm.bio && (
                   <p style={{
-                    fontSize: '0.88rem',
-                    color: 'rgba(255,255,255,0.75)',
-                    lineHeight: '1.5',
+                    fontSize: '0.9rem',
+                    color: 'var(--text-dark, #2C2825)',
+                    lineHeight: '1.6',
                     fontStyle: 'italic',
                     margin: 0,
                     padding: '10px 14px',
-                    background: 'rgba(255,255,255,0.03)',
+                    background: 'var(--bg-primary, #FAF6F0)',
                     borderRadius: '10px',
-                    borderLeft: '3px solid #c5a059'
+                    borderLeft: '3px solid var(--accent-primary, #800020)'
                   }}>
                     "{profileForm.bio}"
                   </p>
                 )}
 
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c5a059', flexShrink: 0 }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--bg-secondary, #F3ECE3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary, #800020)', flexShrink: 0 }}>
                     <GraduationCap size={16} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>განათლება</div>
-                    <div style={{ fontSize: '0.88rem', color: '#fff', marginTop: '2px' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted, #6B625B)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>განათლება</div>
+                    <div style={{ fontSize: '0.88rem', color: 'var(--text-dark, #2C2825)', marginTop: '2px' }}>
                       {profileForm.education || 'არ არის მითითებული'}
                     </div>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c5a059', flexShrink: 0 }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--bg-secondary, #F3ECE3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary, #800020)', flexShrink: 0 }}>
                     <Briefcase size={16} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>პედაგოგიური გამოცდილება</div>
-                    <div style={{ fontSize: '0.88rem', color: '#fff', marginTop: '2px' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted, #6B625B)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>პედაგოგიური გამოცდილება</div>
+                    <div style={{ fontSize: '0.88rem', color: 'var(--text-dark, #2C2825)', marginTop: '2px' }}>
                       {profileForm.experience_years || 'არ არის მითითებული'}
                     </div>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c5a059', flexShrink: 0 }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--bg-secondary, #F3ECE3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary, #800020)', flexShrink: 0 }}>
                     <Award size={16} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>სერტიფიკატები & კვალიფიკაცია</div>
-                    <div style={{ fontSize: '0.88rem', color: '#fff', marginTop: '2px' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted, #6B625B)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>სერტიფიკატები & კვალიფიკაცია</div>
+                    <div style={{ fontSize: '0.88rem', color: 'var(--text-dark, #2C2825)', marginTop: '2px' }}>
                       {profileForm.certifications || 'არ არის მითითებული'}
                     </div>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c5a059', flexShrink: 0 }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--bg-secondary, #F3ECE3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary, #800020)', flexShrink: 0 }}>
                     <Calendar size={16} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>აკადემიაში მუშაობის პერიოდი</div>
-                    <div style={{ fontSize: '0.88rem', color: '#fff', marginTop: '2px' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted, #6B625B)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>აკადემიაში მუშაობის პერიოდი</div>
+                    <div style={{ fontSize: '0.88rem', color: 'var(--text-dark, #2C2825)', marginTop: '2px' }}>
                       {profileForm.years_at_school || 'არ არის მითითებული'}
                     </div>
                   </div>
