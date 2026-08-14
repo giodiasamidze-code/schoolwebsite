@@ -476,6 +476,47 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteTeacher = async (teacherId, teacherName) => {
+    if (!window.confirm(`ნამდვილად გსურთ მასწავლებლის "${teacherName}" წაშლა სისტემიდან?`)) return;
+
+    try {
+      const apiBase = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${apiBase}/api/delete-teacher`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teacherId })
+      });
+
+      let json = {};
+      try {
+        json = await res.json();
+      } catch (parseErr) {
+        throw new Error('სერვერის პასუხის დამუშავება ვერ მოხერხდა.');
+      }
+
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || 'წაშლა ვერ მოხერხდა.');
+      }
+
+      await fetchTeachers();
+      await fetchPendingEdits();
+      showToast(`მასწავლებელი "${teacherName}" წარმატებით წაიშალა!`, 'info');
+    } catch (err) {
+      console.error('Delete teacher error:', err);
+      // Direct client fallback
+      try {
+        await supabase.from('teacher_profile_edits').delete().eq('teacher_id', teacherId);
+        const { error: delErr } = await supabase.from('teachers').delete().eq('id', teacherId);
+        if (delErr) throw delErr;
+        await fetchTeachers();
+        await fetchPendingEdits();
+        showToast(`მასწავლებელი "${teacherName}" წაიშალა!`, 'info');
+      } catch (fallbackErr) {
+        showToast(err.message || 'მასწავლებლის წაშლა ვერ მოხერხდა.', 'error');
+      }
+    }
+  };
+
   const handleCopyCode = (code) => {
     navigator.clipboard.writeText(code);
     setCopiedCode(code);
@@ -2477,34 +2518,67 @@ export default function AdminDashboard() {
                       border: '1px solid rgba(255,255,255,0.08)',
                       borderRadius: '16px',
                       padding: '20px',
-                      boxShadow: '0 16px 36px rgba(0,0,0,0.3)'
+                      boxShadow: '0 16px 36px rgba(0,0,0,0.3)',
+                      position: 'relative'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px' }}>
-                      <div style={{
-                        width: '54px',
-                        height: '54px',
-                        borderRadius: '14px',
-                        background: t.photo_url ? `url(${t.photo_url}) center/cover` : 'linear-gradient(135deg, #8b0000, #c41e3a)',
-                        border: '1px solid rgba(255,255,255,0.15)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#fff',
-                        fontWeight: 700,
-                        fontSize: '1.2rem',
-                        flexShrink: 0
-                      }}>
-                        {!t.photo_url && (t.full_name?.[0] || 'T')}
-                      </div>
-                      <div>
-                        <h4 style={{ color: '#fff', fontSize: '1.1rem', margin: 0, fontWeight: 700 }}>
-                          {t.full_name}
-                        </h4>
-                        <div style={{ color: '#ff8598', fontSize: '0.85rem', fontWeight: 600 }}>
-                          {t.subject}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                        <div style={{
+                          width: '54px',
+                          height: '54px',
+                          borderRadius: '14px',
+                          background: t.photo_url ? `url(${t.photo_url}) center/cover` : 'linear-gradient(135deg, #8b0000, #c41e3a)',
+                          border: '1px solid rgba(255,255,255,0.15)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#fff',
+                          fontWeight: 700,
+                          fontSize: '1.2rem',
+                          flexShrink: 0
+                        }}>
+                          {!t.photo_url && (t.full_name?.[0] || 'T')}
+                        </div>
+                        <div>
+                          <h4 style={{ color: '#fff', fontSize: '1.1rem', margin: 0, fontWeight: 700 }}>
+                            {t.full_name}
+                          </h4>
+                          <div style={{ color: '#ff8598', fontSize: '0.85rem', fontWeight: 600 }}>
+                            {t.subject}
+                          </div>
                         </div>
                       </div>
+
+                      {/* Delete Teacher Button */}
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteTeacher(t.id, t.full_name)}
+                        title="მასწავლებლის წაშლა"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: '34px',
+                          height: '34px',
+                          borderRadius: '8px',
+                          background: 'rgba(239, 68, 68, 0.15)',
+                          border: '1px solid rgba(239, 68, 68, 0.35)',
+                          color: '#fca5a5',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = '#dc2626';
+                          e.currentTarget.style.color = '#ffffff';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
+                          e.currentTarget.style.color = '#fca5a5';
+                        }}
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
 
                     <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', display: 'flex', flexDirection: 'column', gap: '6px' }}>

@@ -229,6 +229,40 @@ app.delete('/api/create-invite-code', async (req, res) => {
   }
 });
 
+// =====================================================
+// Delete Teacher API
+// =====================================================
+app.post('/api/delete-teacher', async (req, res) => {
+  const { teacherId } = req.body || {};
+  if (!teacherId) return res.status(400).json({ success: false, message: 'teacherId is required' });
+
+  try {
+    const { data: teacherData } = await supabaseAdmin
+      .from('teachers')
+      .select('id, user_id, full_name')
+      .eq('id', teacherId)
+      .maybeSingle();
+
+    await supabaseAdmin.from('teacher_profile_edits').delete().eq('teacher_id', teacherId);
+    const { error: teacherDelError } = await supabaseAdmin.from('teachers').delete().eq('id', teacherId);
+    if (teacherDelError) throw teacherDelError;
+
+    if (teacherData?.user_id) {
+      await supabaseAdmin.from('users').delete().eq('id', teacherData.user_id);
+      try {
+        await supabaseAdmin.auth.admin.deleteUser(teacherData.user_id);
+      } catch (authErr) {
+        console.warn('Auth delete warning:', authErr.message);
+      }
+    }
+
+    return res.json({ success: true, message: `მასწავლებელი "${teacherData?.full_name || ''}" წაიშალა.` });
+  } catch (err) {
+    console.error('Delete teacher error:', err);
+    return res.status(500).json({ success: false, message: err.message || 'წაშლა ვერ მოხერხდა' });
+  }
+});
+
 // Base Route
 app.get('/', (req, res) => {
   res.send('Georgian Private School API Server is running.');
