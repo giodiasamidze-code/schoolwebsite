@@ -49,7 +49,7 @@ export default function AdminDashboard() {
   const [appStatusFilter, setAppStatusFilter] = useState('all');
   const [appGradeFilter, setAppGradeFilter] = useState('all');
 
-  const [editFilter, setEditFilter] = useState('all'); // all, pending, approved, rejected
+  const [editFilter, setEditFilter] = useState('all');
   const [teacherSearch, setTeacherSearch] = useState('');
 
   // --- 1. Teacher Profile Edits State ---
@@ -134,7 +134,6 @@ export default function AdminDashboard() {
     try {
       const proposed = editItem.proposed_data;
 
-      // 1. Update live teachers table
       const { error: teacherError } = await supabase
         .from('teachers')
         .update({
@@ -151,7 +150,6 @@ export default function AdminDashboard() {
 
       if (teacherError) throw teacherError;
 
-      // 2. Mark edit record as approved
       const { error: editError } = await supabase
         .from('teacher_profile_edits')
         .update({
@@ -414,7 +412,6 @@ export default function AdminDashboard() {
       showToast(json.message || 'კოდი წარმატებით შეიქმნა!', 'success');
     } catch (err) {
       console.error('Generate code error:', err);
-      // Try fallback direct
       try {
         let codeToInsert = newCodeInput.trim().toUpperCase();
         if (!codeToInsert) {
@@ -463,36 +460,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleDeleteCode = async (codeItem) => {
-    if (!window.confirm(`წაიშალოს კოდი "${codeItem.code}"?`)) return;
-    try {
-      const apiBase = import.meta.env.VITE_API_URL || '';
-      const res = await fetch(`${apiBase}/api/create-invite-code`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: codeItem.id })
-      });
-      let json = {};
-      try {
-        json = await res.json();
-      } catch (parseErr) {
-        throw new Error('სერვერის პასუხის დამუშავება ვერ მოხერხდა.');
-      }
-      if (!res.ok || !json.success) throw new Error(json.message);
-      await fetchInviteCodes();
-      showToast('კოდი წაიშალა.', 'info');
-    } catch (err) {
-      showToast('კოდის წაშლა ვერ მოხერხდა.', 'error');
-    }
-  };
-
-  const handleCopyCode = (code) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCode(code);
-    showToast(`კოდი "${code}" დაკოპირდა ბუფერში!`, 'success');
-    setTimeout(() => setCopiedCode(null), 2500);
-  };
-
   // 5. Teachers Directory
   const fetchTeachers = async () => {
     try {
@@ -509,39 +476,46 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleCopyCode = (code) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    showToast(`კოდი "${code}" დაკოპირდა ბუფერში!`, 'success');
+    setTimeout(() => setCopiedCode(null), 2500);
+  };
+
   // Access Control Guard
   if (!user || role !== 'admin') {
     return (
       <div style={{
         minHeight: '100vh',
-        background: '#120d0d',
+        background: 'linear-gradient(135deg, #18090b 0%, #2a0e12 50%, #140709 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '24px'
       }}>
         <div style={{
-          background: 'rgba(255, 255, 255, 0.05)',
+          background: 'rgba(255, 255, 255, 0.04)',
           border: '1px solid rgba(255, 255, 255, 0.1)',
           borderRadius: '20px',
           padding: '48px 36px',
           maxWidth: '480px',
           textAlign: 'center',
           color: '#fff',
-          boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
-          backdropFilter: 'blur(20px)'
+          boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
+          backdropFilter: 'blur(16px)'
         }}>
           <div style={{
             width: '64px',
             height: '64px',
             borderRadius: '16px',
-            background: 'rgba(220, 38, 38, 0.15)',
-            border: '1px solid rgba(220, 38, 38, 0.3)',
+            background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 20px',
-            color: '#f87171'
+            color: '#fff',
+            boxShadow: '0 8px 24px rgba(139, 0, 0, 0.4)'
           }}>
             <ShieldAlert size={32} />
           </div>
@@ -556,13 +530,14 @@ export default function AdminDashboard() {
               onClick={() => navigate('/admin')}
               style={{
                 padding: '12px 24px',
-                background: 'linear-gradient(135deg, #800020, #a00028)',
+                background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
                 color: '#fff',
                 border: 'none',
                 borderRadius: '10px',
-                fontWeight: 600,
+                fontWeight: 700,
                 cursor: 'pointer',
-                fontSize: '0.95rem'
+                fontSize: '0.95rem',
+                boxShadow: '0 4px 16px rgba(139,0,0,0.4)'
               }}
             >
               ადმინ შესვლა
@@ -625,7 +600,7 @@ export default function AdminDashboard() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#0e0b0b',
+      background: 'linear-gradient(135deg, #18090b 0%, #2a0e12 50%, #140709 100%)',
       color: '#f3ece3',
       fontFamily: 'var(--font-sans, "Noto Sans Georgian", Inter, sans-serif)',
       display: 'flex',
@@ -643,7 +618,7 @@ export default function AdminDashboard() {
           color: '#ffffff',
           padding: '14px 22px',
           borderRadius: '12px',
-          boxShadow: '0 12px 36px rgba(0,0,0,0.5)',
+          boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
           display: 'flex',
           alignItems: 'center',
           gap: '10px',
@@ -659,7 +634,7 @@ export default function AdminDashboard() {
 
       {/* TOP EXECUTIVE HEADER BAR */}
       <header style={{
-        background: 'rgba(22, 14, 14, 0.85)',
+        background: 'rgba(32, 11, 15, 0.85)',
         backdropFilter: 'blur(20px)',
         borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         position: 'sticky',
@@ -680,33 +655,34 @@ export default function AdminDashboard() {
           {/* Left: Brand / Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <div style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: '10px',
-              background: 'linear-gradient(135deg, #800020 0%, #b81434 100%)',
+              width: '44px',
+              height: '44px',
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 16px rgba(128, 0, 32, 0.4)',
-              border: '1px solid rgba(255,255,255,0.15)'
+              boxShadow: '0 6px 20px rgba(139, 0, 0, 0.45)',
+              border: '1px solid rgba(255,255,255,0.15)',
+              fontSize: '20px'
             }}>
-              <GraduationCap size={22} color="#f9f5f0" />
+              🎓
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{
                   fontFamily: 'var(--font-serif, Georgia, serif)',
                   fontWeight: 700,
-                  fontSize: '1.2rem',
+                  fontSize: '1.25rem',
                   letterSpacing: '0.02em',
                   color: '#fff'
                 }}>
                   სოლომონ აკადემია
                 </span>
                 <span style={{
-                  background: 'linear-gradient(135deg, rgba(197, 160, 89, 0.2), rgba(197, 160, 89, 0.05))',
-                  border: '1px solid rgba(197, 160, 89, 0.4)',
-                  color: '#e5c478',
+                  background: 'linear-gradient(135deg, rgba(196, 30, 58, 0.25), rgba(139, 0, 0, 0.15))',
+                  border: '1px solid rgba(196, 30, 58, 0.5)',
+                  color: '#ff8598',
                   fontSize: '0.7rem',
                   fontWeight: 700,
                   padding: '2px 8px',
@@ -754,7 +730,7 @@ export default function AdminDashboard() {
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
-              padding: '6px 12px 6px 6px',
+              padding: '6px 14px 6px 6px',
               background: 'rgba(255,255,255,0.04)',
               border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: '30px'
@@ -763,7 +739,7 @@ export default function AdminDashboard() {
                 width: '32px',
                 height: '32px',
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, #c5a059, #800020)',
+                background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -777,7 +753,7 @@ export default function AdminDashboard() {
                 <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#fff' }}>
                   {user.email || 'admin@school.com'}
                 </div>
-                <div style={{ fontSize: '0.7rem', color: '#c5a059' }}>
+                <div style={{ fontSize: '0.7rem', color: '#ff8598' }}>
                   სრული უფლებამოსილება
                 </div>
               </div>
@@ -792,19 +768,19 @@ export default function AdminDashboard() {
                 justifyContent: 'center',
                 width: '36px',
                 height: '36px',
-                background: 'rgba(220, 38, 38, 0.1)',
-                border: '1px solid rgba(220, 38, 38, 0.25)',
+                background: 'rgba(220, 38, 38, 0.15)',
+                border: '1px solid rgba(220, 38, 38, 0.3)',
                 borderRadius: '8px',
                 color: '#f87171',
                 cursor: 'pointer',
                 transition: 'all 0.2s'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#dc2626';
+                e.currentTarget.style.background = '#c41e3a';
                 e.currentTarget.style.color = '#ffffff';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(220, 38, 38, 0.1)';
+                e.currentTarget.style.background = 'rgba(220, 38, 38, 0.15)';
                 e.currentTarget.style.color = '#f87171';
               }}
             >
@@ -830,16 +806,16 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('edits')}
             style={{
               background: activeTab === 'edits'
-                ? 'linear-gradient(145deg, rgba(128, 0, 32, 0.25), rgba(255, 255, 255, 0.04))'
+                ? 'linear-gradient(145deg, rgba(139, 0, 0, 0.35), rgba(255, 255, 255, 0.04))'
                 : 'rgba(255, 255, 255, 0.03)',
               border: activeTab === 'edits'
-                ? '1px solid rgba(197, 160, 89, 0.5)'
-                : '1px solid rgba(255, 255, 255, 0.07)',
+                ? '1px solid #c41e3a'
+                : '1px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '16px',
               padding: '20px',
               cursor: 'pointer',
               transition: 'all 0.2s',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.2)'
+              boxShadow: '0 12px 32px rgba(0,0,0,0.3)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
@@ -847,19 +823,18 @@ export default function AdminDashboard() {
                 width: '40px',
                 height: '40px',
                 borderRadius: '10px',
-                background: 'rgba(128, 0, 32, 0.3)',
-                border: '1px solid rgba(128, 0, 32, 0.5)',
+                background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#f87171'
+                color: '#fff'
               }}>
                 <UserCheck size={20} />
               </div>
               {pendingEditsCount > 0 ? (
                 <span style={{
-                  background: 'rgba(239, 68, 68, 0.2)',
-                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                  background: 'rgba(239, 68, 68, 0.25)',
+                  border: '1px solid rgba(239, 68, 68, 0.5)',
                   color: '#fca5a5',
                   fontSize: '0.72rem',
                   fontWeight: 700,
@@ -895,16 +870,16 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('queue')}
             style={{
               background: activeTab === 'queue'
-                ? 'linear-gradient(145deg, rgba(197, 160, 89, 0.18), rgba(255, 255, 255, 0.04))'
+                ? 'linear-gradient(145deg, rgba(139, 0, 0, 0.35), rgba(255, 255, 255, 0.04))'
                 : 'rgba(255, 255, 255, 0.03)',
               border: activeTab === 'queue'
-                ? '1px solid rgba(197, 160, 89, 0.5)'
-                : '1px solid rgba(255, 255, 255, 0.07)',
+                ? '1px solid #c41e3a'
+                : '1px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '16px',
               padding: '20px',
               cursor: 'pointer',
               transition: 'all 0.2s',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.2)'
+              boxShadow: '0 12px 32px rgba(0,0,0,0.3)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
@@ -912,19 +887,19 @@ export default function AdminDashboard() {
                 width: '40px',
                 height: '40px',
                 borderRadius: '10px',
-                background: 'rgba(197, 160, 89, 0.2)',
-                border: '1px solid rgba(197, 160, 89, 0.4)',
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#e5c478'
+                color: '#fff'
               }}>
                 <FileText size={20} />
               </div>
               <span style={{
-                background: newAppsCount > 0 ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255,255,255,0.08)',
-                border: newAppsCount > 0 ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid rgba(255,255,255,0.1)',
-                color: newAppsCount > 0 ? '#93c5fd' : 'rgba(255,255,255,0.6)',
+                background: newAppsCount > 0 ? 'rgba(196, 30, 58, 0.25)' : 'rgba(255,255,255,0.08)',
+                border: newAppsCount > 0 ? '1px solid rgba(196, 30, 58, 0.5)' : '1px solid rgba(255,255,255,0.1)',
+                color: newAppsCount > 0 ? '#ff8598' : 'rgba(255,255,255,0.6)',
                 fontSize: '0.72rem',
                 fontWeight: 600,
                 padding: '3px 8px',
@@ -946,16 +921,16 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('news')}
             style={{
               background: activeTab === 'news'
-                ? 'linear-gradient(145deg, rgba(59, 130, 246, 0.18), rgba(255, 255, 255, 0.04))'
+                ? 'linear-gradient(145deg, rgba(139, 0, 0, 0.35), rgba(255, 255, 255, 0.04))'
                 : 'rgba(255, 255, 255, 0.03)',
               border: activeTab === 'news'
-                ? '1px solid rgba(197, 160, 89, 0.5)'
-                : '1px solid rgba(255, 255, 255, 0.07)',
+                ? '1px solid #c41e3a'
+                : '1px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '16px',
               padding: '20px',
               cursor: 'pointer',
               transition: 'all 0.2s',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.2)'
+              boxShadow: '0 12px 32px rgba(0,0,0,0.3)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
@@ -963,12 +938,12 @@ export default function AdminDashboard() {
                 width: '40px',
                 height: '40px',
                 borderRadius: '10px',
-                background: 'rgba(59, 130, 246, 0.2)',
-                border: '1px solid rgba(59, 130, 246, 0.4)',
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#60a5fa'
+                color: '#fff'
               }}>
                 <Newspaper size={20} />
               </div>
@@ -992,21 +967,21 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Card 4: Invite Codes & Teachers */}
+          {/* Card 4: Invite Codes */}
           <div
             onClick={() => setActiveTab('codes')}
             style={{
               background: activeTab === 'codes'
-                ? 'linear-gradient(145deg, rgba(168, 85, 247, 0.18), rgba(255, 255, 255, 0.04))'
+                ? 'linear-gradient(145deg, rgba(139, 0, 0, 0.35), rgba(255, 255, 255, 0.04))'
                 : 'rgba(255, 255, 255, 0.03)',
               border: activeTab === 'codes'
-                ? '1px solid rgba(197, 160, 89, 0.5)'
-                : '1px solid rgba(255, 255, 255, 0.07)',
+                ? '1px solid #c41e3a'
+                : '1px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '16px',
               padding: '20px',
               cursor: 'pointer',
               transition: 'all 0.2s',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.2)'
+              boxShadow: '0 12px 32px rgba(0,0,0,0.3)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
@@ -1014,19 +989,19 @@ export default function AdminDashboard() {
                 width: '40px',
                 height: '40px',
                 borderRadius: '10px',
-                background: 'rgba(168, 85, 247, 0.2)',
-                border: '1px solid rgba(168, 85, 247, 0.4)',
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#c084fc'
+                color: '#fff'
               }}>
                 <Key size={20} />
               </div>
               <span style={{
-                background: 'rgba(168, 85, 247, 0.2)',
-                border: '1px solid rgba(168, 85, 247, 0.4)',
-                color: '#d8b4fe',
+                background: 'rgba(196, 30, 58, 0.2)',
+                border: '1px solid rgba(196, 30, 58, 0.4)',
+                color: '#ff8598',
                 fontSize: '0.72rem',
                 fontWeight: 600,
                 padding: '3px 8px',
@@ -1064,7 +1039,7 @@ export default function AdminDashboard() {
               padding: '10px 18px',
               borderRadius: '10px',
               border: 'none',
-              background: activeTab === 'overview' ? 'linear-gradient(135deg, #800020, #9b0b2e)' : 'transparent',
+              background: activeTab === 'overview' ? 'linear-gradient(135deg, #8b0000, #c41e3a)' : 'transparent',
               color: activeTab === 'overview' ? '#fff' : 'rgba(255,255,255,0.65)',
               fontWeight: 600,
               fontSize: '0.88rem',
@@ -1073,7 +1048,8 @@ export default function AdminDashboard() {
               gap: '8px',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              boxShadow: activeTab === 'overview' ? '0 4px 16px rgba(139,0,0,0.4)' : 'none'
             }}
           >
             <Layers size={16} />
@@ -1086,7 +1062,7 @@ export default function AdminDashboard() {
               padding: '10px 18px',
               borderRadius: '10px',
               border: 'none',
-              background: activeTab === 'edits' ? 'linear-gradient(135deg, #800020, #9b0b2e)' : 'transparent',
+              background: activeTab === 'edits' ? 'linear-gradient(135deg, #8b0000, #c41e3a)' : 'transparent',
               color: activeTab === 'edits' ? '#fff' : 'rgba(255,255,255,0.65)',
               fontWeight: 600,
               fontSize: '0.88rem',
@@ -1095,15 +1071,16 @@ export default function AdminDashboard() {
               gap: '8px',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              boxShadow: activeTab === 'edits' ? '0 4px 16px rgba(139,0,0,0.4)' : 'none'
             }}
           >
             <UserCheck size={16} />
             პროფილების მოდერაცია
             {pendingEditsCount > 0 && (
               <span style={{
-                background: '#ef4444',
-                color: '#fff',
+                background: '#ffffff',
+                color: '#8b0000',
                 fontSize: '0.72rem',
                 fontWeight: 700,
                 padding: '2px 7px',
@@ -1120,7 +1097,7 @@ export default function AdminDashboard() {
               padding: '10px 18px',
               borderRadius: '10px',
               border: 'none',
-              background: activeTab === 'queue' ? 'linear-gradient(135deg, #800020, #9b0b2e)' : 'transparent',
+              background: activeTab === 'queue' ? 'linear-gradient(135deg, #8b0000, #c41e3a)' : 'transparent',
               color: activeTab === 'queue' ? '#fff' : 'rgba(255,255,255,0.65)',
               fontWeight: 600,
               fontSize: '0.88rem',
@@ -1129,13 +1106,14 @@ export default function AdminDashboard() {
               gap: '8px',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              boxShadow: activeTab === 'queue' ? '0 4px 16px rgba(139,0,0,0.4)' : 'none'
             }}
           >
             <FileText size={16} />
             ონლაინ განაცხადები
             <span style={{
-              background: 'rgba(255,255,255,0.12)',
+              background: 'rgba(255,255,255,0.15)',
               color: '#fff',
               fontSize: '0.72rem',
               fontWeight: 600,
@@ -1152,7 +1130,7 @@ export default function AdminDashboard() {
               padding: '10px 18px',
               borderRadius: '10px',
               border: 'none',
-              background: activeTab === 'news' ? 'linear-gradient(135deg, #800020, #9b0b2e)' : 'transparent',
+              background: activeTab === 'news' ? 'linear-gradient(135deg, #8b0000, #c41e3a)' : 'transparent',
               color: activeTab === 'news' ? '#fff' : 'rgba(255,255,255,0.65)',
               fontWeight: 600,
               fontSize: '0.88rem',
@@ -1161,13 +1139,14 @@ export default function AdminDashboard() {
               gap: '8px',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              boxShadow: activeTab === 'news' ? '0 4px 16px rgba(139,0,0,0.4)' : 'none'
             }}
           >
             <Newspaper size={16} />
             სიახლეების მართვა
             <span style={{
-              background: 'rgba(255,255,255,0.12)',
+              background: 'rgba(255,255,255,0.15)',
               color: '#fff',
               fontSize: '0.72rem',
               fontWeight: 600,
@@ -1184,7 +1163,7 @@ export default function AdminDashboard() {
               padding: '10px 18px',
               borderRadius: '10px',
               border: 'none',
-              background: activeTab === 'teachers' ? 'linear-gradient(135deg, #800020, #9b0b2e)' : 'transparent',
+              background: activeTab === 'teachers' ? 'linear-gradient(135deg, #8b0000, #c41e3a)' : 'transparent',
               color: activeTab === 'teachers' ? '#fff' : 'rgba(255,255,255,0.65)',
               fontWeight: 600,
               fontSize: '0.88rem',
@@ -1193,13 +1172,14 @@ export default function AdminDashboard() {
               gap: '8px',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              boxShadow: activeTab === 'teachers' ? '0 4px 16px rgba(139,0,0,0.4)' : 'none'
             }}
           >
             <Users size={16} />
             პედაგოგების კორპუსი
             <span style={{
-              background: 'rgba(255,255,255,0.12)',
+              background: 'rgba(255,255,255,0.15)',
               color: '#fff',
               fontSize: '0.72rem',
               fontWeight: 600,
@@ -1216,7 +1196,7 @@ export default function AdminDashboard() {
               padding: '10px 18px',
               borderRadius: '10px',
               border: 'none',
-              background: activeTab === 'codes' ? 'linear-gradient(135deg, #800020, #9b0b2e)' : 'transparent',
+              background: activeTab === 'codes' ? 'linear-gradient(135deg, #8b0000, #c41e3a)' : 'transparent',
               color: activeTab === 'codes' ? '#fff' : 'rgba(255,255,255,0.65)',
               fontWeight: 600,
               fontSize: '0.88rem',
@@ -1225,7 +1205,8 @@ export default function AdminDashboard() {
               gap: '8px',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              boxShadow: activeTab === 'codes' ? '0 4px 16px rgba(139,0,0,0.4)' : 'none'
             }}
           >
             <Key size={16} />
@@ -1244,7 +1225,7 @@ export default function AdminDashboard() {
                 background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: '8px',
-                color: 'rgba(255,255,255,0.7)',
+                color: 'rgba(255,255,255,0.75)',
                 fontSize: '0.82rem',
                 cursor: 'pointer'
               }}
@@ -1261,16 +1242,15 @@ export default function AdminDashboard() {
         {activeTab === 'overview' && (
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
             
-            {/* Left Column: Recent Activity & Actionable items */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
               {/* Quick Actions Panel */}
               <div style={{
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.08)',
                 borderRadius: '16px',
                 padding: '24px',
-                boxShadow: '0 8px 30px rgba(0,0,0,0.2)'
+                boxShadow: '0 16px 40px rgba(0,0,0,0.4)'
               }}>
                 <h3 style={{
                   fontFamily: 'var(--font-serif, Georgia, serif)',
@@ -1281,7 +1261,7 @@ export default function AdminDashboard() {
                   alignItems: 'center',
                   gap: '8px'
                 }}>
-                  <Sparkles size={18} color="#c5a059" />
+                  <Sparkles size={18} color="#c41e3a" />
                   სწრაფი ქმედებები
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
@@ -1302,7 +1282,7 @@ export default function AdminDashboard() {
                       textAlign: 'left'
                     }}
                   >
-                    <Plus size={18} color="#c5a059" />
+                    <Plus size={18} color="#c41e3a" />
                     <div>
                       <div>ახალი სიახლე</div>
                       <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: 400 }}>პოსტის გამოქვეყნება</div>
@@ -1326,7 +1306,7 @@ export default function AdminDashboard() {
                       textAlign: 'left'
                     }}
                   >
-                    <Key size={18} color="#c084fc" />
+                    <Key size={18} color="#ff8598" />
                     <div>
                       <div>კოდის შექმნა</div>
                       <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: 400 }}>მასწავლებლისთვის</div>
@@ -1350,7 +1330,7 @@ export default function AdminDashboard() {
                       textAlign: 'left'
                     }}
                   >
-                    <FileText size={18} color="#60a5fa" />
+                    <FileText size={18} color="#ffffff" />
                     <div>
                       <div>განაცხადების ნახვა</div>
                       <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: 400 }}>მოსწავლეთა მიღება</div>
@@ -1361,7 +1341,7 @@ export default function AdminDashboard() {
 
               {/* Pending Moderations Preview */}
               <div style={{
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.08)',
                 borderRadius: '16px',
                 padding: '24px'
@@ -1380,7 +1360,7 @@ export default function AdminDashboard() {
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: '#c5a059',
+                      color: '#ff8598',
                       fontSize: '0.85rem',
                       fontWeight: 600,
                       cursor: 'pointer',
@@ -1446,15 +1426,16 @@ export default function AdminDashboard() {
 
             </div>
 
-            {/* Right Column: System Status & School Details */}
+            {/* Right Column */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
               {/* System Card */}
               <div style={{
-                background: 'linear-gradient(145deg, rgba(128, 0, 32, 0.2), rgba(255, 255, 255, 0.03))',
-                border: '1px solid rgba(197, 160, 89, 0.3)',
+                background: 'linear-gradient(145deg, rgba(139, 0, 0, 0.3), rgba(255, 255, 255, 0.03))',
+                border: '1px solid rgba(196, 30, 58, 0.4)',
                 borderRadius: '16px',
-                padding: '24px'
+                padding: '24px',
+                boxShadow: '0 16px 40px rgba(0,0,0,0.4)'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
                   <div style={{
@@ -1464,11 +1445,11 @@ export default function AdminDashboard() {
                     background: '#22c55e',
                     boxShadow: '0 0 10px #22c55e'
                   }} />
-                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff' }}>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 600, color: '#fff' }}>
                     სისტემა აქტიურია (Live Vercel)
                   </span>
                 </div>
-                <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', lineHeight: '1.6' }}>
+                <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.7)', lineHeight: '1.7' }}>
                   <div><strong>Supabase DB:</strong> დაკავშირებულია ✅</div>
                   <div><strong>Serverless API:</strong> მუშაობს ✅</div>
                   <div><strong>Email/Auth:</strong> გააქტიურებულია ✅</div>
@@ -1476,9 +1457,9 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Summary Stats Breakdown */}
+              {/* Summary Stats */}
               <div style={{
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.08)',
                 borderRadius: '16px',
                 padding: '24px'
@@ -1489,7 +1470,7 @@ export default function AdminDashboard() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
                     <span style={{ color: 'rgba(255,255,255,0.6)' }}>ახალი განაცხადები:</span>
-                    <strong style={{ color: '#60a5fa' }}>{newAppsCount}</strong>
+                    <strong style={{ color: '#ff8598' }}>{newAppsCount}</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
                     <span style={{ color: 'rgba(255,255,255,0.6)' }}>განხილვაში:</span>
@@ -1538,9 +1519,9 @@ export default function AdminDashboard() {
                     style={{
                       padding: '6px 12px',
                       borderRadius: '8px',
-                      border: editFilter === st ? '1px solid #c5a059' : '1px solid rgba(255,255,255,0.1)',
-                      background: editFilter === st ? 'rgba(197, 160, 89, 0.2)' : 'rgba(255,255,255,0.04)',
-                      color: editFilter === st ? '#e5c478' : 'rgba(255,255,255,0.7)',
+                      border: editFilter === st ? '1px solid #c41e3a' : '1px solid rgba(255,255,255,0.1)',
+                      background: editFilter === st ? 'linear-gradient(135deg, #8b0000, #c41e3a)' : 'rgba(255,255,255,0.04)',
+                      color: '#ffffff',
                       fontSize: '0.8rem',
                       fontWeight: 500,
                       cursor: 'pointer'
@@ -1554,7 +1535,7 @@ export default function AdminDashboard() {
 
             {filteredEdits.length === 0 ? (
               <div style={{
-                background: 'rgba(255,255,255,0.02)',
+                background: 'rgba(255,255,255,0.03)',
                 border: '1px dashed rgba(255,255,255,0.1)',
                 borderRadius: '16px',
                 padding: '60px 20px',
@@ -1580,15 +1561,14 @@ export default function AdminDashboard() {
                     <div
                       key={edit.id}
                       style={{
-                        background: 'rgba(255,255,255,0.03)',
-                        border: isPending ? '1px solid rgba(197, 160, 89, 0.4)' : '1px solid rgba(255,255,255,0.08)',
+                        background: 'rgba(255,255,255,0.04)',
+                        border: isPending ? '1px solid rgba(196, 30, 58, 0.5)' : '1px solid rgba(255,255,255,0.08)',
                         borderRadius: '16px',
                         padding: '24px',
-                        boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+                        boxShadow: '0 16px 40px rgba(0,0,0,0.4)',
                         position: 'relative'
                       }}
                     >
-                      {/* Top Row: Teacher info + Action buttons */}
                       <div style={{
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -1602,7 +1582,7 @@ export default function AdminDashboard() {
                             width: '48px',
                             height: '48px',
                             borderRadius: '12px',
-                            background: proposed?.photo_url ? `url(${proposed.photo_url}) center/cover` : 'linear-gradient(135deg, #800020, #c5a059)',
+                            background: proposed?.photo_url ? `url(${proposed.photo_url}) center/cover` : 'linear-gradient(135deg, #8b0000, #c41e3a)',
                             border: '1px solid rgba(255,255,255,0.2)',
                             display: 'flex',
                             alignItems: 'center',
@@ -1631,7 +1611,7 @@ export default function AdminDashboard() {
                               </span>
                             </div>
                             <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)', marginTop: '3px' }}>
-                              საგანი: <strong style={{ color: '#c5a059' }}>{teacher?.subject}</strong> • გამოგზავნილია: {new Date(edit.submitted_at).toLocaleString('ka-GE')}
+                              საგანი: <strong style={{ color: '#ff8598' }}>{teacher?.subject}</strong> • გამოგზავნილია: {new Date(edit.submitted_at).toLocaleString('ka-GE')}
                             </div>
                           </div>
                         </div>
@@ -1692,13 +1672,12 @@ export default function AdminDashboard() {
                         display: 'grid',
                         gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
                         gap: '16px',
-                        background: 'rgba(0,0,0,0.35)',
+                        background: 'rgba(0,0,0,0.4)',
                         padding: '18px',
                         borderRadius: '12px',
                         border: '1px solid rgba(255,255,255,0.06)',
                         fontSize: '0.86rem'
                       }}>
-                        {/* Current Column */}
                         <div>
                           <div style={{
                             color: 'rgba(255,255,255,0.45)',
@@ -1710,7 +1689,7 @@ export default function AdminDashboard() {
                             borderBottom: '1px solid rgba(255,255,255,0.08)',
                             paddingBottom: '6px'
                           }}>
-                            მიმდინარე მონაცემები (Live):
+                            მიმდინარე მონაცემები:
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                             <div><span style={{ color: 'rgba(255,255,255,0.45)' }}>სახელი:</span> {teacher?.full_name}</div>
@@ -1723,16 +1702,15 @@ export default function AdminDashboard() {
                           </div>
                         </div>
 
-                        {/* Proposed Column */}
                         <div>
                           <div style={{
-                            color: '#c5a059',
+                            color: '#ff8598',
                             fontWeight: 700,
                             textTransform: 'uppercase',
                             fontSize: '0.75rem',
                             letterSpacing: '0.08em',
                             marginBottom: '12px',
-                            borderBottom: '1px solid rgba(197, 160, 89, 0.2)',
+                            borderBottom: '1px solid rgba(196, 30, 58, 0.3)',
                             paddingBottom: '6px'
                           }}>
                             ახალი შემოთავაზებული ცვლილებები:
@@ -1768,9 +1746,9 @@ export default function AdminDashboard() {
                         <div style={{
                           marginTop: '16px',
                           padding: '16px',
-                          background: 'rgba(220, 38, 38, 0.1)',
+                          background: 'rgba(220, 38, 38, 0.15)',
                           borderRadius: '10px',
-                          border: '1px solid rgba(220, 38, 38, 0.3)'
+                          border: '1px solid rgba(220, 38, 38, 0.4)'
                         }}>
                           <label style={{ display: 'block', color: '#fca5a5', fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>
                             უარყოფის მიზეზი (შეტყობინება მასწავლებელს):
@@ -1841,7 +1819,6 @@ export default function AdminDashboard() {
         {/* ============================================================== */}
         {activeTab === 'queue' && (
           <div>
-            {/* Header & Filters */}
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -1870,8 +1847,8 @@ export default function AdminDashboard() {
                     onChange={(e) => setAppSearch(e.target.value)}
                     style={{
                       padding: '8px 14px 8px 36px',
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.12)',
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.15)',
                       borderRadius: '8px',
                       color: '#fff',
                       fontSize: '0.85rem',
@@ -1886,19 +1863,19 @@ export default function AdminDashboard() {
                   onChange={(e) => setAppStatusFilter(e.target.value)}
                   style={{
                     padding: '8px 12px',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid rgba(255,255,255,0.12)',
+                    background: '#240d10',
+                    border: '1px solid rgba(255,255,255,0.15)',
                     borderRadius: '8px',
                     color: '#fff',
                     fontSize: '0.85rem',
                     outline: 'none'
                   }}
                 >
-                  <option value="all" style={{ background: '#1c1a17' }}>ყველა სტატუსი</option>
-                  <option value="submitted" style={{ background: '#1c1a17' }}>შემოსული (Submitted)</option>
-                  <option value="under_review" style={{ background: '#1c1a17' }}>განხილვაში (Under Review)</option>
-                  <option value="accepted" style={{ background: '#1c1a17' }}>მიღებული (Accepted)</option>
-                  <option value="rejected" style={{ background: '#1c1a17' }}>უარყოფილი (Rejected)</option>
+                  <option value="all">ყველა სტატუსი</option>
+                  <option value="submitted">შემოსული (Submitted)</option>
+                  <option value="under_review">განხილვაში (Under Review)</option>
+                  <option value="accepted">მიღებული (Accepted)</option>
+                  <option value="rejected">უარყოფილი (Rejected)</option>
                 </select>
 
                 <select
@@ -1906,25 +1883,25 @@ export default function AdminDashboard() {
                   onChange={(e) => setAppGradeFilter(e.target.value)}
                   style={{
                     padding: '8px 12px',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid rgba(255,255,255,0.12)',
+                    background: '#240d10',
+                    border: '1px solid rgba(255,255,255,0.15)',
                     borderRadius: '8px',
                     color: '#fff',
                     fontSize: '0.85rem',
                     outline: 'none'
                   }}
                 >
-                  <option value="all" style={{ background: '#1c1a17' }}>ყველა საფეხური</option>
-                  <option value="დაწყებითი (I-IV)" style={{ background: '#1c1a17' }}>დაწყებითი (I-IV)</option>
-                  <option value="საბაზო (V-IX)" style={{ background: '#1c1a17' }}>საბაზო (V-IX)</option>
-                  <option value="საშუალო (X-XII)" style={{ background: '#1c1a17' }}>საშუალო (X-XII)</option>
+                  <option value="all">ყველა საფეხური</option>
+                  <option value="დაწყებითი (I-IV)">დაწყებითი (I-IV)</option>
+                  <option value="საბაზო (V-IX)">საბაზო (V-IX)</option>
+                  <option value="საშუალო (X-XII)">საშუალო (X-XII)</option>
                 </select>
               </div>
             </div>
 
             {filteredApplications.length === 0 ? (
               <div style={{
-                background: 'rgba(255,255,255,0.02)',
+                background: 'rgba(255,255,255,0.03)',
                 border: '1px dashed rgba(255,255,255,0.1)',
                 borderRadius: '16px',
                 padding: '60px 20px',
@@ -1935,9 +1912,6 @@ export default function AdminDashboard() {
                 <h3 style={{ color: '#fff', fontSize: '1.2rem', marginBottom: '6px' }}>
                   განაცხადები არ მოიძებნა
                 </h3>
-                <p style={{ fontSize: '0.88rem' }}>
-                  მშობლების მიერ გამოგზავნილი ონლაინ განცხადებები გამოჩნდება აქ.
-                </p>
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -1955,14 +1929,13 @@ export default function AdminDashboard() {
                     <div
                       key={app.id}
                       style={{
-                        background: 'rgba(255,255,255,0.03)',
+                        background: 'rgba(255,255,255,0.04)',
                         border: '1px solid rgba(255,255,255,0.08)',
                         borderRadius: '16px',
                         padding: '22px',
-                        boxShadow: '0 8px 24px rgba(0,0,0,0.25)'
+                        boxShadow: '0 16px 36px rgba(0,0,0,0.35)'
                       }}
                     >
-                      {/* Top Info */}
                       <div style={{
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -1976,12 +1949,11 @@ export default function AdminDashboard() {
                             width: '44px',
                             height: '44px',
                             borderRadius: '10px',
-                            background: 'rgba(197, 160, 89, 0.15)',
-                            border: '1px solid rgba(197, 160, 89, 0.3)',
+                            background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: '#e5c478',
+                            color: '#fff',
                             fontWeight: 700
                           }}>
                             {app.student_full_name?.[0] || 'S'}
@@ -1996,8 +1968,8 @@ export default function AdminDashboard() {
                                 fontWeight: 600,
                                 padding: '2px 8px',
                                 borderRadius: '6px',
-                                background: 'rgba(255,255,255,0.08)',
-                                color: 'rgba(255,255,255,0.8)'
+                                background: 'rgba(255,255,255,0.1)',
+                                color: 'rgba(255,255,255,0.85)'
                               }}>
                                 {app.grade_stage}
                               </span>
@@ -2028,7 +2000,7 @@ export default function AdminDashboard() {
                             onChange={(e) => handleUpdateAppStatus(app.id, e.target.value)}
                             style={{
                               padding: '6px 10px',
-                              background: 'rgba(255,255,255,0.06)',
+                              background: '#240d10',
                               border: '1px solid rgba(255,255,255,0.15)',
                               borderRadius: '8px',
                               color: '#fff',
@@ -2037,10 +2009,10 @@ export default function AdminDashboard() {
                               cursor: 'pointer'
                             }}
                           >
-                            <option value="submitted" style={{ background: '#1c1a17' }}>შემოსული</option>
-                            <option value="under_review" style={{ background: '#1c1a17' }}>განხილვაში</option>
-                            <option value="accepted" style={{ background: '#1c1a17' }}>მიღებული</option>
-                            <option value="rejected" style={{ background: '#1c1a17' }}>უარყოფილი</option>
+                            <option value="submitted">შემოსული</option>
+                            <option value="under_review">განხილვაში</option>
+                            <option value="accepted">მიღებული</option>
+                            <option value="rejected">უარყოფილი</option>
                           </select>
                         </div>
                       </div>
@@ -2050,7 +2022,7 @@ export default function AdminDashboard() {
                         display: 'grid',
                         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                         gap: '12px',
-                        background: 'rgba(0,0,0,0.3)',
+                        background: 'rgba(0,0,0,0.35)',
                         padding: '16px',
                         borderRadius: '10px',
                         fontSize: '0.86rem',
@@ -2066,7 +2038,7 @@ export default function AdminDashboard() {
                         </div>
                         <div>
                           <span style={{ color: 'rgba(255,255,255,0.45)', display: 'block', fontSize: '0.75rem' }}>ტელეფონი:</span>
-                          <a href={`tel:${app.parent_phone}`} style={{ color: '#c5a059', textDecoration: 'none' }}>
+                          <a href={`tel:${app.parent_phone}`} style={{ color: '#ff8598', textDecoration: 'none' }}>
                             {app.parent_phone || '—'}
                           </a>
                         </div>
@@ -2084,7 +2056,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
 
-                      {/* Attached Documents */}
+                      {/* Documents */}
                       {app.application_documents && app.application_documents.length > 0 && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                           <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>დოკუმენტები:</span>
@@ -2099,10 +2071,10 @@ export default function AdminDashboard() {
                                 alignItems: 'center',
                                 gap: '6px',
                                 padding: '4px 10px',
-                                background: 'rgba(197, 160, 89, 0.15)',
-                                border: '1px solid rgba(197, 160, 89, 0.3)',
+                                background: 'rgba(196, 30, 58, 0.2)',
+                                border: '1px solid rgba(196, 30, 58, 0.4)',
                                 borderRadius: '6px',
-                                color: '#e5c478',
+                                color: '#ff8598',
                                 fontSize: '0.78rem',
                                 textDecoration: 'none'
                               }}
@@ -2127,13 +2099,13 @@ export default function AdminDashboard() {
         {activeTab === 'news' && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '28px' }}>
             
-            {/* Left: News Composer Form */}
+            {/* Left: Composer */}
             <div style={{
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.04)',
               border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: '16px',
               padding: '24px',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.25)'
+              boxShadow: '0 16px 40px rgba(0,0,0,0.4)'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                 <h3 style={{ fontFamily: 'var(--font-serif, Georgia, serif)', fontSize: '1.3rem', color: '#fff', margin: 0 }}>
@@ -2173,8 +2145,8 @@ export default function AdminDashboard() {
                     style={{
                       width: '100%',
                       padding: '12px 14px',
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.12)',
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.15)',
                       borderRadius: '10px',
                       color: '#fff',
                       fontSize: '0.92rem',
@@ -2197,8 +2169,8 @@ export default function AdminDashboard() {
                       style={{
                         flex: 1,
                         padding: '10px 14px',
-                        background: 'rgba(255,255,255,0.05)',
-                        border: '1px solid rgba(255,255,255,0.12)',
+                        background: 'rgba(255,255,255,0.06)',
+                        border: '1px solid rgba(255,255,255,0.15)',
                         borderRadius: '10px',
                         color: '#fff',
                         fontSize: '0.88rem',
@@ -2207,10 +2179,10 @@ export default function AdminDashboard() {
                     />
                     <label style={{
                       padding: '10px 16px',
-                      background: 'rgba(197, 160, 89, 0.2)',
-                      border: '1px solid rgba(197, 160, 89, 0.4)',
+                      background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
+                      border: 'none',
                       borderRadius: '10px',
-                      color: '#e5c478',
+                      color: '#ffffff',
                       fontSize: '0.85rem',
                       fontWeight: 600,
                       cursor: 'pointer',
@@ -2245,8 +2217,8 @@ export default function AdminDashboard() {
                     style={{
                       width: '100%',
                       padding: '12px 14px',
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.12)',
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.15)',
                       borderRadius: '10px',
                       color: '#fff',
                       fontSize: '0.9rem',
@@ -2263,7 +2235,7 @@ export default function AdminDashboard() {
                     id="news-publish-toggle"
                     checked={newsForm.is_published}
                     onChange={(e) => setNewsForm({ ...newsForm, is_published: e.target.checked })}
-                    style={{ width: '18px', height: '18px', accentColor: '#800020', cursor: 'pointer' }}
+                    style={{ width: '18px', height: '18px', accentColor: '#c41e3a', cursor: 'pointer' }}
                   />
                   <label htmlFor="news-publish-toggle" style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.85)', cursor: 'pointer' }}>
                     დაუყოვნებლივ გამოქვეყნება მთავარ გვერდზე
@@ -2276,7 +2248,7 @@ export default function AdminDashboard() {
                   style={{
                     width: '100%',
                     padding: '14px',
-                    background: 'linear-gradient(135deg, #800020, #a00028)',
+                    background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
                     color: '#fff',
                     border: 'none',
                     borderRadius: '10px',
@@ -2287,7 +2259,7 @@ export default function AdminDashboard() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '8px',
-                    boxShadow: '0 4px 18px rgba(128, 0, 32, 0.4)'
+                    boxShadow: '0 4px 18px rgba(139, 0, 0, 0.45)'
                   }}
                 >
                   <Save size={18} />
@@ -2296,7 +2268,7 @@ export default function AdminDashboard() {
               </form>
             </div>
 
-            {/* Right: Published News List */}
+            {/* Right: List */}
             <div>
               <h3 style={{ fontFamily: 'var(--font-serif, Georgia, serif)', fontSize: '1.3rem', color: '#fff', marginBottom: '16px' }}>
                 გამოქვეყნებული სიახლეები ({newsList.length})
@@ -2304,7 +2276,7 @@ export default function AdminDashboard() {
 
               {newsList.length === 0 ? (
                 <div style={{
-                  background: 'rgba(255,255,255,0.02)',
+                  background: 'rgba(255,255,255,0.03)',
                   border: '1px dashed rgba(255,255,255,0.1)',
                   borderRadius: '14px',
                   padding: '40px 20px',
@@ -2319,7 +2291,7 @@ export default function AdminDashboard() {
                     <div
                       key={n.id}
                       style={{
-                        background: 'rgba(255,255,255,0.03)',
+                        background: 'rgba(255,255,255,0.04)',
                         border: '1px solid rgba(255,255,255,0.08)',
                         borderRadius: '14px',
                         padding: '16px',
@@ -2372,7 +2344,7 @@ export default function AdminDashboard() {
                         </p>
                       </div>
 
-                      {/* Action buttons */}
+                      {/* Actions */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                         <button
                           onClick={() => handleToggleNewsPublish(n)}
@@ -2396,10 +2368,10 @@ export default function AdminDashboard() {
                           }}
                           style={{
                             padding: '6px',
-                            background: 'rgba(197, 160, 89, 0.15)',
+                            background: 'rgba(196, 30, 58, 0.2)',
                             border: 'none',
                             borderRadius: '6px',
-                            color: '#e5c478',
+                            color: '#ff8598',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
@@ -2465,8 +2437,8 @@ export default function AdminDashboard() {
                   onChange={(e) => setTeacherSearch(e.target.value)}
                   style={{
                     padding: '8px 14px 8px 36px',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid rgba(255,255,255,0.12)',
+                    background: 'rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.15)',
                     borderRadius: '8px',
                     color: '#fff',
                     fontSize: '0.85rem',
@@ -2479,7 +2451,7 @@ export default function AdminDashboard() {
 
             {filteredTeachers.length === 0 ? (
               <div style={{
-                background: 'rgba(255,255,255,0.02)',
+                background: 'rgba(255,255,255,0.03)',
                 border: '1px dashed rgba(255,255,255,0.1)',
                 borderRadius: '16px',
                 padding: '60px 20px',
@@ -2501,11 +2473,11 @@ export default function AdminDashboard() {
                   <div
                     key={t.id}
                     style={{
-                      background: 'rgba(255,255,255,0.03)',
+                      background: 'rgba(255,255,255,0.04)',
                       border: '1px solid rgba(255,255,255,0.08)',
                       borderRadius: '16px',
                       padding: '20px',
-                      boxShadow: '0 8px 24px rgba(0,0,0,0.2)'
+                      boxShadow: '0 16px 36px rgba(0,0,0,0.3)'
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px' }}>
@@ -2513,7 +2485,7 @@ export default function AdminDashboard() {
                         width: '54px',
                         height: '54px',
                         borderRadius: '14px',
-                        background: t.photo_url ? `url(${t.photo_url}) center/cover` : 'linear-gradient(135deg, #800020, #c5a059)',
+                        background: t.photo_url ? `url(${t.photo_url}) center/cover` : 'linear-gradient(135deg, #8b0000, #c41e3a)',
                         border: '1px solid rgba(255,255,255,0.15)',
                         display: 'flex',
                         alignItems: 'center',
@@ -2529,7 +2501,7 @@ export default function AdminDashboard() {
                         <h4 style={{ color: '#fff', fontSize: '1.1rem', margin: 0, fontWeight: 700 }}>
                           {t.full_name}
                         </h4>
-                        <div style={{ color: '#c5a059', fontSize: '0.85rem', fontWeight: 600 }}>
+                        <div style={{ color: '#ff8598', fontSize: '0.85rem', fontWeight: 600 }}>
                           {t.subject}
                         </div>
                       </div>
@@ -2578,7 +2550,7 @@ export default function AdminDashboard() {
                   onChange={(e) => setNewCodeInput(e.target.value)}
                   style={{
                     padding: '10px 14px',
-                    background: 'rgba(255,255,255,0.05)',
+                    background: 'rgba(255,255,255,0.06)',
                     border: '1px solid rgba(255,255,255,0.15)',
                     borderRadius: '10px',
                     color: '#fff',
@@ -2592,8 +2564,8 @@ export default function AdminDashboard() {
                   disabled={codeGenerating}
                   style={{
                     padding: '10px 18px',
-                    background: 'linear-gradient(135deg, #c5a059, #e5c478)',
-                    color: '#120d0d',
+                    background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
+                    color: '#ffffff',
                     border: 'none',
                     borderRadius: '10px',
                     fontWeight: 700,
@@ -2601,7 +2573,8 @@ export default function AdminDashboard() {
                     cursor: codeGenerating ? 'not-allowed' : 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '6px'
+                    gap: '6px',
+                    boxShadow: '0 4px 16px rgba(139,0,0,0.45)'
                   }}
                 >
                   <Plus size={16} />
@@ -2613,9 +2586,9 @@ export default function AdminDashboard() {
                   disabled={codeGenerating}
                   style={{
                     padding: '10px 16px',
-                    background: 'rgba(168, 85, 247, 0.2)',
-                    border: '1px solid rgba(168, 85, 247, 0.4)',
-                    color: '#d8b4fe',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    color: '#ffffff',
                     borderRadius: '10px',
                     fontWeight: 600,
                     fontSize: '0.85rem',
@@ -2625,7 +2598,7 @@ export default function AdminDashboard() {
                     gap: '6px'
                   }}
                 >
-                  <Sparkles size={16} />
+                  <Sparkles size={16} color="#ff8598" />
                   ⚡ 50 კოდის გენერაცია (Batch)
                 </button>
               </div>
@@ -2633,8 +2606,8 @@ export default function AdminDashboard() {
 
             {/* Standard Valid Codes Banner */}
             <div style={{
-              background: 'linear-gradient(135deg, rgba(197, 160, 89, 0.15), rgba(128, 0, 32, 0.15))',
-              border: '1px solid rgba(197, 160, 89, 0.4)',
+              background: 'linear-gradient(135deg, rgba(139, 0, 0, 0.35), rgba(255, 255, 255, 0.03))',
+              border: '1px solid rgba(196, 30, 58, 0.45)',
               borderRadius: '14px',
               padding: '20px',
               marginBottom: '24px',
@@ -2645,7 +2618,7 @@ export default function AdminDashboard() {
               gap: '16px'
             }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#e5c478', fontWeight: 700, fontSize: '0.95rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ff8598', fontWeight: 700, fontSize: '0.95rem' }}>
                   <Sparkles size={16} />
                   სტანდარტული აქტიური კოდები:
                 </div>
@@ -2660,8 +2633,8 @@ export default function AdminDashboard() {
                     onClick={() => handleCopyCode(code)}
                     style={{
                       padding: '8px 14px',
-                      background: 'rgba(0,0,0,0.4)',
-                      border: '1px solid rgba(197, 160, 89, 0.5)',
+                      background: 'rgba(0,0,0,0.5)',
+                      border: '1px solid rgba(196, 30, 58, 0.5)',
                       borderRadius: '8px',
                       color: '#fff',
                       fontFamily: 'monospace',
@@ -2690,7 +2663,7 @@ export default function AdminDashboard() {
                 <div
                   key={item.id || idx}
                   style={{
-                    background: 'rgba(255,255,255,0.03)',
+                    background: 'rgba(255,255,255,0.04)',
                     border: '1px solid rgba(255,255,255,0.08)',
                     borderRadius: '12px',
                     padding: '16px',
