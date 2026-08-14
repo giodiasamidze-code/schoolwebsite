@@ -16,12 +16,15 @@ import { useAuth } from './components/AuthContext';
 export default function App() {
   const { path } = useAuth();
 
-  // Admin routes — no Header/Footer
+  // Standalone portals — dedicated executive header/navigation
   if (path === '/admin') {
     return <AdminLoginPage />;
   }
   if (path === '/admin-dashboard') {
     return <AdminDashboard />;
+  }
+  if (path === '/teacher-dashboard') {
+    return <TeacherDashboard />;
   }
 
   return (
@@ -29,8 +32,6 @@ export default function App() {
       <Header />
       {path === '/register' ? (
         <RegistrationPage />
-      ) : path === '/teacher-dashboard' ? (
-        <TeacherDashboard />
       ) : path === '/parent-account' ? (
         <ParentAccountPage />
       ) : (
