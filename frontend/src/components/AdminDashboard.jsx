@@ -359,6 +359,20 @@ export default function AdminDashboard() {
   // 4. Invite Codes Management
   const fetchInviteCodes = async () => {
     try {
+      const apiBase = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${apiBase}/api/create-invite-code`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.codes) {
+          setInviteCodes(json.codes);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('API fetch failed, falling back to direct supabase query', e);
+    }
+
+    try {
       const { data, error } = await supabase
         .from('invite_codes')
         .select('*')
@@ -376,27 +390,84 @@ export default function AdminDashboard() {
     setCodeGenerating(true);
     try {
       let codeToInsert = newCodeInput.trim().toUpperCase();
-      if (!codeToInsert) {
-        const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
-        codeToInsert = `SOL-${new Date().getFullYear()}-${rand}`;
+      const apiBase = import.meta.env.VITE_API_URL || '';
+
+      const res = await fetch(`${apiBase}/api/create-invite-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: codeToInsert })
+      });
+
+      const json = await res.json();
+
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || 'კოდის შექმნა ვერ მოხერხდა.');
       }
-
-      const { data, error } = await supabase
-        .from('invite_codes')
-        .insert([{ code: codeToInsert, is_active: true }])
-        .select()
-        .single();
-
-      if (error) throw error;
 
       setNewCodeInput('');
       await fetchInviteCodes();
-      showToast(`კოდი ${codeToInsert} წარმატებით შეიქმნა!`, 'success');
+      showToast(json.message || 'კოდი წარმატებით შეიქმნა!', 'success');
     } catch (err) {
       console.error('Generate code error:', err);
-      showToast('კოდის შექმნა ვერ მოხერხდა.', 'error');
+      // Try fallback direct
+      try {
+        let codeToInsert = newCodeInput.trim().toUpperCase();
+        if (!codeToInsert) {
+          const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+          codeToInsert = `SOL-${new Date().getFullYear()}-${rand}`;
+        }
+        const { error } = await supabase
+          .from('invite_codes')
+          .insert([{ code: codeToInsert, is_active: true }]);
+        if (error) throw error;
+        setNewCodeInput('');
+        await fetchInviteCodes();
+        showToast(`კოდი ${codeToInsert} წარმატებით შეიქმნა!`, 'success');
+      } catch (fallbackErr) {
+        showToast(err.message || 'კოდის შექმნა ვერ მოხერხდა.', 'error');
+      }
     } finally {
       setCodeGenerating(false);
+    }
+  };
+
+  const handleGenerateBatch50 = async () => {
+    if (!window.confirm('ნამდვილად გსურთ 50 ახალი მრავალჯერადი კოდის ერთიანად გენერაცია?')) return;
+    setCodeGenerating(true);
+    try {
+      const apiBase = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${apiBase}/api/create-invite-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ generateBatch: 50 })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.message);
+      await fetchInviteCodes();
+      showToast('🎉 50 ახალი კოდი წარმატებით დაემატა!', 'success');
+    } catch (err) {
+      console.error('Batch generation error:', err);
+      showToast(err.message || 'კოდების გენერაცია ვერ მოხერხდა.', 'error');
+    } finally {
+      setCodeGenerating(false);
+    }
+  };
+
+  const handleDeleteCode = async (codeItem) => {
+    if (!window.confirm(`წაიშალოს კოდი "${codeItem.code}"?`)) return;
+    try {
+      const apiBase = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${apiBase}/api/create-invite-code`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: codeItem.id })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.message);
+      await fetchInviteCodes();
+      showToast('კოდი წაიშალა.', 'info');
+    } catch (err) {
+      showToast('კოდის წაშლა ვერ მოხერხდა.', 'error');
     }
   };
 
@@ -2484,7 +2555,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Quick Generator Box */}
-              <div style={{ display: 'flex', gap: '10px' }}>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                 <input
                   type="text"
                   placeholder="სურვილისამებრ კოდი (მაგ: SOL-MATH-2026)"
@@ -2498,7 +2569,7 @@ export default function AdminDashboard() {
                     color: '#fff',
                     fontSize: '0.85rem',
                     outline: 'none',
-                    minWidth: '240px'
+                    minWidth: '220px'
                   }}
                 />
                 <button
@@ -2520,6 +2591,27 @@ export default function AdminDashboard() {
                 >
                   <Plus size={16} />
                   {codeGenerating ? 'იქმნება...' : 'ახალი კოდის შექმნა'}
+                </button>
+
+                <button
+                  onClick={handleGenerateBatch50}
+                  disabled={codeGenerating}
+                  style={{
+                    padding: '10px 16px',
+                    background: 'rgba(168, 85, 247, 0.2)',
+                    border: '1px solid rgba(168, 85, 247, 0.4)',
+                    color: '#d8b4fe',
+                    borderRadius: '10px',
+                    fontWeight: 600,
+                    fontSize: '0.85rem',
+                    cursor: codeGenerating ? 'not-allowed' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <Sparkles size={16} />
+                  ⚡ 50 კოდის გენერაცია (Batch)
                 </button>
               </div>
             </div>

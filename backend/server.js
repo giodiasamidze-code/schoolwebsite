@@ -156,6 +156,79 @@ app.post('/api/register-parent', async (req, res) => {
   }
 });
 
+// =====================================================
+// Invite Codes API
+// =====================================================
+app.get('/api/create-invite-code', async (req, res) => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('invite_codes')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    res.json({ success: true, codes: data });
+  } catch (e) {
+    res.status(500).json({ success: false, message: e.message });
+  }
+});
+
+app.post('/api/create-invite-code', async (req, res) => {
+  try {
+    let { code, generateBatch } = req.body || {};
+
+    if (generateBatch && typeof generateBatch === 'number') {
+      const batchCount = Math.min(Math.max(generateBatch, 1), 50);
+      const codesToInsert = [];
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      for (let i = 0; i < batchCount; i++) {
+        const rand = Array.from({ length: 5 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+        codesToInsert.push({
+          code: `SOL-${new Date().getFullYear()}-${rand}`,
+          is_active: true
+        });
+      }
+      const { data, error } = await supabaseAdmin.from('invite_codes').insert(codesToInsert).select();
+      if (error) throw error;
+      return res.json({ success: true, message: `${batchCount} კოდი წარმატებით შეიქმნა!`, codes: data });
+    }
+
+    if (!code || !code.trim()) {
+      const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+      code = `SOL-${new Date().getFullYear()}-${rand}`;
+    } else {
+      code = code.trim().toUpperCase();
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from('invite_codes')
+      .insert([{ code, is_active: true }])
+      .select()
+      .single();
+
+    if (error) {
+      if (error.code === '23505' || error.message.includes('unique')) {
+        return res.status(400).json({ success: false, message: `კოდი "${code}" უკვე არსებობს.` });
+      }
+      throw error;
+    }
+
+    res.json({ success: true, message: `კოდი "${code}" წარმატებით შეიქმნა!`, code: data });
+  } catch (e) {
+    res.status(500).json({ success: false, message: e.message });
+  }
+});
+
+app.delete('/api/create-invite-code', async (req, res) => {
+  try {
+    const { id } = req.body || {};
+    const { error } = await supabaseAdmin.from('invite_codes').delete().eq('id', id);
+    if (error) throw error;
+    res.json({ success: true, message: 'კოდი წაიშალა.' });
+  } catch (e) {
+    res.status(500).json({ success: false, message: e.message });
+  }
+});
+
 // Base Route
 app.get('/', (req, res) => {
   res.send('Georgian Private School API Server is running.');
@@ -165,3 +238,4 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
