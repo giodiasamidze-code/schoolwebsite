@@ -106,24 +106,24 @@ export default function ParentAccountPage() {
                 const IconComponent = st.icon;
 
                 return (
-                  <div key={app.id} style={{ background: '#ffffff', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                  <div key={app.id} style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '16px', padding: '24px', boxShadow: '0 16px 36px rgba(0,0,0,0.35)', backdropFilter: 'blur(12px)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                       <div>
                         <span style={{ fontSize: '0.8rem', fontWeight: 700, padding: '4px 12px', borderRadius: '12px', background: st.bg, color: st.color, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                           <IconComponent size={14} />
                           {st.label}
                         </span>
-                        <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: 'var(--text-dark)', marginTop: '8px' }}>
+                        <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: '#ffffff', marginTop: '8px', fontWeight: 700 }}>
                           მოსწავლე: {app.student_full_name} ({app.grade_stage})
                         </h4>
                       </div>
 
-                      <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                      <span style={{ fontSize: '0.82rem', color: 'rgba(255, 255, 255, 0.5)' }}>
                         გაგზავნილია: {new Date(app.created_at).toLocaleDateString('ka-GE')}
                       </span>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', fontSize: '0.9rem', color: 'var(--text-dark)', background: 'var(--bg-secondary)', padding: '12px', borderRadius: '6px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', fontSize: '0.88rem', color: '#f3ece3', background: 'rgba(0, 0, 0, 0.35)', padding: '16px', borderRadius: '10px' }}>
                       <div><strong>მშობლის სახელი:</strong> {app.parent_full_name}</div>
                       <div><strong>პირადი ნომერი:</strong> {app.parent_id_number || 'არ არის'}</div>
                       <div><strong>მისამართი:</strong> {app.parent_address || 'არ არის'}</div>

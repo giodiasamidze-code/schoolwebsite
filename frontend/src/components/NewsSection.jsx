@@ -44,7 +44,7 @@ export default function NewsSection() {
   ];
 
   return (
-    <section className="news-section bg-cream-dark" id="news" style={{ padding: '80px 0' }}>
+    <section className="news-section" id="news" style={{ padding: '80px 0' }}>
       <div className="container">
         <span className="section-eyebrow">სიახლეები</span>
         <h2 className="section-title">სკოლის აკადემიური სიახლეები & განცხადებები</h2>
@@ -58,20 +58,21 @@ export default function NewsSection() {
               key={item.id}
               className="card fade-in"
               style={{
-                background: '#ffffff',
-                border: '1px solid var(--border-color)',
-                borderRadius: '8px',
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '16px',
                 overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column',
-                boxShadow: '0 4px 15px rgba(0,0,0,0.04)',
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                cursor: 'pointer'
+                boxShadow: '0 16px 36px rgba(0,0,0,0.35)',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                cursor: 'pointer',
+                backdropFilter: 'blur(12px)'
               }}
               onClick={() => setSelectedArticle(item)}
             >
               {item.image_url && (
-                <div style={{ height: '200px', overflow: 'hidden', background: '#f1f5f9' }}>
+                <div style={{ height: '200px', overflow: 'hidden', background: '#000' }}>
                   <img
                     src={item.image_url}
                     alt={item.title}
@@ -81,12 +82,12 @@ export default function NewsSection() {
               )}
 
               <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '8px' }}>
+                <span style={{ fontSize: '0.82rem', color: '#ff8598', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', fontWeight: 600 }}>
                   <Calendar size={14} />
                   {new Date(item.published_at).toLocaleDateString('ka-GE', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </span>
 
-                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: 'var(--text-dark)', marginBottom: '12px', lineHeight: 1.4 }}>
+                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: '#ffffff', marginBottom: '12px', lineHeight: 1.4, fontWeight: 700 }}>
                   {item.title}
                 </h3>
 
@@ -94,7 +95,7 @@ export default function NewsSection() {
                   {item.content}
                 </p>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-primary)', fontWeight: 600, fontSize: '0.9rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-secondary)', fontWeight: 700, fontSize: '0.9rem' }}>
                   <span>სრულად წაკითხვა</span>
                   <ArrowRight size={16} />
                 </div>
@@ -107,7 +108,7 @@ export default function NewsSection() {
       {/* Article Detail Modal */}
       {selectedArticle && (
         <div className="modal-overlay" onClick={() => setSelectedArticle(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '680px' }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '680px', background: '#1c0a0d', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '20px' }}>
             <button className="modal-close" onClick={() => setSelectedArticle(null)}>
               <X size={20} />
             </button>
@@ -116,17 +117,17 @@ export default function NewsSection() {
               <img
                 src={selectedArticle.image_url}
                 alt={selectedArticle.title}
-                style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '8px 8px 0 0', marginBottom: '20px' }}
+                style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '16px 16px 0 0', marginBottom: '20px' }}
               />
             )}
 
             <div style={{ padding: '0 8px 16px' }}>
-              <span style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+              <span style={{ fontSize: '0.85rem', color: '#ff8598', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
                 <Calendar size={14} />
                 {new Date(selectedArticle.published_at).toLocaleDateString('ka-GE', { day: 'numeric', month: 'long', year: 'numeric' })}
               </span>
 
-              <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', color: 'var(--text-dark)', marginBottom: '16px', lineHeight: 1.3 }}>
+              <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', color: '#ffffff', marginBottom: '16px', lineHeight: 1.3 }}>
                 {selectedArticle.title}
               </h2>
 

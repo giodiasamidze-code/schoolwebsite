@@ -462,19 +462,19 @@ export default function AdmissionsSection() {
 
                       {/* Upload status / file preview */}
                       {docState.file ? (
-                        <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '8px 12px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                        <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255, 255, 255, 0.06)', padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.12)' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>
                             <FileCheck size={18} className="text-burgundy" />
-                            <span style={{ fontSize: '0.88rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>
+                            <span style={{ fontSize: '0.88rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px', color: '#fff' }}>
                               {docState.fileName}
                             </span>
-                            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                            <span style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.6)' }}>
                               ({(docState.file.size / 1024).toFixed(1)} KB)
                             </span>
                           </div>
 
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <label htmlFor={`upload-${docType}`} style={{ cursor: 'pointer', fontSize: '0.8rem', color: 'var(--accent-primary)', textDecoration: 'underline' }}>
+                            <label htmlFor={`upload-${docType}`} style={{ cursor: 'pointer', fontSize: '0.8rem', color: 'var(--accent-secondary)', textDecoration: 'underline' }}>
                               შეცვლა
                             </label>
                             <button
@@ -495,13 +495,14 @@ export default function AdmissionsSection() {
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '6px',
-                              padding: '6px 12px',
+                              padding: '8px 14px',
                               fontSize: '0.85rem',
-                              background: '#ffffff',
-                              border: '1px solid var(--border-color, #cbd5e1)',
-                              borderRadius: '6px',
+                              background: 'rgba(255, 255, 255, 0.08)',
+                              border: '1px solid rgba(255, 255, 255, 0.15)',
+                              borderRadius: '8px',
                               cursor: 'pointer',
-                              color: 'var(--text-dark)',
+                              color: '#ffffff',
+                              fontWeight: 500,
                               transition: 'all 0.2s'
                             }}
                           >
