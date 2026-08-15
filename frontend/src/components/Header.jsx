@@ -56,104 +56,65 @@ export default function Header() {
   };
 
   return (
-    <header className="header" style={{
-      position: 'fixed',
-      top: '14px',
-      left: 0,
-      right: 0,
-      zIndex: 1000,
-      background: 'transparent',
-      border: 'none',
-      boxShadow: 'none',
-      padding: '0'
-    }}>
-      <div style={{
-        width: '92%',
-        maxWidth: '1360px',
-        margin: '0 auto',
-        background: 'rgba(28, 10, 14, 0.88)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        borderRadius: '20px',
-        padding: '12px 24px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        boxShadow: '0 16px 40px rgba(0, 0, 0, 0.45)'
-      }}>
+    <header className="header">
+      <div className="header-container">
         
         {/* Brand / Logo */}
-        <a href="#" className="logo" onClick={(e) => handleNavClick(e, '#')} style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
+        <a href="#" className="logo" onClick={(e) => handleNavClick(e, '#')}>
           <div style={{
-            width: '40px',
-            height: '40px',
+            width: '36px',
+            height: '36px',
             borderRadius: '10px',
             background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             boxShadow: '0 4px 14px rgba(139, 0, 0, 0.45)',
-            border: '1px solid rgba(255, 255, 255, 0.15)'
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            flexShrink: 0
           }}>
-            <GraduationCap size={22} color="#ffffff" />
+            <GraduationCap size={20} color="#ffffff" />
           </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{
-                fontFamily: 'var(--font-serif, Georgia, serif)',
-                fontSize: '1.2rem',
-                fontWeight: 700,
-                color: '#ffffff',
-                letterSpacing: '-0.01em'
-              }}>
-                სოლომონ
-              </span>
-              <span style={{
-                background: 'rgba(212, 175, 55, 0.12)',
-                border: '1px solid rgba(212, 175, 55, 0.35)',
-                color: 'var(--accent-secondary, #d4af37)',
-                fontSize: '0.68rem',
-                fontWeight: 700,
-                padding: '2px 7px',
-                borderRadius: '6px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em'
-              }}>
-                აკადემია
-              </span>
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{
+              fontFamily: 'var(--font-serif, Georgia, serif)',
+              fontSize: '1.15rem',
+              fontWeight: 700,
+              color: '#ffffff',
+              letterSpacing: '-0.01em'
+            }}>
+              სოლომონ
+            </span>
+            <span style={{
+              background: 'rgba(212, 175, 55, 0.12)',
+              border: '1px solid rgba(212, 175, 55, 0.35)',
+              color: 'var(--accent-secondary, #d4af37)',
+              fontSize: '0.68rem',
+              fontWeight: 700,
+              padding: '2px 7px',
+              borderRadius: '6px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}>
+              აკადემია
+            </span>
           </div>
         </a>
 
-        {/* Desktop Nav Items */}
-        <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '22px' }}>
+        {/* Desktop Nav Items (Strictly Hidden on Mobile via CSS) */}
+        <nav className="desktop-nav">
           {navItems.map((item) => (
             <a
               key={item.href}
               href={item.href}
+              className="nav-link"
               onClick={(e) => handleNavClick(e, item.href)}
-              style={{
-                textDecoration: 'none',
-                color: 'rgba(255, 255, 255, 0.78)',
-                fontSize: '0.88rem',
-                fontWeight: 500,
-                transition: 'all 0.2s',
-                whiteSpace: 'nowrap'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = '#ffffff';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = 'rgba(255, 255, 255, 0.78)';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
             >
               {item.label}
             </a>
           ))}
 
-          {/* User Auth Buttons / Portals */}
+          {/* User Auth Profile */}
           {user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               {role === 'admin' && (
@@ -269,7 +230,7 @@ export default function Header() {
             href="#admissions"
             onClick={(e) => handleNavClick(e, '#admissions')}
             style={{
-              padding: '10px 20px',
+              padding: '9px 18px',
               background: 'linear-gradient(135deg, #8b0000 0%, #c41e3a 100%)',
               color: '#ffffff',
               borderRadius: '10px',
@@ -284,43 +245,25 @@ export default function Header() {
               transition: 'all 0.2s',
               whiteSpace: 'nowrap'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
           >
             <span>რეგისტრაცია</span>
             <ArrowRight size={14} />
           </a>
         </nav>
 
-        {/* Mobile Toggle Button */}
+        {/* Mobile Toggle Button (Visible only on Mobile) */}
         <button
           className="mobile-toggle"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle Menu"
-          style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: '4px' }}
         >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
+          {isOpen ? <X size={24} color="#ffffff" /> : <Menu size={24} color="#ffffff" />}
         </button>
 
       </div>
 
-      {/* Mobile Drawer */}
-      <div className={`mobile-drawer ${isOpen ? 'active' : ''}`} style={{
-        position: 'fixed',
-        top: '80px',
-        left: '4%',
-        right: '4%',
-        background: 'rgba(24, 9, 11, 0.98)',
-        border: '1px solid rgba(255, 255, 255, 0.12)',
-        borderRadius: '20px',
-        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.7)',
-        backdropFilter: 'blur(24px)',
-        padding: '24px',
-        display: isOpen ? 'flex' : 'none',
-        flexDirection: 'column',
-        gap: '16px',
-        zIndex: 999
-      }}>
+      {/* Mobile Drawer (Dropdown) */}
+      <div className={`mobile-drawer ${isOpen ? 'active' : ''}`}>
         {navItems.map((item) => (
           <a
             key={item.href}
@@ -331,8 +274,9 @@ export default function Header() {
               color: '#ffffff',
               fontSize: '1.05rem',
               fontWeight: 600,
-              padding: '10px 0',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.06)'
+              padding: '12px 0',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              display: 'block'
             }}
           >
             {item.label}
@@ -341,9 +285,27 @@ export default function Header() {
 
         {user ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '10px' }}>
-            <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.88rem' }}>
-              სალამი, {user.name || user.email}
-            </span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.9rem', fontWeight: 600 }}>
+                სალამი, {user.name || user.email}
+              </span>
+              {role === 'admin' && (
+                <button
+                  onClick={() => { setIsOpen(false); navigate('/admin-dashboard'); }}
+                  style={{
+                    padding: '6px 12px',
+                    background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
+                    color: '#fff',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontSize: '0.8rem',
+                    fontWeight: 700
+                  }}
+                >
+                  ადმინ პანელი
+                </button>
+              )}
+            </div>
             <button
               onClick={() => { setIsOpen(false); logout(); }}
               style={{
@@ -351,7 +313,7 @@ export default function Header() {
                 background: 'rgba(239, 68, 68, 0.15)',
                 border: '1px solid rgba(239, 68, 68, 0.3)',
                 color: '#f87171',
-                borderRadius: '8px',
+                borderRadius: '10px',
                 fontWeight: 600,
                 cursor: 'pointer'
               }}
@@ -369,7 +331,8 @@ export default function Header() {
               color: '#fff',
               borderRadius: '10px',
               fontWeight: 600,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              marginTop: '4px'
             }}
           >
             რეგისტრაცია / შესვლა
@@ -383,10 +346,12 @@ export default function Header() {
             padding: '14px',
             background: 'linear-gradient(135deg, #8b0000 0%, #c41e3a 100%)',
             color: '#fff',
-            borderRadius: '10px',
+            borderRadius: '12px',
             fontWeight: 700,
             textAlign: 'center',
-            textDecoration: 'none'
+            textDecoration: 'none',
+            boxShadow: '0 4px 16px rgba(139, 0, 0, 0.45)',
+            marginTop: '4px'
           }}
         >
           ონლაინ რეგისტრაცია
