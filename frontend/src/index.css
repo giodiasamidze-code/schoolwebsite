@@ -39,6 +39,14 @@
   padding: 0;
 }
 
+/* Custom Luxury Cursor Global Hide (Desktop fine pointer) */
+@media (hover: hover) and (pointer: fine) {
+  html, body, *, *::before, *::after,
+  button, a, input, select, textarea, [role="button"], label, div, span, p, h1, h2, h3, h4, h5, h6 {
+    cursor: none !important;
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }
