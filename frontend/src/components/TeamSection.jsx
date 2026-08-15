@@ -158,30 +158,39 @@ export default function TeamSection() {
     : allTeachersList.filter(t => t.category === activeSubject);
 
   return (
-    <section className="team-section bg-cream-dark" id="teachers">
-      <div className="container">
+    <section className="team-section" id="teachers" style={{ position: 'relative', overflow: 'hidden', padding: '90px 0 60px' }}>
+      
+      {/* Luxury Background Watermark */}
+      <div className="section-watermark">
+        FACULTY
+      </div>
+
+      <div className="container" style={{ position: 'relative', zIndex: 2, width: '92%', maxWidth: '1360px', margin: '0 auto' }}>
         <span className="section-eyebrow">ჩვენი გუნდი</span>
         <h2 className="section-title">აკადემიური ლიდერები და მასწავლებლები</h2>
         <p className="section-desc">
           სკოლის წარმატებას განაპირობებენ მაღალი კვალიფიკაციის მქონე პროფესიონალები, რომლებიც მუდმივად ზრუნავენ სწავლების ხარისხის განვითარებაზე.
         </p>
 
-        {/* Director Spotlight Section */}
-        <div className="director-card">
-          <div className="director-image-wrapper">
-            <img src={director.image} alt={director.name} className="director-headshot" />
-          </div>
-          <div className="director-content">
-            <Quote className="quote-icon text-gold" size={32} />
-            <p className="director-quote">{director.quote}</p>
-            <h3 className="director-name">{director.name}</h3>
-            <span className="director-role">{director.role}</span>
-            <button 
-              className="btn btn-outline btn-sm mt-4"
-              onClick={() => setSelectedTeacher(director)}
-            >
-              სრული რეზიუმე
-            </button>
+        {/* Director Spotlight Section with Border Beam */}
+        <div className="border-beam-container" style={{ borderRadius: '24px', margin: '0 auto 48px', maxWidth: '1000px' }}>
+          <div className="border-beam" />
+          <div className="director-card spotlight-card" style={{ position: 'relative', zIndex: 1, margin: 0, width: '100%' }}>
+            <div className="director-image-wrapper">
+              <img src={director.image} alt={director.name} className="director-headshot" />
+            </div>
+            <div className="director-content">
+              <Quote className="quote-icon text-gold" size={32} />
+              <p className="director-quote">{director.quote}</p>
+              <h3 className="director-name">{director.name}</h3>
+              <span className="director-role">{director.role}</span>
+              <button 
+                className="btn btn-outline btn-sm mt-4"
+                onClick={() => setSelectedTeacher(director)}
+              >
+                სრული რეზიუმე
+              </button>
+            </div>
           </div>
         </div>
 
@@ -198,10 +207,10 @@ export default function TeamSection() {
           ))}
         </div>
 
-        {/* Teachers Grid */}
+        {/* Teachers Grid with Spotlight Cards */}
         <div className="card-grid">
           {filteredTeachers.map((teacher) => (
-            <div key={teacher.id} className="card teacher-card fade-in">
+            <div key={teacher.id} className="card teacher-card spotlight-card fade-in">
               <div className="teacher-avatar">
                 <img src={teacher.image} alt={teacher.name} className="teacher-headshot" />
               </div>
@@ -217,6 +226,13 @@ export default function TeamSection() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Luxury Gold Divider */}
+      <div className="luxury-divider" style={{ marginTop: '50px' }}>
+        <div className="luxury-divider-line" />
+        <span className="luxury-divider-star">✦ ✦ ✦</span>
+        <div className="luxury-divider-line" />
       </div>
 
       {/* CV Modal Overlay */}

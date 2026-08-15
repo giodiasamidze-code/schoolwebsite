@@ -44,8 +44,14 @@ export default function NewsSection() {
   ];
 
   return (
-    <section className="news-section" id="news" style={{ padding: '80px 0' }}>
-      <div className="container">
+    <section className="news-section" id="news" style={{ padding: '90px 0 60px', position: 'relative', overflow: 'hidden' }}>
+      
+      {/* Luxury Background Watermark */}
+      <div className="section-watermark">
+        DISPATCHES
+      </div>
+
+      <div className="container" style={{ position: 'relative', zIndex: 2, width: '92%', maxWidth: '1360px', margin: '0 auto' }}>
         <span className="section-eyebrow">სიახლეები</span>
         <h2 className="section-title">სკოლის აკადემიური სიახლეები & განცხადებები</h2>
         <p className="section-desc">
@@ -56,32 +62,33 @@ export default function NewsSection() {
           {displayNews.map((item) => (
             <div
               key={item.id}
-              className="card fade-in"
+              className="card spotlight-card fade-in"
               style={{
-                background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '16px',
+                background: 'linear-gradient(145deg, rgba(32, 11, 15, 0.9), rgba(18, 6, 8, 0.98))',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '20px',
                 overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column',
-                boxShadow: '0 16px 36px rgba(0,0,0,0.35)',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: '0 16px 40px rgba(0,0,0,0.5)',
                 cursor: 'pointer',
-                backdropFilter: 'blur(12px)'
+                backdropFilter: 'blur(16px)'
               }}
               onClick={() => setSelectedArticle(item)}
             >
               {item.image_url && (
-                <div style={{ height: '200px', overflow: 'hidden', background: '#000' }}>
+                <div style={{ height: '220px', overflow: 'hidden', background: '#000', position: 'relative', zIndex: 2 }}>
                   <img
                     src={item.image_url}
                     alt={item.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                   />
                 </div>
               )}
 
-              <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+              <div style={{ padding: '26px', display: 'flex', flexDirection: 'column', flexGrow: 1, position: 'relative', zIndex: 2 }}>
                 <span style={{ fontSize: '0.82rem', color: '#ff8598', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', fontWeight: 600 }}>
                   <Calendar size={14} />
                   {new Date(item.published_at).toLocaleDateString('ka-GE', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -91,11 +98,11 @@ export default function NewsSection() {
                   {item.title}
                 </h3>
 
-                <p style={{ fontSize: '0.92rem', color: 'var(--text-muted)', lineHeight: 1.6, flexGrow: 1, marginBottom: '16px', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                <p style={{ fontSize: '0.92rem', color: 'rgba(255, 255, 255, 0.72)', lineHeight: 1.65, flexGrow: 1, marginBottom: '20px', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                   {item.content}
                 </p>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-secondary)', fontWeight: 700, fontSize: '0.9rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-secondary, #d4af37)', fontWeight: 700, fontSize: '0.9rem', marginTop: 'auto' }}>
                   <span>სრულად წაკითხვა</span>
                   <ArrowRight size={16} />
                 </div>
@@ -105,35 +112,72 @@ export default function NewsSection() {
         </div>
       </div>
 
+      {/* Luxury Gold Divider */}
+      <div className="luxury-divider" style={{ marginTop: '50px' }}>
+        <div className="luxury-divider-line" />
+        <span className="luxury-divider-star">✦</span>
+        <div className="luxury-divider-line" />
+      </div>
+
       {/* Article Detail Modal */}
       {selectedArticle && (
         <div className="modal-overlay" onClick={() => setSelectedArticle(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '680px', background: '#1c0a0d', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '20px' }}>
-            <button className="modal-close" onClick={() => setSelectedArticle(null)}>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: 'rgba(24, 9, 11, 0.98)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '24px',
+              maxWidth: '720px',
+              padding: '36px',
+              boxShadow: '0 24px 80px rgba(0,0,0,0.8)',
+              backdropFilter: 'blur(24px)'
+            }}
+          >
+            <button
+              className="modal-close"
+              onClick={() => setSelectedArticle(null)}
+              style={{
+                position: 'absolute',
+                top: '20px',
+                right: '20px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: 'none',
+                borderRadius: '50%',
+                width: '36px',
+                height: '36px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#fff',
+                cursor: 'pointer'
+              }}
+            >
               <X size={20} />
             </button>
 
             {selectedArticle.image_url && (
-              <img
-                src={selectedArticle.image_url}
-                alt={selectedArticle.title}
-                style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '16px 16px 0 0', marginBottom: '20px' }}
-              />
+              <div style={{ borderRadius: '16px', overflow: 'hidden', maxHeight: '320px', marginBottom: '24px', background: '#000' }}>
+                <img
+                  src={selectedArticle.image_url}
+                  alt={selectedArticle.title}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
             )}
 
-            <div style={{ padding: '0 8px 16px' }}>
-              <span style={{ fontSize: '0.85rem', color: '#ff8598', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                <Calendar size={14} />
-                {new Date(selectedArticle.published_at).toLocaleDateString('ka-GE', { day: 'numeric', month: 'long', year: 'numeric' })}
-              </span>
+            <span style={{ fontSize: '0.85rem', color: '#ff8598', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px', fontWeight: 600 }}>
+              <Calendar size={14} />
+              {new Date(selectedArticle.published_at).toLocaleDateString('ka-GE', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </span>
 
-              <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', color: '#ffffff', marginBottom: '16px', lineHeight: 1.3 }}>
-                {selectedArticle.title}
-              </h2>
+            <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', color: '#ffffff', marginBottom: '16px', lineHeight: 1.3, fontWeight: 700 }}>
+              {selectedArticle.title}
+            </h2>
 
-              <div style={{ fontSize: '1rem', color: 'var(--text-dark)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>
-                {selectedArticle.content}
-              </div>
+            <div style={{ fontSize: '1rem', color: 'rgba(255, 255, 255, 0.85)', lineHeight: 1.8, whiteSpace: 'pre-line' }}>
+              {selectedArticle.content}
             </div>
           </div>
         </div>

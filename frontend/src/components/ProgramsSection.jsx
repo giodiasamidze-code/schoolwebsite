@@ -68,8 +68,14 @@ export default function ProgramsSection() {
   const SelectedIcon = selected.icon;
 
   return (
-    <section className="programs-section" id="programs" style={{ padding: '80px 0', position: 'relative' }}>
-      <div className="container" style={{ width: '92%', maxWidth: '1360px', margin: '0 auto' }}>
+    <section className="programs-section" id="programs" style={{ padding: '90px 0 60px', position: 'relative', overflow: 'hidden' }}>
+      
+      {/* Luxury Background Watermark */}
+      <div className="section-watermark">
+        CURRICULUM
+      </div>
+
+      <div className="container" style={{ position: 'relative', zIndex: 2, width: '92%', maxWidth: '1360px', margin: '0 auto' }}>
         
         {/* Section Header */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
@@ -85,13 +91,15 @@ export default function ProgramsSection() {
           display: 'flex',
           justifyContent: 'center',
           gap: '10px',
-          background: 'rgba(255, 255, 255, 0.03)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'rgba(28, 10, 14, 0.85)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
           borderRadius: '16px',
           padding: '8px',
           maxWidth: '680px',
           margin: '0 auto 48px',
-          flexWrap: 'wrap'
+          flexWrap: 'wrap',
+          backdropFilter: 'blur(16px)',
+          boxShadow: '0 12px 32px rgba(0,0,0,0.4)'
         }}>
           {categories.map((cat) => (
             <button
@@ -122,158 +130,174 @@ export default function ProgramsSection() {
           ))}
         </div>
 
-        {/* Master Showcase Bento Card */}
-        <div style={{
-          background: 'linear-gradient(145deg, rgba(38, 14, 19, 0.75), rgba(20, 7, 9, 0.9))',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
-          borderRadius: '24px',
-          padding: '40px',
-          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.45)',
-          backdropFilter: 'blur(20px)',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-          gap: '40px',
-          alignItems: 'center'
-        }}>
-          
-          {/* Left Details */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
-              <div style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '14px',
-                background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 6px 18px rgba(139, 0, 0, 0.4)'
-              }}>
-                <SelectedIcon size={24} color="#ffffff" />
-              </div>
-              <div>
-                <span style={{
-                  padding: '3px 10px',
-                  borderRadius: '20px',
-                  background: 'rgba(212, 175, 55, 0.12)',
-                  border: '1px solid rgba(212, 175, 55, 0.35)',
-                  color: 'var(--accent-secondary, #d4af37)',
-                  fontSize: '0.78rem',
-                  fontWeight: 700
-                }}>
-                  ასაკი: {selected.age}
-                </span>
-                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.75rem', color: '#fff', margin: '4px 0 0', fontWeight: 700 }}>
-                  {selected.title}
-                </h3>
-              </div>
-            </div>
-
-            <div style={{ color: '#ff8598', fontWeight: 600, fontSize: '0.95rem', marginBottom: '16px' }}>
-              {selected.track}
-            </div>
-
-            <p style={{ fontSize: '1.05rem', color: 'rgba(255, 255, 255, 0.8)', lineHeight: 1.7, marginBottom: '24px' }}>
-              {selected.description}
-            </p>
-
-            {/* Curriculum Highlights with Checkmarks */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
-              {selected.highlights.map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <CheckCircle2 size={18} color="var(--accent-secondary, #d4af37)" style={{ flexShrink: 0 }} />
-                  <span style={{ fontSize: '0.92rem', color: '#f3ece3' }}>{item}</span>
-                </div>
-              ))}
-            </div>
-
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '8px 16px',
-              background: 'rgba(0, 0, 0, 0.4)',
-              borderRadius: '10px',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              fontSize: '0.85rem',
-              color: 'rgba(255, 255, 255, 0.7)'
-            }}>
-              <Clock size={16} color="#ff8598" />
-              <span>განრიგი: <strong>{selected.schedule}</strong></span>
-            </div>
-          </div>
-
-          {/* Right: Subject Chips & Apply CTA */}
-          <div style={{
-            background: 'rgba(0, 0, 0, 0.35)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '20px',
-            padding: '30px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px'
-          }}>
+        {/* Master Showcase Bento Card with Border Beam */}
+        <div className="border-beam-container" style={{ borderRadius: '24px' }}>
+          <div className="border-beam" />
+          <div
+            className="spotlight-card"
+            style={{
+              position: 'relative',
+              zIndex: 1,
+              background: 'linear-gradient(145deg, rgba(38, 14, 19, 0.88), rgba(20, 7, 9, 0.96))',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: '24px',
+              padding: '40px',
+              boxShadow: '0 24px 60px rgba(0, 0, 0, 0.55)',
+              backdropFilter: 'blur(20px)',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: '40px',
+              alignItems: 'center'
+            }}
+          >
+            
+            {/* Left Details */}
             <div>
-              <div style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--accent-secondary, #d4af37)', marginBottom: '14px' }}>
-                ძირითადი საგნობრივი მოდულები:
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {selected.subjects.map((sub, i) => (
-                  <span
-                    key={i}
-                    style={{
-                      padding: '8px 14px',
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '10px',
-                      color: '#ffffff',
-                      fontSize: '0.85rem',
-                      fontWeight: 500
-                    }}
-                  >
-                    {sub}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
+                <div style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '14px',
+                  background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 6px 18px rgba(139, 0, 0, 0.45)'
+                }}>
+                  <SelectedIcon size={24} color="#ffffff" />
+                </div>
+                <div>
+                  <span style={{
+                    padding: '3px 10px',
+                    borderRadius: '20px',
+                    background: 'rgba(212, 175, 55, 0.12)',
+                    border: '1px solid rgba(212, 175, 55, 0.35)',
+                    color: 'var(--accent-secondary, #d4af37)',
+                    fontSize: '0.78rem',
+                    fontWeight: 700
+                  }}>
+                    ასაკი: {selected.age}
                   </span>
+                  <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.75rem', color: '#fff', margin: '4px 0 0', fontWeight: 700 }}>
+                    {selected.title}
+                  </h3>
+                </div>
+              </div>
+
+              <div style={{ color: '#ff8598', fontWeight: 600, fontSize: '0.95rem', marginBottom: '16px' }}>
+                {selected.track}
+              </div>
+
+              <p style={{ fontSize: '1.05rem', color: 'rgba(255, 255, 255, 0.8)', lineHeight: 1.7, marginBottom: '24px' }}>
+                {selected.description}
+              </p>
+
+              {/* Curriculum Highlights with Checkmarks */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+                {selected.highlights.map((item, idx) => (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <CheckCircle2 size={18} color="var(--accent-secondary, #d4af37)" style={{ flexShrink: 0 }} />
+                    <span style={{ fontSize: '0.92rem', color: '#f3ece3' }}>{item}</span>
+                  </div>
                 ))}
               </div>
+
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 16px',
+                background: 'rgba(0, 0, 0, 0.45)',
+                borderRadius: '10px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                fontSize: '0.85rem',
+                color: 'rgba(255, 255, 255, 0.75)'
+              }}>
+                <Clock size={16} color="#ff8598" />
+                <span>განრიგი: <strong>{selected.schedule}</strong></span>
+              </div>
             </div>
 
+            {/* Right: Subject Chips & Apply CTA */}
             <div style={{
-              padding: '16px',
-              background: 'rgba(196, 30, 58, 0.12)',
-              border: '1px solid rgba(196, 30, 58, 0.3)',
-              borderRadius: '14px'
+              background: 'rgba(0, 0, 0, 0.45)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '20px',
+              padding: '30px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '20px'
             }}>
-              <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem', marginBottom: '4px' }}>
-                გსურთ ამ საფეხურზე რეგისტრაცია?
+              <div>
+                <div style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--accent-secondary, #d4af37)', marginBottom: '14px' }}>
+                  ძირითადი საგნობრივი მოდულები:
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {selected.subjects.map((sub, i) => (
+                    <span
+                      key={i}
+                      style={{
+                        padding: '8px 14px',
+                        background: 'rgba(255, 255, 255, 0.06)',
+                        border: '1px solid rgba(255, 255, 255, 0.12)',
+                        borderRadius: '10px',
+                        color: '#ffffff',
+                        fontSize: '0.85rem',
+                        fontWeight: 500
+                      }}
+                    >
+                      {sub}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <div style={{ fontSize: '0.82rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '14px' }}>
-                შეავსეთ ონლაინ განაცხადი 2 წუთში და დაჯავშნეთ გასაუბრება დირექციასთან.
+
+              <div style={{
+                padding: '18px',
+                background: 'linear-gradient(135deg, rgba(139, 0, 0, 0.3), rgba(196, 30, 58, 0.15))',
+                border: '1px solid rgba(196, 30, 58, 0.35)',
+                borderRadius: '14px'
+              }}>
+                <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.98rem', marginBottom: '4px' }}>
+                  გსურთ ამ საფეხურზე რეგისტრაცია?
+                </div>
+                <div style={{ fontSize: '0.82rem', color: 'rgba(255, 255, 255, 0.72)', marginBottom: '14px' }}>
+                  შეავსეთ ონლაინ განაცხადი 2 წუთში და დაჯავშნეთ გასაუბრება დირექციასთან.
+                </div>
+                <a
+                  href="#admissions"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '10px 20px',
+                    background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
+                    color: '#fff',
+                    borderRadius: '10px',
+                    fontWeight: 700,
+                    fontSize: '0.88rem',
+                    textDecoration: 'none',
+                    boxShadow: '0 4px 16px rgba(139, 0, 0, 0.45)',
+                    border: '1px solid rgba(255, 255, 255, 0.15)'
+                  }}
+                >
+                  <span>განაცხადის შევსება</span>
+                  <ArrowRight size={16} />
+                </a>
               </div>
-              <a
-                href="#admissions"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '10px 20px',
-                  background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
-                  color: '#fff',
-                  borderRadius: '10px',
-                  fontWeight: 700,
-                  fontSize: '0.88rem',
-                  textDecoration: 'none',
-                  boxShadow: '0 4px 16px rgba(139, 0, 0, 0.4)'
-                }}
-              >
-                <span>განაცხადის შევსება</span>
-                <ArrowRight size={16} />
-              </a>
+
             </div>
 
           </div>
-
         </div>
 
+      </div>
+
+      {/* Luxury Gold Divider */}
+      <div className="luxury-divider" style={{ marginTop: '50px' }}>
+        <div className="luxury-divider-line" />
+        <span className="luxury-divider-star">✦</span>
+        <div className="luxury-divider-line" />
       </div>
     </section>
   );

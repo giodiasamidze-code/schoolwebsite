@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import StatsBar from './components/StatsBar';
@@ -11,24 +11,59 @@ import TeacherDashboard from './components/TeacherDashboard';
 import AdminDashboard from './components/AdminDashboard';
 import AdminLoginPage from './components/AdminLoginPage';
 import ParentAccountPage from './components/ParentAccountPage';
+import CustomCursor from './components/CustomCursor';
+import FloatingDock from './components/FloatingDock';
 import { useAuth } from './components/AuthContext';
 
 export default function App() {
   const { path } = useAuth();
 
+  // Mouse Spotlight Effect on cards
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      const cards = document.querySelectorAll('.spotlight-card');
+      cards.forEach((card) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   // Standalone portals — dedicated executive header/navigation
   if (path === '/admin') {
-    return <AdminLoginPage />;
+    return (
+      <>
+        <CustomCursor />
+        <AdminLoginPage />
+      </>
+    );
   }
   if (path === '/admin-dashboard') {
-    return <AdminDashboard />;
+    return (
+      <>
+        <CustomCursor />
+        <AdminDashboard />
+      </>
+    );
   }
   if (path === '/teacher-dashboard') {
-    return <TeacherDashboard />;
+    return (
+      <>
+        <CustomCursor />
+        <TeacherDashboard />
+      </>
+    );
   }
 
   return (
     <div className="app-wrapper">
+      <CustomCursor />
       <Header />
       {path === '/register' ? (
         <RegistrationPage />
@@ -44,7 +79,7 @@ export default function App() {
         </main>
       )}
       <Footer />
+      <FloatingDock />
     </div>
   );
 }
-
