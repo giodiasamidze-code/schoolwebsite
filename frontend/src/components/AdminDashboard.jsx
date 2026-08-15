@@ -889,7 +889,15 @@ export default function AdminDashboard() {
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <main style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', padding: '28px 24px 60px', flex: 1 }}>
+      <main style={{
+        maxWidth: '1400px',
+        width: '100%',
+        margin: '0 auto',
+        padding: '28px 24px 60px',
+        flex: 1,
+        position: 'relative',
+        zIndex: 10
+      }}>
 
         {/* 1. EXECUTIVE KPI STATS CARDS */}
         <div style={{

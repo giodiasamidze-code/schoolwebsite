@@ -100,7 +100,9 @@ export default function AdminLoginPage() {
         width: '100%',
         maxWidth: '440px',
         backdropFilter: 'blur(16px)',
-        boxShadow: '0 32px 80px rgba(0,0,0,0.6)'
+        boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
+        position: 'relative',
+        zIndex: 10
       }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
