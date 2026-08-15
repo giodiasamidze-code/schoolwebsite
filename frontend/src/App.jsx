@@ -12,7 +12,6 @@ import AdminDashboard from './components/AdminDashboard';
 import AdminLoginPage from './components/AdminLoginPage';
 import ParentAccountPage from './components/ParentAccountPage';
 import CustomCursor from './components/CustomCursor';
-import FloatingDock from './components/FloatingDock';
 import { useAuth } from './components/AuthContext';
 
 export default function App() {
@@ -79,7 +78,6 @@ export default function App() {
         </main>
       )}
       <Footer />
-      <FloatingDock />
     </div>
   );
 }

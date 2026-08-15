@@ -172,25 +172,22 @@ export default function TeamSection() {
           სკოლის წარმატებას განაპირობებენ მაღალი კვალიფიკაციის მქონე პროფესიონალები, რომლებიც მუდმივად ზრუნავენ სწავლების ხარისხის განვითარებაზე.
         </p>
 
-        {/* Director Spotlight Section with Border Beam */}
-        <div className="border-beam-container" style={{ borderRadius: '24px', margin: '0 auto 48px', maxWidth: '1000px' }}>
-          <div className="border-beam" />
-          <div className="director-card spotlight-card" style={{ position: 'relative', zIndex: 1, margin: 0, width: '100%' }}>
-            <div className="director-image-wrapper">
-              <img src={director.image} alt={director.name} className="director-headshot" />
-            </div>
-            <div className="director-content">
-              <Quote className="quote-icon text-gold" size={32} />
-              <p className="director-quote">{director.quote}</p>
-              <h3 className="director-name">{director.name}</h3>
-              <span className="director-role">{director.role}</span>
-              <button 
-                className="btn btn-outline btn-sm mt-4"
-                onClick={() => setSelectedTeacher(director)}
-              >
-                სრული რეზიუმე
-              </button>
-            </div>
+        {/* Director Spotlight Section */}
+        <div className="director-card spotlight-card" style={{ maxWidth: '1000px', margin: '0 auto 48px' }}>
+          <div className="director-image-wrapper">
+            <img src={director.image} alt={director.name} className="director-headshot" />
+          </div>
+          <div className="director-content">
+            <Quote className="quote-icon text-gold" size={32} />
+            <p className="director-quote">{director.quote}</p>
+            <h3 className="director-name">{director.name}</h3>
+            <span className="director-role">{director.role}</span>
+            <button 
+              className="btn btn-outline btn-sm mt-4"
+              onClick={() => setSelectedTeacher(director)}
+            >
+              სრული რეზიუმე
+            </button>
           </div>
         </div>
 

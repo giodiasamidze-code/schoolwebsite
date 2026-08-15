@@ -130,26 +130,22 @@ export default function ProgramsSection() {
           ))}
         </div>
 
-        {/* Master Showcase Bento Card with Border Beam */}
-        <div className="border-beam-container" style={{ borderRadius: '24px' }}>
-          <div className="border-beam" />
-          <div
-            className="spotlight-card"
-            style={{
-              position: 'relative',
-              zIndex: 1,
-              background: 'linear-gradient(145deg, rgba(38, 14, 19, 0.88), rgba(20, 7, 9, 0.96))',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              borderRadius: '24px',
-              padding: '40px',
-              boxShadow: '0 24px 60px rgba(0, 0, 0, 0.55)',
-              backdropFilter: 'blur(20px)',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-              gap: '40px',
-              alignItems: 'center'
-            }}
-          >
+        {/* Master Showcase Bento Card */}
+        <div
+          className="spotlight-card"
+          style={{
+            background: 'rgba(28, 10, 14, 0.96)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: '24px',
+            padding: '40px',
+            boxShadow: '0 24px 60px rgba(0, 0, 0, 0.55)',
+            backdropFilter: 'blur(20px)',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: '40px',
+            alignItems: 'center'
+          }}
+        >
             
             {/* Left Details */}
             <div>
@@ -289,7 +285,6 @@ export default function ProgramsSection() {
             </div>
 
           </div>
-        </div>
 
       </div>
 

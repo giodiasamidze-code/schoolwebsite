@@ -325,17 +325,15 @@ export default function AdmissionsSection() {
           </div>
         </div>
 
-        {/* 2. Online Application Form with Shimmer Border Beam */}
-        <div className="border-beam-container" style={{ borderRadius: '24px', margin: '3.5rem auto 0', maxWidth: '850px' }}>
-          <div className="border-beam" />
-          <div className="single-form-container spotlight-card" style={{ position: 'relative', zIndex: 1, margin: 0 }}>
-            <div className="form-card-container">
-              <h3 className="form-card-heading">ონლაინ განაცხადი & დოკუმენტების ატვირთვა</h3>
-              <p className="form-card-subheading">დაიწყეთ რეგისტრაციის პროცესი ონლაინ განაცხადის შევსებით და დოკუმენტაციის ატვირთვით.</p>
-              
-              <form onSubmit={handleAppSubmit}>
-                <div className="form-row">
-                  <div className="form-group">
+        {/* 2. Online Application Form */}
+        <div className="single-form-container spotlight-card">
+          <div className="form-card-container">
+            <h3 className="form-card-heading">ონლაინ განაცხადი & დოკუმენტების ატვირთვა</h3>
+            <p className="form-card-subheading">დაიწყეთ რეგისტრაციის პროცესი ონლაინ განაცხადის შევსებით და დოკუმენტაციის ატვირთვით.</p>
+            
+            <form onSubmit={handleAppSubmit}>
+              <div className="form-row">
+                <div className="form-group">
                   <label className="form-label" htmlFor="app-student-name">მოსწავლის სახელი და გვარი *</label>
                   <input
                     id="app-student-name"
@@ -562,7 +560,6 @@ export default function AdmissionsSection() {
             </form>
           </div>
         </div>
-      </div>
 
       </div>
     </section>

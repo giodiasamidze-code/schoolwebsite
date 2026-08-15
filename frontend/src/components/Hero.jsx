@@ -148,37 +148,30 @@ export default function Hero() {
 
             {/* Action CTAs */}
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
-              
-              {/* Shimmer Border Beam Primary CTA */}
-              <div className="border-beam-container" style={{ borderRadius: '14px' }}>
-                <div className="border-beam" />
-                <a
-                  href="#admissions"
-                  onClick={(e) => handleScrollTo(e, '#admissions')}
-                  style={{
-                    position: 'relative',
-                    zIndex: 1,
-                    padding: '14px 28px',
-                    background: 'linear-gradient(135deg, #8b0000 0%, #c41e3a 100%)',
-                    color: '#ffffff',
-                    borderRadius: '12px',
-                    fontWeight: 700,
-                    fontSize: '0.95rem',
-                    textDecoration: 'none',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    boxShadow: '0 8px 24px rgba(196, 30, 58, 0.5)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    transition: 'all 0.25s'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-                >
-                  <span>ონლაინ რეგისტრაცია</span>
-                  <ArrowRight size={18} />
-                </a>
-              </div>
+              <a
+                href="#admissions"
+                onClick={(e) => handleScrollTo(e, '#admissions')}
+                style={{
+                  padding: '14px 28px',
+                  background: 'linear-gradient(135deg, #8b0000 0%, #c41e3a 100%)',
+                  color: '#ffffff',
+                  borderRadius: '12px',
+                  fontWeight: 700,
+                  fontSize: '0.95rem',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 8px 24px rgba(196, 30, 58, 0.5)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  transition: 'all 0.25s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              >
+                <span>ონლაინ რეგისტრაცია</span>
+                <ArrowRight size={18} />
+              </a>
 
               <a
                 href="#programs"
@@ -252,22 +245,18 @@ export default function Hero() {
 
           </div>
 
-          {/* Right Column: Interactive Academy Feature Card (Admin Style Bento with Shimmer Beam) */}
-          <div className="border-beam-container" style={{ borderRadius: '24px' }}>
-            <div className="border-beam" />
-            <div
-              className="spotlight-card"
-              style={{
-                position: 'relative',
-                zIndex: 1,
-                background: 'linear-gradient(145deg, rgba(38, 14, 19, 0.88), rgba(20, 7, 9, 0.95))',
-                border: '1px solid rgba(255, 255, 255, 0.14)',
-                borderRadius: '24px',
-                padding: '32px',
-                boxShadow: '0 24px 60px rgba(0, 0, 0, 0.6)',
-                backdropFilter: 'blur(20px)'
-              }}
-            >
+          {/* Right Column: Interactive Academy Feature Card (Admin Style Bento) */}
+          <div
+            className="spotlight-card"
+            style={{
+              background: 'rgba(28, 10, 14, 0.96)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: '24px',
+              padding: '32px',
+              boxShadow: '0 24px 60px rgba(0, 0, 0, 0.6)',
+              backdropFilter: 'blur(20px)'
+            }}
+          >
               
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -435,7 +424,6 @@ export default function Hero() {
               </div>
 
             </div>
-          </div>
 
         </div>
 
