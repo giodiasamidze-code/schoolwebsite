@@ -25,7 +25,7 @@ export default function Hero() {
       minHeight: '100vh',
       display: 'flex',
       alignItems: 'center',
-      padding: '120px 0 80px',
+      padding: 'clamp(110px, 14vw, 140px) 0 60px',
       overflow: 'hidden'
     }}>
       
@@ -71,8 +71,8 @@ export default function Hero() {
         
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-          gap: '48px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '40px',
           alignItems: 'center'
         }}>
 

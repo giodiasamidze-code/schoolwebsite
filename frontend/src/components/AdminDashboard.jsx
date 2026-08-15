@@ -113,12 +113,12 @@ export default function AdminDashboard() {
             minHeight: 200.0,
             minWidth: 200.0,
             scale: 1.0,
-            scaleMobile: 1.0,
+            scaleMobile: 0.5,
             color: 0xc41e3a,
             backgroundColor: 0x140709,
-            points: 12.0,
-            maxDistance: 20.0,
-            spacing: 19.0
+            points: 8.0,
+            maxDistance: 16.0,
+            spacing: 22.0
           });
         } catch (err) {
           console.warn('Vanta initialization warning:', err);
@@ -1383,17 +1383,17 @@ export default function AdminDashboard() {
         {/* TAB 0: EXECUTIVE OVERVIEW                                      */}
         {/* ============================================================== */}
         {activeTab === 'overview' && (
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
               {/* Quick Actions Panel */}
               <div style={{
-                background: 'rgba(28, 10, 14, 0.9)',
+                background: 'rgba(28, 10, 14, 0.94)',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '16px',
                 padding: '24px',
-                boxShadow: '0 16px 40px rgba(0,0,0,0.4)',
+                boxShadow: '0 16px 40px rgba(0,0,0,0.5)',
                 backdropFilter: 'blur(16px)'
               }}>
                 <h3 style={{
@@ -1485,14 +1485,14 @@ export default function AdminDashboard() {
 
               {/* Pending Moderations Preview */}
               <div style={{
-                background: 'rgba(28, 10, 14, 0.9)',
+                background: 'rgba(28, 10, 14, 0.94)',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '16px',
                 padding: '24px',
-                boxShadow: '0 16px 40px rgba(0,0,0,0.4)',
+                boxShadow: '0 16px 40px rgba(0,0,0,0.5)',
                 backdropFilter: 'blur(16px)'
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
                   <h3 style={{
                     fontFamily: 'var(--font-serif, Georgia, serif)',
                     fontSize: '1.25rem',
@@ -1512,7 +1512,8 @@ export default function AdminDashboard() {
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '4px'
+                      gap: '4px',
+                      whiteSpace: 'nowrap'
                     }}
                   >
                     სრულად ნახვა <ChevronRight size={14} />
@@ -1660,7 +1661,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Status Filter */}
-              <div style={{ display: 'flex', gap: '6px' }}>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 {['all', 'pending', 'approved', 'rejected'].map((st) => (
                   <button
                     key={st}
@@ -1669,7 +1670,7 @@ export default function AdminDashboard() {
                       padding: '6px 12px',
                       borderRadius: '8px',
                       border: editFilter === st ? '1px solid #c41e3a' : '1px solid rgba(255,255,255,0.1)',
-                      background: editFilter === st ? 'linear-gradient(135deg, #8b0000, #c41e3a)' : 'rgba(255,255,255,0.04)',
+                      background: editFilter === st ? 'linear-gradient(135deg, #8b0000, #c41e3a)' : 'rgba(28, 10, 14, 0.85)',
                       color: '#ffffff',
                       fontSize: '0.8rem',
                       fontWeight: 500,
@@ -1684,12 +1685,14 @@ export default function AdminDashboard() {
 
             {filteredEdits.length === 0 ? (
               <div style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px dashed rgba(255,255,255,0.1)',
+                background: 'rgba(28, 10, 14, 0.94)',
+                border: '1px dashed rgba(255,255,255,0.15)',
                 borderRadius: '16px',
                 padding: '60px 20px',
                 textAlign: 'center',
-                color: 'rgba(255,255,255,0.5)'
+                color: 'rgba(255,255,255,0.6)',
+                backdropFilter: 'blur(16px)',
+                boxShadow: '0 16px 40px rgba(0,0,0,0.5)'
               }}>
                 <ShieldCheck size={48} color="#22c55e" style={{ margin: '0 auto 12px' }} />
                 <h3 style={{ color: '#fff', fontSize: '1.2rem', marginBottom: '6px' }}>
@@ -1710,11 +1713,12 @@ export default function AdminDashboard() {
                     <div
                       key={edit.id}
                       style={{
-                        background: 'rgba(255,255,255,0.04)',
-                        border: isPending ? '1px solid rgba(196, 30, 58, 0.5)' : '1px solid rgba(255,255,255,0.08)',
+                        background: 'rgba(28, 10, 14, 0.94)',
+                        border: isPending ? '1px solid rgba(196, 30, 58, 0.5)' : '1px solid rgba(255,255,255,0.1)',
                         borderRadius: '16px',
                         padding: '24px',
-                        boxShadow: '0 16px 40px rgba(0,0,0,0.4)',
+                        boxShadow: '0 16px 40px rgba(0,0,0,0.5)',
+                        backdropFilter: 'blur(16px)',
                         position: 'relative'
                       }}
                     >
@@ -2078,11 +2082,12 @@ export default function AdminDashboard() {
                     <div
                       key={app.id}
                       style={{
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(255,255,255,0.08)',
+                        background: 'rgba(28, 10, 14, 0.94)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
                         borderRadius: '16px',
                         padding: '22px',
-                        boxShadow: '0 16px 36px rgba(0,0,0,0.35)'
+                        boxShadow: '0 16px 36px rgba(0,0,0,0.5)',
+                        backdropFilter: 'blur(16px)'
                       }}
                     >
                       <div style={{
@@ -2250,11 +2255,12 @@ export default function AdminDashboard() {
             
             {/* Left: Composer */}
             <div style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              background: 'rgba(28, 10, 14, 0.94)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: '16px',
               padding: '24px',
-              boxShadow: '0 16px 40px rgba(0,0,0,0.4)'
+              boxShadow: '0 16px 40px rgba(0,0,0,0.5)',
+              backdropFilter: 'blur(16px)'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                 <h3 style={{ fontFamily: 'var(--font-serif, Georgia, serif)', fontSize: '1.3rem', color: '#fff', margin: 0 }}>
@@ -2309,14 +2315,14 @@ export default function AdminDashboard() {
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'rgba(255,255,255,0.8)', marginBottom: '6px' }}>
                     მთავარი ფოტოს URL ან ატვირთვა
                   </label>
-                  <div style={{ display: 'flex', gap: '10px' }}>
+                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                     <input
                       type="text"
                       placeholder="https://... ან ატვირთეთ ფაილი"
                       value={newsForm.image_url}
                       onChange={(e) => setNewsForm({ ...newsForm, image_url: e.target.value })}
                       style={{
-                        flex: 1,
+                        flex: '1 1 200px',
                         padding: '10px 14px',
                         background: 'rgba(255,255,255,0.06)',
                         border: '1px solid rgba(255,255,255,0.15)',
@@ -2425,12 +2431,14 @@ export default function AdminDashboard() {
 
               {newsList.length === 0 ? (
                 <div style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px dashed rgba(255,255,255,0.1)',
+                  background: 'rgba(28, 10, 14, 0.94)',
+                  border: '1px dashed rgba(255,255,255,0.15)',
                   borderRadius: '14px',
                   padding: '40px 20px',
                   textAlign: 'center',
-                  color: 'rgba(255,255,255,0.5)'
+                  color: 'rgba(255,255,255,0.6)',
+                  backdropFilter: 'blur(16px)',
+                  boxShadow: '0 16px 40px rgba(0,0,0,0.5)'
                 }}>
                   სიახლეები ჯერ არ არის დამატებული.
                 </div>
@@ -2440,13 +2448,15 @@ export default function AdminDashboard() {
                     <div
                       key={n.id}
                       style={{
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(255,255,255,0.08)',
+                        background: 'rgba(28, 10, 14, 0.94)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
                         borderRadius: '14px',
                         padding: '16px',
                         display: 'flex',
                         gap: '14px',
-                        alignItems: 'flex-start'
+                        alignItems: 'flex-start',
+                        backdropFilter: 'blur(16px)',
+                        boxShadow: '0 12px 30px rgba(0,0,0,0.45)'
                       }}
                     >
                       {n.image_url && (
@@ -2846,13 +2856,15 @@ export default function AdminDashboard() {
                 <div
                   key={item.id || idx}
                   style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid rgba(255,255,255,0.08)',
+                    background: 'rgba(28, 10, 14, 0.94)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
                     borderRadius: '12px',
                     padding: '16px',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between'
+                    justifyContent: 'space-between',
+                    backdropFilter: 'blur(16px)',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.4)'
                   }}
                 >
                   <div>
