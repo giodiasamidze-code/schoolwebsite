@@ -115,10 +115,10 @@ export default function AdminDashboard() {
             scale: 1.0,
             scaleMobile: 1.0,
             color: 0xc41e3a,
-            backgroundColor: 0x18090b,
-            points: 20.0,
-            maxDistance: 25.0,
-            spacing: 19.0
+            backgroundColor: 0x140709,
+            points: 10.0,
+            maxDistance: 18.0,
+            spacing: 20.0
           });
         } catch (err) {
           console.warn('Vanta initialization warning:', err);
@@ -938,16 +938,17 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('edits')}
             style={{
               background: activeTab === 'edits'
-                ? 'linear-gradient(145deg, rgba(139, 0, 0, 0.35), rgba(255, 255, 255, 0.04))'
-                : 'rgba(255, 255, 255, 0.03)',
+                ? 'linear-gradient(145deg, rgba(139, 0, 0, 0.45), rgba(30, 10, 14, 0.95))'
+                : 'rgba(28, 10, 14, 0.88)',
               border: activeTab === 'edits'
                 ? '1px solid #c41e3a'
-                : '1px solid rgba(255, 255, 255, 0.08)',
+                : '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: '16px',
               padding: '20px',
               cursor: 'pointer',
               transition: 'all 0.2s',
-              boxShadow: '0 12px 32px rgba(0,0,0,0.3)'
+              boxShadow: '0 16px 36px rgba(0,0,0,0.4)',
+              backdropFilter: 'blur(16px)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
@@ -1002,16 +1003,17 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('queue')}
             style={{
               background: activeTab === 'queue'
-                ? 'linear-gradient(145deg, rgba(139, 0, 0, 0.35), rgba(255, 255, 255, 0.04))'
-                : 'rgba(255, 255, 255, 0.03)',
+                ? 'linear-gradient(145deg, rgba(139, 0, 0, 0.45), rgba(30, 10, 14, 0.95))'
+                : 'rgba(28, 10, 14, 0.88)',
               border: activeTab === 'queue'
                 ? '1px solid #c41e3a'
-                : '1px solid rgba(255, 255, 255, 0.08)',
+                : '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: '16px',
               padding: '20px',
               cursor: 'pointer',
               transition: 'all 0.2s',
-              boxShadow: '0 12px 32px rgba(0,0,0,0.3)'
+              boxShadow: '0 16px 36px rgba(0,0,0,0.4)',
+              backdropFilter: 'blur(16px)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
@@ -1053,16 +1055,17 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('news')}
             style={{
               background: activeTab === 'news'
-                ? 'linear-gradient(145deg, rgba(139, 0, 0, 0.35), rgba(255, 255, 255, 0.04))'
-                : 'rgba(255, 255, 255, 0.03)',
+                ? 'linear-gradient(145deg, rgba(139, 0, 0, 0.45), rgba(30, 10, 14, 0.95))'
+                : 'rgba(28, 10, 14, 0.88)',
               border: activeTab === 'news'
                 ? '1px solid #c41e3a'
-                : '1px solid rgba(255, 255, 255, 0.08)',
+                : '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: '16px',
               padding: '20px',
               cursor: 'pointer',
               transition: 'all 0.2s',
-              boxShadow: '0 12px 32px rgba(0,0,0,0.3)'
+              boxShadow: '0 16px 36px rgba(0,0,0,0.4)',
+              backdropFilter: 'blur(16px)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
@@ -1104,16 +1107,17 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('codes')}
             style={{
               background: activeTab === 'codes'
-                ? 'linear-gradient(145deg, rgba(139, 0, 0, 0.35), rgba(255, 255, 255, 0.04))'
-                : 'rgba(255, 255, 255, 0.03)',
+                ? 'linear-gradient(145deg, rgba(139, 0, 0, 0.45), rgba(30, 10, 14, 0.95))'
+                : 'rgba(28, 10, 14, 0.88)',
               border: activeTab === 'codes'
                 ? '1px solid #c41e3a'
-                : '1px solid rgba(255, 255, 255, 0.08)',
+                : '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: '16px',
               padding: '20px',
               cursor: 'pointer',
               transition: 'all 0.2s',
-              boxShadow: '0 12px 32px rgba(0,0,0,0.3)'
+              boxShadow: '0 16px 36px rgba(0,0,0,0.4)',
+              backdropFilter: 'blur(16px)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
@@ -1157,13 +1161,15 @@ export default function AdminDashboard() {
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
-          background: 'rgba(255,255,255,0.03)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: '14px',
-          padding: '6px',
+          background: 'rgba(28, 10, 14, 0.9)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: '16px',
+          padding: '8px',
           marginBottom: '28px',
           overflowX: 'auto',
-          scrollbarWidth: 'none'
+          scrollbarWidth: 'none',
+          boxShadow: '0 12px 30px rgba(0,0,0,0.4)',
+          backdropFilter: 'blur(16px)'
         }}>
           <button
             onClick={() => setActiveTab('overview')}
@@ -1378,11 +1384,12 @@ export default function AdminDashboard() {
               
               {/* Quick Actions Panel */}
               <div style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: 'rgba(28, 10, 14, 0.9)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '16px',
                 padding: '24px',
-                boxShadow: '0 16px 40px rgba(0,0,0,0.4)'
+                boxShadow: '0 16px 40px rgba(0,0,0,0.4)',
+                backdropFilter: 'blur(16px)'
               }}>
                 <h3 style={{
                   fontFamily: 'var(--font-serif, Georgia, serif)',
@@ -1401,8 +1408,8 @@ export default function AdminDashboard() {
                     onClick={() => setActiveTab('news')}
                     style={{
                       padding: '14px',
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.12)',
                       borderRadius: '12px',
                       color: '#fff',
                       fontSize: '0.9rem',
@@ -1425,8 +1432,8 @@ export default function AdminDashboard() {
                     onClick={() => setActiveTab('codes')}
                     style={{
                       padding: '14px',
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.12)',
                       borderRadius: '12px',
                       color: '#fff',
                       fontSize: '0.9rem',
@@ -1438,7 +1445,7 @@ export default function AdminDashboard() {
                       textAlign: 'left'
                     }}
                   >
-                    <Key size={18} color="#ff8598" />
+                    <Key size={18} color="#d4af37" />
                     <div>
                       <div>კოდის შექმნა</div>
                       <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: 400 }}>მასწავლებლისთვის</div>
@@ -1449,8 +1456,8 @@ export default function AdminDashboard() {
                     onClick={() => setActiveTab('queue')}
                     style={{
                       padding: '14px',
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.12)',
                       borderRadius: '12px',
                       color: '#fff',
                       fontSize: '0.9rem',
@@ -1473,10 +1480,12 @@ export default function AdminDashboard() {
 
               {/* Pending Moderations Preview */}
               <div style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: 'rgba(28, 10, 14, 0.9)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '16px',
-                padding: '24px'
+                padding: '24px',
+                boxShadow: '0 16px 40px rgba(0,0,0,0.4)',
+                backdropFilter: 'blur(16px)'
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                   <h3 style={{
@@ -1509,10 +1518,10 @@ export default function AdminDashboard() {
                   <div style={{
                     padding: '32px 20px',
                     textAlign: 'center',
-                    background: 'rgba(255,255,255,0.02)',
+                    background: 'rgba(0,0,0,0.35)',
                     borderRadius: '12px',
-                    border: '1px dashed rgba(255,255,255,0.1)',
-                    color: 'rgba(255,255,255,0.5)'
+                    border: '1px dashed rgba(255,255,255,0.15)',
+                    color: 'rgba(255,255,255,0.6)'
                   }}>
                     <ShieldCheck size={32} color="#22c55e" style={{ margin: '0 auto 8px' }} />
                     <div>ყველა მასწავლებლის პროფილი შემოწმებულია და დამტკიცებულია!</div>
@@ -1523,8 +1532,8 @@ export default function AdminDashboard() {
                       <div
                         key={edit.id}
                         style={{
-                          background: 'rgba(255,255,255,0.03)',
-                          border: '1px solid rgba(255,255,255,0.06)',
+                          background: 'rgba(0,0,0,0.35)',
+                          border: '1px solid rgba(255,255,255,0.08)',
                           borderRadius: '10px',
                           padding: '14px 16px',
                           display: 'flex',
@@ -1563,11 +1572,12 @@ export default function AdminDashboard() {
               
               {/* System Card */}
               <div style={{
-                background: 'linear-gradient(145deg, rgba(139, 0, 0, 0.3), rgba(255, 255, 255, 0.03))',
-                border: '1px solid rgba(196, 30, 58, 0.4)',
+                background: 'linear-gradient(145deg, rgba(139, 0, 0, 0.45), rgba(28, 10, 14, 0.95))',
+                border: '1px solid rgba(196, 30, 58, 0.45)',
                 borderRadius: '16px',
                 padding: '24px',
-                boxShadow: '0 16px 40px rgba(0,0,0,0.4)'
+                boxShadow: '0 16px 40px rgba(0,0,0,0.4)',
+                backdropFilter: 'blur(16px)'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
                   <div style={{
@@ -1591,10 +1601,12 @@ export default function AdminDashboard() {
 
               {/* Summary Stats */}
               <div style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: 'rgba(28, 10, 14, 0.9)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '16px',
-                padding: '24px'
+                padding: '24px',
+                boxShadow: '0 16px 40px rgba(0,0,0,0.4)',
+                backdropFilter: 'blur(16px)'
               }}>
                 <h4 style={{ color: '#fff', fontSize: '0.95rem', marginBottom: '16px' }}>
                   განაცხადების სტატისტიკა
@@ -2605,11 +2617,12 @@ export default function AdminDashboard() {
                   <div
                     key={t.id}
                     style={{
-                      background: 'rgba(255,255,255,0.04)',
-                      border: '1px solid rgba(255,255,255,0.08)',
+                      background: 'rgba(28, 10, 14, 0.88)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
                       borderRadius: '16px',
                       padding: '20px',
-                      boxShadow: '0 16px 36px rgba(0,0,0,0.3)',
+                      boxShadow: '0 16px 36px rgba(0,0,0,0.45)',
+                      backdropFilter: 'blur(16px)',
                       position: 'relative'
                     }}
                   >
