@@ -281,6 +281,46 @@ textarea.form-control {
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), 0 0 20px rgba(196, 30, 58, 0.25) !important;
 }
 
+/* Aurora Glow Orb Pulse Animations */
+@keyframes aurora-pulse-1 {
+  0%, 100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes aurora-pulse-2 {
+  0%, 100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes aurora-pulse-3 {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.aurora-orb-1 {
+  animation: aurora-pulse-1 12s ease-in-out infinite;
+}
+
+.aurora-orb-2 {
+  animation: aurora-pulse-2 16s ease-in-out infinite;
+}
+
+.aurora-orb-3 {
+  animation: aurora-pulse-3 14s ease-in-out infinite;
+}
+
 /* Luxury Section Divider with Star Centerpiece */
 .luxury-divider {
   display: flex;

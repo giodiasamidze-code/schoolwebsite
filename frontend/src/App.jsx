@@ -12,6 +12,7 @@ import AdminDashboard from './components/AdminDashboard';
 import AdminLoginPage from './components/AdminLoginPage';
 import ParentAccountPage from './components/ParentAccountPage';
 import CustomCursor from './components/CustomCursor';
+import DynamicBackground from './components/DynamicBackground';
 import { useAuth } from './components/AuthContext';
 
 export default function App() {
@@ -61,7 +62,8 @@ export default function App() {
   }
 
   return (
-    <div className="app-wrapper">
+    <div className="app-wrapper" style={{ position: 'relative', minHeight: '100vh' }}>
+      <DynamicBackground />
       <CustomCursor />
       <Header />
       {path === '/register' ? (
@@ -69,7 +71,7 @@ export default function App() {
       ) : path === '/parent-account' ? (
         <ParentAccountPage />
       ) : (
-        <main>
+        <main style={{ position: 'relative', zIndex: 1 }}>
           <Hero />
           <StatsBar />
           <TeamSection />
