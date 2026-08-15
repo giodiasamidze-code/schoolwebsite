@@ -91,6 +91,48 @@ export default function AdminDashboard() {
     setTimeout(() => setToast(null), 3500);
   };
 
+  // --- Vanta.NET 3D Background Effect ---
+  const vantaRef = React.useRef(null);
+
+  useEffect(() => {
+    let effect = null;
+    const initVanta = () => {
+      if (window.VANTA && window.VANTA.NET && vantaRef.current && !effect) {
+        effect = window.VANTA.NET({
+          el: vantaRef.current,
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.0,
+          minWidth: 200.0,
+          scale: 1.0,
+          scaleMobile: 1.0,
+          color: 0xc41e3a,
+          backgroundColor: 0x18090b,
+          points: 20.0,
+          maxDistance: 25.0,
+          spacing: 19.0
+        });
+      }
+    };
+
+    if (window.VANTA && window.VANTA.NET) {
+      initVanta();
+    } else {
+      const timer = setInterval(() => {
+        if (window.VANTA && window.VANTA.NET) {
+          initVanta();
+          clearInterval(timer);
+        }
+      }, 150);
+      return () => clearInterval(timer);
+    }
+
+    return () => {
+      if (effect) effect.destroy();
+    };
+  }, []);
+
   // Real-time Date
   const [currentDateStr, setCurrentDateStr] = useState('');
   useEffect(() => {
@@ -641,12 +683,27 @@ export default function AdminDashboard() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #18090b 0%, #2a0e12 50%, #140709 100%)',
+      background: 'transparent',
       color: '#f3ece3',
       fontFamily: 'var(--font-sans, "Noto Sans Georgian", Inter, sans-serif)',
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      position: 'relative'
     }}>
+
+      {/* 3D Vanta.NET Interactive Canvas Background */}
+      <div
+        ref={vantaRef}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 0,
+          pointerEvents: 'none'
+        }}
+      />
 
       {/* TOAST POPUP */}
       {toast && (

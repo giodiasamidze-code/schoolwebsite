@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from './AuthContext';
 
 export default function AdminLoginPage() {
@@ -7,6 +7,48 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // --- Vanta.NET 3D Background ---
+  const vantaRef = useRef(null);
+
+  useEffect(() => {
+    let effect = null;
+    const initVanta = () => {
+      if (window.VANTA && window.VANTA.NET && vantaRef.current && !effect) {
+        effect = window.VANTA.NET({
+          el: vantaRef.current,
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.0,
+          minWidth: 200.0,
+          scale: 1.0,
+          scaleMobile: 1.0,
+          color: 0xc41e3a,
+          backgroundColor: 0x18090b,
+          points: 20.0,
+          maxDistance: 25.0,
+          spacing: 19.0
+        });
+      }
+    };
+
+    if (window.VANTA && window.VANTA.NET) {
+      initVanta();
+    } else {
+      const timer = setInterval(() => {
+        if (window.VANTA && window.VANTA.NET) {
+          initVanta();
+          clearInterval(timer);
+        }
+      }, 150);
+      return () => clearInterval(timer);
+    }
+
+    return () => {
+      if (effect) effect.destroy();
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,13 +70,28 @@ export default function AdminLoginPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #1a0a0a 0%, #2d1010 50%, #1a0a0a 100%)',
+      background: 'transparent',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       padding: '40px 20px',
-      fontFamily: 'var(--font-sans, Inter, sans-serif)'
+      fontFamily: 'var(--font-sans, Inter, sans-serif)',
+      position: 'relative'
     }}>
+
+      {/* 3D Vanta.NET Interactive Canvas Background */}
+      <div
+        ref={vantaRef}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 0,
+          pointerEvents: 'none'
+        }}
+      />
       <div style={{
         background: 'rgba(255,255,255,0.04)',
         border: '1px solid rgba(255,255,255,0.1)',
