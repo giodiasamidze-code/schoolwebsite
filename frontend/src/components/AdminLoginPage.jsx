@@ -13,40 +13,52 @@ export default function AdminLoginPage() {
 
   useEffect(() => {
     let effect = null;
+    let timer = null;
+
     const initVanta = () => {
-      if (window.VANTA && window.VANTA.NET && vantaRef.current && !effect) {
-        effect = window.VANTA.NET({
-          el: vantaRef.current,
-          mouseControls: true,
-          touchControls: true,
-          gyroControls: false,
-          minHeight: 200.0,
-          minWidth: 200.0,
-          scale: 1.0,
-          scaleMobile: 1.0,
-          color: 0xc41e3a,
-          backgroundColor: 0x18090b,
-          points: 20.0,
-          maxDistance: 25.0,
-          spacing: 19.0
-        });
+      if (!vantaRef.current) return;
+      if (effect) {
+        try { effect.destroy(); } catch (e) {}
+      }
+      if (window.VANTA && window.VANTA.NET) {
+        try {
+          effect = window.VANTA.NET({
+            el: vantaRef.current,
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.0,
+            minWidth: 200.0,
+            scale: 1.0,
+            scaleMobile: 1.0,
+            color: 0xc41e3a,
+            backgroundColor: 0x18090b,
+            points: 20.0,
+            maxDistance: 25.0,
+            spacing: 19.0
+          });
+        } catch (err) {
+          console.warn('Vanta login error:', err);
+        }
       }
     };
 
     if (window.VANTA && window.VANTA.NET) {
       initVanta();
     } else {
-      const timer = setInterval(() => {
+      timer = setInterval(() => {
         if (window.VANTA && window.VANTA.NET) {
           initVanta();
           clearInterval(timer);
         }
-      }, 150);
-      return () => clearInterval(timer);
+      }, 100);
     }
 
     return () => {
-      if (effect) effect.destroy();
+      if (timer) clearInterval(timer);
+      if (effect) {
+        try { effect.destroy(); } catch (e) {}
+      }
     };
   }, []);
 

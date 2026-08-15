@@ -96,40 +96,52 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     let effect = null;
+    let timer = null;
+
     const initVanta = () => {
-      if (window.VANTA && window.VANTA.NET && vantaRef.current && !effect) {
-        effect = window.VANTA.NET({
-          el: vantaRef.current,
-          mouseControls: true,
-          touchControls: true,
-          gyroControls: false,
-          minHeight: 200.0,
-          minWidth: 200.0,
-          scale: 1.0,
-          scaleMobile: 1.0,
-          color: 0xc41e3a,
-          backgroundColor: 0x18090b,
-          points: 20.0,
-          maxDistance: 25.0,
-          spacing: 19.0
-        });
+      if (!vantaRef.current) return;
+      if (effect) {
+        try { effect.destroy(); } catch (e) {}
+      }
+      if (window.VANTA && window.VANTA.NET) {
+        try {
+          effect = window.VANTA.NET({
+            el: vantaRef.current,
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.0,
+            minWidth: 200.0,
+            scale: 1.0,
+            scaleMobile: 1.0,
+            color: 0xc41e3a,
+            backgroundColor: 0x18090b,
+            points: 20.0,
+            maxDistance: 25.0,
+            spacing: 19.0
+          });
+        } catch (err) {
+          console.warn('Vanta initialization warning:', err);
+        }
       }
     };
 
     if (window.VANTA && window.VANTA.NET) {
       initVanta();
     } else {
-      const timer = setInterval(() => {
+      timer = setInterval(() => {
         if (window.VANTA && window.VANTA.NET) {
           initVanta();
           clearInterval(timer);
         }
-      }, 150);
-      return () => clearInterval(timer);
+      }, 100);
     }
 
     return () => {
-      if (effect) effect.destroy();
+      if (timer) clearInterval(timer);
+      if (effect) {
+        try { effect.destroy(); } catch (e) {}
+      }
     };
   }, []);
 
@@ -688,24 +700,38 @@ export default function AdminDashboard() {
       fontFamily: 'var(--font-sans, "Noto Sans Georgian", Inter, sans-serif)',
       display: 'flex',
       flexDirection: 'column',
-      position: 'relative'
+      position: 'relative',
+      overflowX: 'hidden'
     }}>
 
-      {/* 3D Vanta.NET Interactive Canvas Background */}
+      {/* 3D Vanta.NET Interactive Canvas Background (Always below content at zIndex: 0) */}
       <div
         ref={vantaRef}
         style={{
           position: 'fixed',
           top: 0,
           left: 0,
+          right: 0,
+          bottom: 0,
           width: '100vw',
           height: '100vh',
           zIndex: 0,
-          pointerEvents: 'none'
+          pointerEvents: 'none',
+          overflow: 'hidden'
         }}
       />
 
-      {/* TOAST POPUP */}
+      {/* Content Layer (Always in front of 3D canvas at zIndex: 2) */}
+      <div style={{
+        position: 'relative',
+        zIndex: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        width: '100%'
+      }}>
+
+        {/* TOAST POPUP */}
       {toast && (
         <div style={{
           position: 'fixed',
@@ -2842,6 +2868,7 @@ export default function AdminDashboard() {
 
       </main>
 
+      </div>
     </div>
   );
 }
