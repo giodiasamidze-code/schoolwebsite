@@ -116,9 +116,9 @@ export default function AdminDashboard() {
             scaleMobile: 1.0,
             color: 0xc41e3a,
             backgroundColor: 0x140709,
-            points: 10.0,
-            maxDistance: 18.0,
-            spacing: 20.0
+            points: 12.0,
+            maxDistance: 20.0,
+            spacing: 19.0
           });
         } catch (err) {
           console.warn('Vanta initialization warning:', err);
@@ -126,24 +126,29 @@ export default function AdminDashboard() {
       }
     };
 
-    if (window.VANTA && window.VANTA.NET) {
-      initVanta();
-    } else {
-      timer = setInterval(() => {
-        if (window.VANTA && window.VANTA.NET) {
-          initVanta();
-          clearInterval(timer);
-        }
-      }, 100);
-    }
+    const tryInit = () => {
+      if (vantaRef.current && window.VANTA && window.VANTA.NET) {
+        initVanta();
+      } else {
+        timer = setInterval(() => {
+          if (vantaRef.current && window.VANTA && window.VANTA.NET) {
+            initVanta();
+            clearInterval(timer);
+          }
+        }, 80);
+      }
+    };
+
+    const initTimer = setTimeout(tryInit, 50);
 
     return () => {
+      clearTimeout(initTimer);
       if (timer) clearInterval(timer);
       if (effect) {
         try { effect.destroy(); } catch (e) {}
       }
     };
-  }, []);
+  }, [user, role]);
 
   // Real-time Date
   const [currentDateStr, setCurrentDateStr] = useState('');
