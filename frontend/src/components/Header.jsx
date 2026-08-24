@@ -7,7 +7,6 @@ export default function Header() {
   const { path, navigate, user, role, logout } = useAuth();
 
   const navItems = [
-    { label: 'პროგრამები', href: '#programs' },
     { label: 'მასწავლებლები', href: '#teachers' },
     { label: 'სიახლეები', href: '#news' },
     { label: 'მიღება & ტარიფები', href: '#admissions' },
