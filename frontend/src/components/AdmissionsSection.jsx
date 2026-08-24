@@ -45,6 +45,18 @@ export default function AdmissionsSection() {
     }
   }, [user]);
 
+  // Listen for authMode trigger from Header (e.g. clicking 'შესვლა' or 'რეგისტრაცია')
+  useEffect(() => {
+    const handleSetAuthMode = (e) => {
+      if (e.detail?.mode) {
+        setAuthMode(e.detail.mode);
+        setAuthStatus({ loading: false, error: '', success: '' });
+      }
+    };
+    window.addEventListener('set-auth-mode', handleSetAuthMode);
+    return () => window.removeEventListener('set-auth-mode', handleSetAuthMode);
+  }, []);
+
   // Handle document file selection
   const handleFileSelect = (docType, e) => {
     const file = e.target.files?.[0];

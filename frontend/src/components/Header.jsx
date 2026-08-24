@@ -48,6 +48,13 @@ export default function Header() {
     }
   };
 
+  const handleAuthClick = (e, mode = 'login') => {
+    e.preventDefault();
+    setIsOpen(false);
+    window.dispatchEvent(new CustomEvent('set-auth-mode', { detail: { mode } }));
+    handleNavClick(e, '#admissions');
+  };
+
   const scrollToElement = (element) => {
     const offset = 90;
     const bodyRect = document.body.getBoundingClientRect().top;
@@ -206,7 +213,7 @@ export default function Header() {
             </div>
           ) : (
             <button
-              onClick={() => navigate('/register')}
+              onClick={(e) => handleAuthClick(e, 'login')}
               style={{
                 background: 'none',
                 border: 'none',
@@ -224,7 +231,7 @@ export default function Header() {
           {/* Online Application CTA Button */}
           <a
             href="#admissions"
-            onClick={(e) => handleNavClick(e, '#admissions')}
+            onClick={(e) => handleAuthClick(e, 'register')}
             style={{
               padding: '8px 18px',
               background: '#c41e3a',
@@ -320,7 +327,7 @@ export default function Header() {
           </div>
         ) : (
           <button
-            onClick={() => { setIsOpen(false); navigate('/register'); }}
+            onClick={(e) => handleAuthClick(e, 'login')}
             style={{
               padding: '12px',
               background: 'rgba(255, 255, 255, 0.06)',
@@ -338,7 +345,7 @@ export default function Header() {
 
         <a
           href="#admissions"
-          onClick={(e) => handleNavClick(e, '#admissions')}
+          onClick={(e) => handleAuthClick(e, 'register')}
           style={{
             padding: '14px',
             background: 'linear-gradient(135deg, #8b0000 0%, #c41e3a 100%)',
