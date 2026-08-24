@@ -19,6 +19,7 @@ export default function AdmissionsSection() {
     additionalInfo: ''
   });
   const [appStatus, setAppStatus] = useState({ loading: false, success: null, message: '' });
+  const [gradeDropdownOpen, setGradeDropdownOpen] = useState(false);
 
   // Right-column Inline Auth State (for guests)
   const [authMode, setAuthMode] = useState('register'); // 'register' | 'login'
@@ -473,21 +474,204 @@ export default function AdmissionsSection() {
               </div>
 
               <div className="form-row">
-                <div className="form-group">
+                <div className="form-group" style={{ position: 'relative' }}>
                   <label className="form-label" htmlFor="app-grade">კლასი, სადაც სურს სწავლა *</label>
-                  <select
-                    id="app-grade"
-                    required
-                    className="form-control"
-                    value={appForm.grade}
-                    onChange={(e) => setAppForm({ ...appForm, grade: e.target.value })}
+                  
+                  {/* Custom Styled Grade Dropdown */}
+                  <div
+                    onClick={() => setGradeDropdownOpen(!gradeDropdownOpen)}
+                    style={{
+                      width: '100%',
+                      padding: '0.85rem 1.1rem',
+                      background: 'rgba(255, 255, 255, 0.06)',
+                      border: gradeDropdownOpen ? '1px solid #c41e3a' : '1px solid rgba(255, 255, 255, 0.15)',
+                      borderRadius: '10px',
+                      color: appForm.grade ? '#ffffff' : 'rgba(255, 255, 255, 0.4)',
+                      fontSize: '0.95rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      cursor: 'pointer',
+                      userSelect: 'none',
+                      transition: 'all 0.2s',
+                      boxShadow: gradeDropdownOpen ? '0 0 0 3px rgba(196, 30, 58, 0.25)' : 'none'
+                    }}
                   >
-                    <option value="">აირჩიეთ კლასი...</option>
-                    {[...Array(12)].map((_, i) => (
-                      <option key={i+1} value={`${i+1} კლასი`}>{`${i+1} კლასი`}</option>
-                    ))}
-                  </select>
+                    <span>{appForm.grade || 'აირჩიეთ კლასი...'}</span>
+                    <span style={{
+                      transform: gradeDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.2s',
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      fontSize: '0.8rem'
+                    }}>
+                      ▼
+                    </span>
+                  </div>
+
+                  {/* Dropdown Menu */}
+                  {gradeDropdownOpen && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '105%',
+                        left: 0,
+                        right: 0,
+                        zIndex: 100,
+                        background: '#18090b',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        borderRadius: '12px',
+                        padding: '12px',
+                        boxShadow: '0 16px 40px rgba(0, 0, 0, 0.8)',
+                        backdropFilter: 'blur(20px)'
+                      }}
+                    >
+                      {/* დაწყებითი */}
+                      <div style={{ marginBottom: '10px' }}>
+                        <div style={{ fontSize: '0.74rem', color: '#d4af37', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px', paddingLeft: '4px' }}>
+                          დაწყებითი საფეხური
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                          {[1, 2, 3, 4].map((num) => (
+                            <button
+                              key={num}
+                              type="button"
+                              onClick={() => {
+                                setAppForm({ ...appForm, grade: `${num} კლასი` });
+                                setGradeDropdownOpen(false);
+                              }}
+                              style={{
+                                padding: '8px 4px',
+                                borderRadius: '8px',
+                                border: '1px solid',
+                                borderColor: appForm.grade === `${num} კლასი` ? '#c41e3a' : 'rgba(255, 255, 255, 0.08)',
+                                background: appForm.grade === `${num} კლასი` ? '#c41e3a' : 'rgba(255, 255, 255, 0.04)',
+                                color: '#ffffff',
+                                fontSize: '0.86rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                transition: 'all 0.15s'
+                              }}
+                              onMouseEnter={(e) => {
+                                if (appForm.grade !== `${num} კლასი`) {
+                                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (appForm.grade !== `${num} კლასი`) {
+                                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+                                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                                }
+                              }}
+                            >
+                              {num} კლასი
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* საბაზო */}
+                      <div style={{ marginBottom: '10px' }}>
+                        <div style={{ fontSize: '0.74rem', color: '#ff8598', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px', paddingLeft: '4px' }}>
+                          საბაზო საფეხური
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
+                          {[5, 6, 7, 8, 9].map((num) => (
+                            <button
+                              key={num}
+                              type="button"
+                              onClick={() => {
+                                setAppForm({ ...appForm, grade: `${num} კლასი` });
+                                setGradeDropdownOpen(false);
+                              }}
+                              style={{
+                                padding: '8px 2px',
+                                borderRadius: '8px',
+                                border: '1px solid',
+                                borderColor: appForm.grade === `${num} კლასი` ? '#c41e3a' : 'rgba(255, 255, 255, 0.08)',
+                                background: appForm.grade === `${num} კლასი` ? '#c41e3a' : 'rgba(255, 255, 255, 0.04)',
+                                color: '#ffffff',
+                                fontSize: '0.84rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                transition: 'all 0.15s'
+                              }}
+                              onMouseEnter={(e) => {
+                                if (appForm.grade !== `${num} კლასი`) {
+                                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (appForm.grade !== `${num} კლასი`) {
+                                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+                                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                                }
+                              }}
+                            >
+                              {num} კლასი
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* საშუალო */}
+                      <div>
+                        <div style={{ fontSize: '0.74rem', color: '#86efac', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px', paddingLeft: '4px' }}>
+                          საშუალო საფეხური
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                          {[10, 11, 12].map((num) => (
+                            <button
+                              key={num}
+                              type="button"
+                              onClick={() => {
+                                setAppForm({ ...appForm, grade: `${num} კლასი` });
+                                setGradeDropdownOpen(false);
+                              }}
+                              style={{
+                                padding: '8px 4px',
+                                borderRadius: '8px',
+                                border: '1px solid',
+                                borderColor: appForm.grade === `${num} კლასი` ? '#c41e3a' : 'rgba(255, 255, 255, 0.08)',
+                                background: appForm.grade === `${num} კლასი` ? '#c41e3a' : 'rgba(255, 255, 255, 0.04)',
+                                color: '#ffffff',
+                                fontSize: '0.86rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                transition: 'all 0.15s'
+                              }}
+                              onMouseEnter={(e) => {
+                                if (appForm.grade !== `${num} კლასი`) {
+                                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (appForm.grade !== `${num} კლასი`) {
+                                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+                                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                                }
+                              }}
+                            >
+                              {num} კლასი
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Hidden input for form validation */}
+                  <input
+                    type="text"
+                    required
+                    value={appForm.grade}
+                    onChange={() => {}}
+                    style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', height: 0, width: 0 }}
+                  />
                 </div>
+
                 <div className="form-group">
                   <label className="form-label" htmlFor="app-parent-address">საცხოვრებელი მისამართი</label>
                   <input

@@ -231,6 +231,16 @@ p {
   box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.25);
 }
 
+select.form-control {
+  cursor: pointer;
+}
+
+select.form-control option {
+  background-color: #18090b;
+  color: #ffffff;
+  padding: 10px 14px;
+}
+
 textarea.form-control {
   resize: vertical;
   min-height: 120px;
