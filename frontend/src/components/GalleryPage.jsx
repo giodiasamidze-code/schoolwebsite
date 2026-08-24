@@ -306,46 +306,6 @@ export default function GalleryPage() {
               <ChevronRight size={22} />
             </button>
           )}
-          {/* Close */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setLightbox(null);
-            }}
-            aria-label="დახურვა"
-            style={{
-              position: 'absolute',
-              top: '24px',
-              right: '24px',
-              zIndex: 2010,
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              borderRadius: '50%',
-              width: '44px',
-              height: '44px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              color: '#ffffff',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#c41e3a';
-              e.currentTarget.style.borderColor = '#c41e3a';
-              e.currentTarget.style.transform = 'scale(1.08)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-              e.currentTarget.style.transform = 'scale(1)';
-            }}
-          >
-            <X size={20} strokeWidth={2.2} />
-          </button>
           {/* Image */}
           <div onClick={e => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '90vh', textAlign: 'center', position: 'relative' }}>
             <img
