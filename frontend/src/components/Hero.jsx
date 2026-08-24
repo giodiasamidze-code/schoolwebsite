@@ -127,23 +127,6 @@ export default function Hero() {
           >
             ონლაინ რეგისტრაცია <ArrowRight size={16} />
           </a>
-
-          <a
-            href="#programs"
-            onClick={(e) => { e.preventDefault(); scrollTo('#programs'); }}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '8px',
-              padding: '13px 26px',
-              background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.8)',
-              borderRadius: '10px', fontWeight: 500, fontSize: '0.92rem',
-              textDecoration: 'none', border: '1px solid rgba(255,255,255,0.1)',
-              transition: 'background 0.2s, transform 0.2s'
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.09)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.transform = 'translateY(0)'; }}
-          >
-            პროგრამები
-          </a>
         </div>
 
         {/* Stats strip */}
