@@ -60,25 +60,23 @@ export default function Header() {
       <div className="header-container">
         
         {/* Brand / Logo */}
-        <a href="#" className="logo" onClick={(e) => handleNavClick(e, '#')}>
+      <a href="#" className="logo" onClick={(e) => handleNavClick(e, '#')}>
           <div style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '10px',
-            background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
+            width: '34px',
+            height: '34px',
+            borderRadius: '8px',
+            background: '#c41e3a',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 4px 14px rgba(139, 0, 0, 0.45)',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
             flexShrink: 0
           }}>
-            <GraduationCap size={20} color="#ffffff" />
+            <GraduationCap size={19} color="#ffffff" />
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '5px' }}>
             <span style={{
               fontFamily: 'var(--font-serif, Georgia, serif)',
-              fontSize: '1.15rem',
+              fontSize: '1.1rem',
               fontWeight: 700,
               color: '#ffffff',
               letterSpacing: '-0.01em'
@@ -86,18 +84,10 @@ export default function Header() {
               სოლომონ
             </span>
             <span style={{
-              background: 'rgba(212, 175, 55, 0.12)',
-              border: '1px solid rgba(212, 175, 55, 0.35)',
-              color: 'var(--accent-secondary, #d4af37)',
-              fontSize: '0.68rem',
-              fontWeight: 700,
-              padding: '2px 7px',
-              borderRadius: '6px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em'
-            }}>
-              აკადემია
-            </span>
+              color: 'rgba(255,255,255,0.4)',
+              fontSize: '0.92rem',
+              fontWeight: 400
+            }}>აკადემია</span>
           </div>
         </a>
 
@@ -230,21 +220,22 @@ export default function Header() {
             href="#admissions"
             onClick={(e) => handleNavClick(e, '#admissions')}
             style={{
-              padding: '9px 18px',
-              background: 'linear-gradient(135deg, #8b0000 0%, #c41e3a 100%)',
+              padding: '8px 18px',
+              background: '#c41e3a',
               color: '#ffffff',
-              borderRadius: '10px',
-              fontWeight: 700,
+              borderRadius: '8px',
+              fontWeight: 600,
               fontSize: '0.88rem',
               textDecoration: 'none',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              boxShadow: '0 4px 16px rgba(139, 0, 0, 0.45)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              transition: 'all 0.2s',
+              border: '1px solid transparent',
+              transition: 'background 0.2s',
               whiteSpace: 'nowrap'
             }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#dc2445'}
+            onMouseLeave={(e) => e.currentTarget.style.background = '#c41e3a'}
           >
             <span>რეგისტრაცია</span>
             <ArrowRight size={14} />
