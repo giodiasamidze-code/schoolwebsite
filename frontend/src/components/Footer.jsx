@@ -8,7 +8,13 @@ export default function Footer() {
   const handleNavClick = (e, href) => {
     e.preventDefault();
 
-    if (path === '/register' || path === '/parent-account') {
+    if (href.startsWith('/')) {
+      navigate(href);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (path !== '/') {
       navigate('/');
       setTimeout(() => {
         const element = document.querySelector(href);
@@ -122,11 +128,6 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#programs" onClick={(e) => handleNavClick(e, '#programs')} style={{ color: 'rgba(255, 255, 255, 0.75)', textDecoration: 'none', fontSize: '0.92rem', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#fff'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)'}>
-                  აკადემიური პროგრამები
-                </a>
-              </li>
-              <li>
                 <a href="#teachers" onClick={(e) => handleNavClick(e, '#teachers')} style={{ color: 'rgba(255, 255, 255, 0.75)', textDecoration: 'none', fontSize: '0.92rem', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#fff'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)'}>
                   პედაგოგები & გუნდი
                 </a>
@@ -134,6 +135,11 @@ export default function Footer() {
               <li>
                 <a href="#news" onClick={(e) => handleNavClick(e, '#news')} style={{ color: 'rgba(255, 255, 255, 0.75)', textDecoration: 'none', fontSize: '0.92rem', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#fff'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)'}>
                   სკოლის სიახლეები
+                </a>
+              </li>
+              <li>
+                <a href="/gallery" onClick={(e) => handleNavClick(e, '/gallery')} style={{ color: 'rgba(255, 255, 255, 0.75)', textDecoration: 'none', fontSize: '0.92rem', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#fff'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)'}>
+                  სასკოლო გალერეა
                 </a>
               </li>
               <li>

@@ -4,6 +4,7 @@ import Hero from './components/Hero';
 import TeamSection from './components/TeamSection';
 import NewsSection from './components/NewsSection';
 import AdmissionsSection from './components/AdmissionsSection';
+import GalleryPage from './components/GalleryPage';
 import Footer from './components/Footer';
 import RegistrationPage from './components/RegistrationPage';
 import TeacherDashboard from './components/TeacherDashboard';
@@ -71,10 +72,16 @@ export default function App() {
         <ParentAccountPage />
       ) : (
         <main style={{ position: 'relative', zIndex: 1 }}>
-          <Hero />
-          <TeamSection />
-          <NewsSection />
-          <AdmissionsSection />
+          {path === '/gallery' ? (
+            <GalleryPage />
+          ) : (
+            <>
+              <Hero />
+              <TeamSection />
+              <NewsSection />
+              <AdmissionsSection />
+            </>
+          )}
         </main>
       )}
       <Footer />

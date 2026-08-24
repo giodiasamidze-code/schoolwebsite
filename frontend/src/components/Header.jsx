@@ -9,6 +9,7 @@ export default function Header() {
   const navItems = [
     { label: 'მასწავლებლები', href: '#teachers' },
     { label: 'სიახლეები', href: '#news' },
+    { label: 'გალერეა', href: '/gallery' },
     { label: 'მიღება & ტარიფები', href: '#admissions' },
     { label: 'კონტაქტი', href: '#contact' }
   ];
@@ -16,6 +17,12 @@ export default function Header() {
   const handleNavClick = (e, href) => {
     e.preventDefault();
     setIsOpen(false);
+
+    if (href.startsWith('/')) {
+      navigate(href);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
 
     if (path !== '/') {
       navigate('/');
