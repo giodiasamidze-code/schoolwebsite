@@ -307,19 +307,54 @@ export default function GalleryPage() {
             </button>
           )}
           {/* Close */}
-          <button onClick={() => setLightbox(null)}
-            style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255,255,255,0.08)', border: 'none', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff' }}>
-            <X size={18} />
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightbox(null);
+            }}
+            aria-label="დახურვა"
+            style={{
+              position: 'absolute',
+              top: '24px',
+              right: '24px',
+              zIndex: 2010,
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '50%',
+              width: '44px',
+              height: '44px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              color: '#ffffff',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#c41e3a';
+              e.currentTarget.style.borderColor = '#c41e3a';
+              e.currentTarget.style.transform = 'scale(1.08)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            <X size={20} strokeWidth={2.2} />
           </button>
           {/* Image */}
-          <div onClick={e => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '90vh', textAlign: 'center' }}>
+          <div onClick={e => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '90vh', textAlign: 'center', position: 'relative' }}>
             <img
               src={filtered[lightbox].image_url}
               alt={filtered[lightbox].title || ''}
-              style={{ maxWidth: '100%', maxHeight: '80vh', borderRadius: '12px', objectFit: 'contain' }}
+              style={{ maxWidth: '100%', maxHeight: '80vh', borderRadius: '14px', objectFit: 'contain', boxShadow: '0 20px 60px rgba(0,0,0,0.8)' }}
             />
             {filtered[lightbox].title && (
-              <p style={{ color: '#fff', fontWeight: 600, marginTop: '12px', fontSize: '1rem' }}>
+              <p style={{ color: '#fff', fontWeight: 600, marginTop: '14px', fontSize: '1.05rem', letterSpacing: '-0.01em' }}>
                 {filtered[lightbox].title}
               </p>
             )}
@@ -328,7 +363,7 @@ export default function GalleryPage() {
                 ატვირთა: {filtered[lightbox].uploader_name}
               </p>
             )}
-            <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: '0.75rem', marginTop: '6px' }}>
+            <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.78rem', marginTop: '6px' }}>
               {lightbox + 1} / {filtered.length}
             </p>
           </div>
@@ -341,7 +376,8 @@ export default function GalleryPage() {
           onClick={() => setShowUpload(false)}
           style={{
             position: 'fixed', inset: 0, zIndex: 2000,
-            background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)',
+            background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             padding: '20px'
           }}
@@ -349,15 +385,52 @@ export default function GalleryPage() {
           <div
             onClick={e => e.stopPropagation()}
             style={{
-              background: '#110709', border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '16px', padding: '32px',
-              width: '100%', maxWidth: '480px',
-              position: 'relative'
+              background: '#14070a',
+              border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: '20px',
+              padding: '32px',
+              width: '100%',
+              maxWidth: '480px',
+              position: 'relative',
+              boxShadow: '0 24px 60px rgba(0, 0, 0, 0.7)'
             }}
           >
-            <button onClick={() => setShowUpload(false)}
-              style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer' }}>
-              <X size={18} />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowUpload(false);
+              }}
+              aria-label="დახურვა"
+              style={{
+                position: 'absolute',
+                top: '18px',
+                right: '18px',
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                borderRadius: '50%',
+                width: '36px',
+                height: '36px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'rgba(255,255,255,0.7)',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#c41e3a';
+                e.currentTarget.style.borderColor = '#c41e3a';
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.transform = 'scale(1.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';
+                e.currentTarget.style.color = 'rgba(255,255,255,0.7)';
+                e.currentTarget.style.transform = 'scale(1)';
+              }}
+            >
+              <X size={18} strokeWidth={2} />
             </button>
 
             <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>
