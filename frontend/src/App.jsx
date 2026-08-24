@@ -6,7 +6,6 @@ import NewsSection from './components/NewsSection';
 import AdmissionsSection from './components/AdmissionsSection';
 import GalleryPage from './components/GalleryPage';
 import Footer from './components/Footer';
-import RegistrationPage from './components/RegistrationPage';
 import TeacherDashboard from './components/TeacherDashboard';
 import AdminDashboard from './components/AdminDashboard';
 import AdminLoginPage from './components/AdminLoginPage';
@@ -66,9 +65,7 @@ export default function App() {
       <DynamicBackground />
       <CustomCursor />
       <Header />
-      {path === '/register' ? (
-        <RegistrationPage />
-      ) : path === '/parent-account' ? (
+      {path === '/parent-account' ? (
         <ParentAccountPage />
       ) : (
         <main style={{ position: 'relative', zIndex: 1 }}>

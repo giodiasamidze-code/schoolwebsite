@@ -219,7 +219,13 @@ export function AuthProvider({ children }) {
       onSuccess();
     } else {
       setPendingFormSubmit({ formType, data });
-      navigate('/register');
+      navigate('/');
+      setTimeout(() => {
+        const element = document.querySelector('#admissions');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
     }
   };
 

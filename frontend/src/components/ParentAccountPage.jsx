@@ -42,7 +42,7 @@ export default function ParentAccountPage() {
         <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>
           პირადი ანგარიშის სანახავად გთხოვთ გაიაროთ ავტორიზაცია.
         </p>
-        <button onClick={() => navigate('/register')} className="btn btn-primary">
+        <button onClick={() => { navigate('/'); setTimeout(() => { const el = document.querySelector('#admissions'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }, 100); }} className="btn btn-primary">
           ავტორიზაცია / შესვლა
         </button>
       </div>
