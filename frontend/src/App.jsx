@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
-import StatsBar from './components/StatsBar';
 import TeamSection from './components/TeamSection';
 import NewsSection from './components/NewsSection';
 import AdmissionsSection from './components/AdmissionsSection';
@@ -73,7 +72,6 @@ export default function App() {
       ) : (
         <main style={{ position: 'relative', zIndex: 1 }}>
           <Hero />
-          <StatsBar />
           <TeamSection />
           <NewsSection />
           <AdmissionsSection />
