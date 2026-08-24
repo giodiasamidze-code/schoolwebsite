@@ -211,22 +211,7 @@ export default function Header() {
                 </button>
               </div>
             </div>
-          ) : (
-            <button
-              onClick={(e) => handleAuthClick(e, 'login')}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: 'rgba(255, 255, 255, 0.85)',
-                fontSize: '0.88rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                padding: '6px 12px'
-              }}
-            >
-              შესვლა
-            </button>
-          )}
+          ) : null}
 
           {/* Online Application CTA Button */}
           <a
@@ -325,23 +310,7 @@ export default function Header() {
               გამოსვლა
             </button>
           </div>
-        ) : (
-          <button
-            onClick={(e) => handleAuthClick(e, 'login')}
-            style={{
-              padding: '12px',
-              background: 'rgba(255, 255, 255, 0.06)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              color: '#fff',
-              borderRadius: '10px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              marginTop: '4px'
-            }}
-          >
-            რეგისტრაცია / შესვლა
-          </button>
-        )}
+        ) : null}
 
         <a
           href="#admissions"
