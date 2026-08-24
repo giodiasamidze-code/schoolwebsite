@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, CheckCircle2, Info, Upload, FileCheck, X } from 'lucide-react';
+import { FileText, CheckCircle2, Info, Upload, FileCheck, X, User, Lock, Mail, Phone, LogIn, UserPlus, LogOut, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { supabase } from '../lib/supabaseClient';
 
 export default function AdmissionsSection() {
-  const { user, pendingFormSubmit, setPendingFormSubmit, requireAuth } = useAuth();
+  const { user, role, login, register, logout, navigate, pendingFormSubmit, setPendingFormSubmit, requireAuth } = useAuth();
 
   // Application Form State
   const [appForm, setAppForm] = useState({
@@ -20,8 +20,12 @@ export default function AdmissionsSection() {
   });
   const [appStatus, setAppStatus] = useState({ loading: false, success: null, message: '' });
 
+  // Right-column Inline Auth State (for guests)
+  const [authMode, setAuthMode] = useState('register'); // 'register' | 'login'
+  const [authForm, setAuthForm] = useState({ name: '', phone: '', email: '', password: '' });
+  const [authStatus, setAuthStatus] = useState({ loading: false, error: '', success: '' });
+
   // Document files state
-  // docTypes: parent_id, student_birth_certificate, residence_permit
   const [documents, setDocuments] = useState({
     parent_id: { file: null, progress: 0, status: 'idle', url: '', fileName: '' },
     student_birth_certificate: { file: null, progress: 0, status: 'idle', url: '', fileName: '' },
@@ -45,7 +49,6 @@ export default function AdmissionsSection() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Check size limit (10MB)
     if (file.size > 10 * 1024 * 1024) {
       alert('ფაილის ზომა არ უნდა აღემატებოდეს 10MB-ს');
       return;
@@ -96,7 +99,7 @@ export default function AdmissionsSection() {
     setAppStatus({ loading: true, success: null, message: '' });
     try {
       if (!user) {
-        throw new Error('განაცხადის გასაგზავნად გთხოვთ გაიაროთ ავტორიზაცია.');
+        throw new Error('განაცხადის გასაგზავნად გთხოვთ მარჯვენა ბლოკიდან გაიაროთ რეგისტრაცია ან შესვლა.');
       }
 
       // 1. Insert into applications table
@@ -133,60 +136,59 @@ export default function AdmissionsSection() {
         const fileExt = file.name.split('.').pop();
         const filePath = `${user.id}/${applicationId}/${docType}_${Date.now()}.${fileExt}`;
 
-        // Update document upload progress UI state
         setDocuments((prev) => ({
           ...prev,
           [docType]: { ...prev[docType], status: 'uploading', progress: 40 }
         }));
 
         const { error: uploadError } = await supabase.storage
-          .from('application-documents')
-          .upload(filePath, file, { upsert: true });
+          .from('documents')
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
 
         if (uploadError) {
-          console.error(`Error uploading document ${docType}:`, uploadError);
+          console.error(`Document upload error for ${docType}:`, uploadError);
           setDocuments((prev) => ({
             ...prev,
             [docType]: { ...prev[docType], status: 'error' }
           }));
-          throw new Error(`დოკუმენტის (${file.name}) ატვირთვა ვერ მოხერხდა.`);
+          continue;
         }
 
-        // Get public URL or path
         const { data: publicUrlData } = supabase.storage
-          .from('application-documents')
+          .from('documents')
           .getPublicUrl(filePath);
 
         const fileUrl = publicUrlData?.publicUrl || filePath;
 
-        // Save into application_documents table
-        const { error: docTableError } = await supabase
-          .from('application_documents')
-          .insert([
-            {
-              application_id: applicationId,
-              document_type: docType,
-              file_url: fileUrl
-            }
-          ]);
-
-        if (docTableError) {
-          console.error(`Error inserting doc record for ${docType}:`, docTableError);
-        }
+        await supabase.from('application_documents').insert([
+          {
+            application_id: applicationId,
+            document_type: docType,
+            file_url: fileUrl,
+            file_name: file.name
+          }
+        ]);
 
         setDocuments((prev) => ({
           ...prev,
-          [docType]: { ...prev[docType], status: 'completed', progress: 100, url: fileUrl }
+          [docType]: {
+            ...prev[docType],
+            status: 'uploaded',
+            progress: 100,
+            url: fileUrl
+          }
         }));
       }
 
       setAppStatus({
         loading: false,
         success: true,
-        message: 'ონლაინ განაცხადი და დოკუმენტები წარმატებით გაიგზავნა! მადლობას გიხდით.'
+        message: 'თქვენი ონლაინ განაცხადი და დოკუმენტები წარმატებით გაიგზავნა! ადმინისტრაცია მალე დაგიკავშირდებათ.'
       });
 
-      // Reset form & document inputs
       setAppForm({
         studentName: '',
         studentDob: '',
@@ -215,23 +217,67 @@ export default function AdmissionsSection() {
 
   const handleAppSubmit = (e) => {
     e.preventDefault();
-    requireAuth('application', appForm, () => {
-      submitAppData(appForm);
-    });
+    if (!user) {
+      setAppStatus({
+        loading: false,
+        success: false,
+        message: 'განაცხადის გასაგზავნად გთხოვთ ჯერ გაიაროთ რეგისტრაცია ან ავტორიზაცია მარჯვენა ბლოკში.'
+      });
+      return;
+    }
+    submitAppData(appForm);
   };
 
-  useEffect(() => {
-    if (user && pendingFormSubmit) {
-      const { formType, data } = pendingFormSubmit;
-      if (formType === 'application') {
-        setAppForm(data);
-        setPendingFormSubmit(null);
-        submitAppData(data);
-      }
-    }
-  }, [user, pendingFormSubmit, setPendingFormSubmit]);
+  // Inline Auth Handler (Register / Sign In right next to the form)
+  const handleInlineAuth = async (e) => {
+    e.preventDefault();
+    setAuthStatus({ loading: true, error: '', success: '' });
 
-  // Labels for uploaded documents
+    try {
+      if (authMode === 'register') {
+        if (!authForm.name || !authForm.phone || !authForm.email || !authForm.password) {
+          throw new Error('გთხოვთ შეავსოთ ყველა ველი.');
+        }
+        if (authForm.password.length < 6) {
+          throw new Error('პაროლი უნდა შეიცავდეს მინიმუმ 6 სიმბოლოს.');
+        }
+        const result = await register({
+          email: authForm.email,
+          password: authForm.password,
+          fullName: authForm.name,
+          phone: authForm.phone
+        });
+
+        if (!result?.session) {
+          setAuthStatus({
+            loading: false,
+            error: '',
+            success: '✅ რეგისტრაცია მიღებულია! გთხოვთ დაადასტუროთ ელ-ფოსტა ან შეხვიდეთ სისტემაში.'
+          });
+          return;
+        }
+
+        setAuthStatus({ loading: false, error: '', success: 'მშობლის ანგარიში შეიქმნა!' });
+      } else {
+        // Login mode
+        if (!authForm.email || !authForm.password) {
+          throw new Error('გთხოვთ შეიყვანოთ ელ-ფოსტა და პაროლი.');
+        }
+        await login(authForm.email, authForm.password);
+        setAuthStatus({ loading: false, error: '', success: 'ავტორიზაცია წარმატებულია!' });
+      }
+    } catch (err) {
+      console.error('Inline auth error:', err);
+      let msg = err.message || 'შეცდომა';
+      if (err.message?.includes('already registered') || err.message?.includes('User already registered')) {
+        msg = 'ეს ელ-ფოსტა უკვე რეგისტრირებულია. გადადით "შესვლა" რეჟიმში.';
+      } else if (err.message?.includes('Invalid login credentials')) {
+        msg = 'არასწორი ელ-ფოსტა ან პაროლი.';
+      }
+      setAuthStatus({ loading: false, error: msg, success: '' });
+    }
+  };
+
   const docLabels = {
     parent_id: {
       title: 'მშობლის პირადობის ასლი *',
@@ -249,12 +295,6 @@ export default function AdmissionsSection() {
 
   return (
     <section className="admissions-section" id="admissions" style={{ position: 'relative', overflow: 'hidden', padding: '90px 0 60px' }}>
-      
-      {/* Luxury Background Watermark */}
-      <div className="section-watermark">
-        ADMISSIONS
-      </div>
-
       <div className="container" style={{ position: 'relative', zIndex: 2, width: '92%', maxWidth: '1360px', margin: '0 auto' }}>
         <span className="section-eyebrow">მიღება სკოლაში</span>
         <h2 className="section-title">მისაღები პროცედურა და რეგისტრაცია</h2>
@@ -325,11 +365,34 @@ export default function AdmissionsSection() {
           </div>
         </div>
 
-        {/* 2. Online Application Form */}
-        <div className="single-form-container spotlight-card">
-          <div className="form-card-container">
-            <h3 className="form-card-heading">ონლაინ განაცხადი & დოკუმენტების ატვირთვა</h3>
-            <p className="form-card-subheading">დაიწყეთ რეგისტრაციის პროცესი ონლაინ განაცხადის შევსებით და დოკუმენტაციის ატვირთვით.</p>
+        {/* 2. Side-by-Side: Online Application Form + Registration / Account Panel */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1.4fr) minmax(0, 1fr)',
+          gap: '32px',
+          alignItems: 'flex-start',
+          marginTop: '20px'
+        }}
+        className="admissions-two-col"
+        >
+          
+          {/* LEFT: Online Application Form */}
+          <div className="form-card-container spotlight-card" style={{ padding: '36px 32px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <div style={{
+                width: '32px', height: '32px', borderRadius: '8px',
+                background: 'rgba(196, 30, 58, 0.15)', border: '1px solid rgba(196, 30, 58, 0.3)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ff8598'
+              }}>
+                <FileText size={18} />
+              </div>
+              <h3 className="form-card-heading" style={{ margin: 0, fontSize: '1.45rem' }}>
+                ონლაინ განაცხადი
+              </h3>
+            </div>
+            <p className="form-card-subheading" style={{ marginBottom: '24px', fontSize: '0.88rem' }}>
+              შეავსეთ მოსწავლის მონაცემები და ატვირთეთ საჭირო დოკუმენტაცია.
+            </p>
             
             <form onSubmit={handleAppSubmit}>
               <div className="form-row">
@@ -409,38 +472,39 @@ export default function AdmissionsSection() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label" htmlFor="app-parent-address">საცხოვრებელი მისამართი</label>
-                <input
-                  id="app-parent-address"
-                  type="text"
-                  className="form-control"
-                  placeholder="ქალაქი, ქუჩა, ბინა..."
-                  value={appForm.parentAddress}
-                  onChange={(e) => setAppForm({ ...appForm, parentAddress: e.target.value })}
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label" htmlFor="app-grade">კლასი, სადაც სურს სწავლა *</label>
-                <select
-                  id="app-grade"
-                  required
-                  className="form-control"
-                  value={appForm.grade}
-                  onChange={(e) => setAppForm({ ...appForm, grade: e.target.value })}
-                >
-                  <option value="">აირჩიეთ კლასი...</option>
-                  {[...Array(12)].map((_, i) => (
-                    <option key={i+1} value={`${i+1} კლასი`}>{`${i+1} კლასი`}</option>
-                  ))}
-                </select>
+              <div className="form-row">
+                <div className="form-group">
+                  <label className="form-label" htmlFor="app-grade">კლასი, სადაც სურს სწავლა *</label>
+                  <select
+                    id="app-grade"
+                    required
+                    className="form-control"
+                    value={appForm.grade}
+                    onChange={(e) => setAppForm({ ...appForm, grade: e.target.value })}
+                  >
+                    <option value="">აირჩიეთ კლასი...</option>
+                    {[...Array(12)].map((_, i) => (
+                      <option key={i+1} value={`${i+1} კლასი`}>{`${i+1} კლასი`}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label" htmlFor="app-parent-address">საცხოვრებელი მისამართი</label>
+                  <input
+                    id="app-parent-address"
+                    type="text"
+                    className="form-control"
+                    placeholder="ქალაქი, ქუჩა, ბინა..."
+                    value={appForm.parentAddress}
+                    onChange={(e) => setAppForm({ ...appForm, parentAddress: e.target.value })}
+                  />
+                </div>
               </div>
 
               {/* Supabase Storage File Uploads */}
-              <div className="file-uploads-container" style={{ marginTop: '24px', marginBottom: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color, #e2e8f0)' }}>
-                <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', marginBottom: '12px', color: 'var(--text-dark)' }}>
-                  სავალდებულო დოკუმენტაცია (Supabase Storage)
+              <div className="file-uploads-container" style={{ marginTop: '20px', marginBottom: '20px', paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.08rem', marginBottom: '14px', color: '#ffffff' }}>
+                  სავალდებულო დოკუმენტაცია
                 </h4>
 
                 {['parent_id', 'student_birth_certificate', 'residence_permit'].map((docType) => {
@@ -448,61 +512,49 @@ export default function AdmissionsSection() {
                   const docState = documents[docType];
 
                   return (
-                    <div
-                      key={docType}
-                      className="doc-upload-card"
-                      style={{
-                        background: 'var(--bg-secondary, #f8fafc)',
-                        border: '1px dashed var(--border-color, #cbd5e1)',
-                        borderRadius: '8px',
-                        padding: '12px 16px',
-                        marginBottom: '12px'
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div key={docType} style={{
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '12px',
+                      padding: '14px 16px',
+                      marginBottom: '12px'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div>
-                          <strong style={{ fontSize: '0.95rem', color: 'var(--text-dark)' }}>{docInfo.title}</strong>
-                          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '2px 0 0' }}>{docInfo.desc}</p>
+                          <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#ffffff' }}>{docInfo.title}</div>
+                          <div style={{ fontSize: '0.78rem', color: 'rgba(255, 255, 255, 0.5)', marginTop: '2px' }}>{docInfo.desc}</div>
                         </div>
+
+                        {docState.status === 'uploaded' ? (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#4ade80', fontSize: '0.8rem', fontWeight: 600 }}>
+                            <FileCheck size={16} /> ატვირთულია
+                          </span>
+                        ) : null}
                       </div>
 
-                      {/* Upload status / file preview */}
-                      {docState.file ? (
-                        <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255, 255, 255, 0.06)', padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.12)' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>
-                            <FileCheck size={18} className="text-burgundy" />
-                            <span style={{ fontSize: '0.88rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px', color: '#fff' }}>
-                              {docState.fileName}
-                            </span>
-                            <span style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.6)' }}>
-                              ({(docState.file.size / 1024).toFixed(1)} KB)
-                            </span>
-                          </div>
-
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <label htmlFor={`upload-${docType}`} style={{ cursor: 'pointer', fontSize: '0.8rem', color: 'var(--accent-secondary)', textDecoration: 'underline' }}>
-                              შეცვლა
-                            </label>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveFile(docType)}
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', padding: '2px' }}
-                              title="წაშლა"
-                            >
-                              <X size={16} />
-                            </button>
-                          </div>
+                      {docState.fileName ? (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px', background: 'rgba(255, 255, 255, 0.06)', padding: '6px 12px', borderRadius: '8px' }}>
+                          <span style={{ fontSize: '0.82rem', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '280px' }}>
+                            📄 {docState.fileName}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveFile(docType)}
+                            style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '2px' }}
+                          >
+                            <X size={14} />
+                          </button>
                         </div>
                       ) : (
-                        <div style={{ marginTop: '8px' }}>
+                        <div style={{ marginTop: '10px' }}>
                           <label
                             htmlFor={`upload-${docType}`}
                             style={{
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '6px',
-                              padding: '8px 14px',
-                              fontSize: '0.85rem',
+                              padding: '7px 14px',
+                              fontSize: '0.82rem',
                               background: 'rgba(255, 255, 255, 0.08)',
                               border: '1px solid rgba(255, 255, 255, 0.15)',
                               borderRadius: '8px',
@@ -512,7 +564,7 @@ export default function AdmissionsSection() {
                               transition: 'all 0.2s'
                             }}
                           >
-                            <Upload size={14} />
+                            <Upload size={13} />
                             ფაილის არჩევა
                           </label>
                         </div>
@@ -526,9 +578,8 @@ export default function AdmissionsSection() {
                         onChange={(e) => handleFileSelect(docType, e)}
                       />
 
-                      {/* Progress bar during upload */}
                       {docState.status === 'uploading' && (
-                        <div style={{ marginTop: '8px', height: '4px', background: '#e2e8f0', borderRadius: '2px', overflow: 'hidden' }}>
+                        <div style={{ marginTop: '8px', height: '4px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '2px', overflow: 'hidden' }}>
                           <div style={{ height: '100%', width: `${docState.progress}%`, background: 'var(--accent-primary)', transition: 'width 0.3s' }} />
                         </div>
                       )}
@@ -542,26 +593,333 @@ export default function AdmissionsSection() {
                 <textarea
                   id="app-info"
                   className="form-control"
+                  rows={3}
                   placeholder="დაწერეთ სასურველი ინფორმაცია..."
                   value={appForm.additionalInfo}
                   onChange={(e) => setAppForm({ ...appForm, additionalInfo: e.target.value })}
                 ></textarea>
               </div>
 
-              <button type="submit" disabled={appStatus.loading} className="btn btn-primary w-full">
-                {appStatus.loading ? 'იგზავნება Supabase-ში...' : 'განაცხადის & დოკუმენტების გაგზავნა'}
+              <button type="submit" disabled={appStatus.loading} className="btn btn-primary w-full" style={{ padding: '13px', fontWeight: 700 }}>
+                {appStatus.loading ? 'იგზავნება...' : 'განაცხადის & დოკუმენტების გაგზავნა'}
               </button>
 
               {appStatus.message && (
-                <div className={`form-feedback ${appStatus.success ? 'success' : 'error'}`}>
+                <div className={`form-feedback ${appStatus.success ? 'success' : 'error'}`} style={{ marginTop: '16px' }}>
                   {appStatus.message}
                 </div>
               )}
             </form>
           </div>
+
+          {/* RIGHT: Registration & Parent Account Panel */}
+          <div className="form-card-container spotlight-card" style={{ padding: '36px 30px', position: 'sticky', top: '90px' }}>
+            
+            {user ? (
+              // LOGGED IN STATE
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '18px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <div style={{
+                    width: '46px', height: '46px', borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
+                    color: '#ffffff', fontSize: '1.2rem', fontWeight: 700,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  }}>
+                    {(user.name || user.email || 'U')[0].toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.15rem', color: '#ffffff', margin: 0, fontWeight: 700 }}>
+                      {user.name || user.full_name || 'მომხმარებელი'}
+                    </h3>
+                    <span style={{ fontSize: '0.78rem', color: 'rgba(255, 255, 255, 0.5)' }}>
+                      {user.email}
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{
+                  padding: '14px',
+                  borderRadius: '12px',
+                  background: 'rgba(34, 197, 94, 0.1)',
+                  border: '1px solid rgba(34, 197, 94, 0.25)',
+                  marginBottom: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px'
+                }}>
+                  <ShieldCheck size={20} color="#4ade80" />
+                  <span style={{ fontSize: '0.86rem', color: '#86efac', fontWeight: 600 }}>
+                    ავტორიზებული ხართ ({role === 'admin' ? 'ადმინისტრატორი' : role === 'teacher' ? 'მასწავლებელი' : 'მშობელი'})
+                  </span>
+                </div>
+
+                <p style={{ fontSize: '0.88rem', color: 'rgba(255, 255, 255, 0.65)', lineHeight: 1.6, marginBottom: '24px' }}>
+                  თქვენი საკონტაქტო მონაცემები ავტომატურად დაკავშირებულია განაცხადთან. გაგზავნის შემდეგ სტატუსის ნახვა შეგეძლებათ თქვენს პირად კაბინეტში.
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {role === 'parent' && (
+                    <button
+                      onClick={() => navigate('/parent-account')}
+                      style={{
+                        padding: '12px',
+                        background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '10px',
+                        fontWeight: 600,
+                        fontSize: '0.9rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px'
+                      }}
+                    >
+                      ჩემი ანგარიშის გახსნა <ArrowRight size={16} />
+                    </button>
+                  )}
+
+                  {role === 'teacher' && (
+                    <button
+                      onClick={() => navigate('/teacher-dashboard')}
+                      style={{
+                        padding: '12px',
+                        background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '10px',
+                        fontWeight: 600,
+                        fontSize: '0.9rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px'
+                      }}
+                    >
+                      მასწავლებლის კაბინეტი <ArrowRight size={16} />
+                    </button>
+                  )}
+
+                  <button
+                    onClick={logout}
+                    style={{
+                      padding: '10px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      borderRadius: '10px',
+                      fontWeight: 500,
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    <LogOut size={14} /> გამოსვლა
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // GUEST: REGISTRATION & LOGIN FORM
+              <div>
+                {/* Tabs Switcher */}
+                <div style={{
+                  display: 'flex',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  padding: '4px',
+                  borderRadius: '10px',
+                  marginBottom: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.08)'
+                }}>
+                  <button
+                    type="button"
+                    onClick={() => { setAuthMode('register'); setAuthStatus({ loading: false, error: '', success: '' }); }}
+                    style={{
+                      flex: 1,
+                      padding: '8px',
+                      border: 'none',
+                      borderRadius: '8px',
+                      background: authMode === 'register' ? '#c41e3a' : 'transparent',
+                      color: authMode === 'register' ? '#fff' : 'rgba(255,255,255,0.6)',
+                      fontWeight: 600,
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    <UserPlus size={15} /> რეგისტრაცია
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setAuthMode('login'); setAuthStatus({ loading: false, error: '', success: '' }); }}
+                    style={{
+                      flex: 1,
+                      padding: '8px',
+                      border: 'none',
+                      borderRadius: '8px',
+                      background: authMode === 'login' ? '#c41e3a' : 'transparent',
+                      color: authMode === 'login' ? '#fff' : 'rgba(255,255,255,0.6)',
+                      fontWeight: 600,
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    <LogIn size={15} /> შესვლა
+                  </button>
+                </div>
+
+                <div style={{ marginBottom: '18px' }}>
+                  <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: '#fff', margin: 0, fontWeight: 700 }}>
+                    {authMode === 'register' ? 'მშობლის რეგისტრაცია' : 'ანგარიშზე შესვლა'}
+                  </h4>
+                  <p style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.5)', marginTop: '4px' }}>
+                    {authMode === 'register'
+                      ? 'შექმენით ანგარიში განაცხადის სტატუსის თვალყურის სადევნებლად.'
+                      : 'თუ უკვე დარეგისტრირებული ხართ, შედით თქვენი მონაცემებით.'}
+                  </p>
+                </div>
+
+                <form onSubmit={handleInlineAuth} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {authMode === 'register' && (
+                    <>
+                      <div>
+                        <label className="form-label" style={{ fontSize: '0.8rem', marginBottom: '4px' }}>სახელი და გვარი *</label>
+                        <div style={{ position: 'relative' }}>
+                          <input
+                            type="text"
+                            required
+                            placeholder="მშობლის სახელი..."
+                            value={authForm.name}
+                            onChange={(e) => setAuthForm({ ...authForm, name: e.target.value })}
+                            className="form-control"
+                            style={{ padding: '8px 12px', fontSize: '0.88rem' }}
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="form-label" style={{ fontSize: '0.8rem', marginBottom: '4px' }}>ტელეფონი *</label>
+                        <input
+                          type="tel"
+                          required
+                          placeholder="599 00 00 00"
+                          value={authForm.phone}
+                          onChange={(e) => setAuthForm({ ...authForm, phone: e.target.value })}
+                          className="form-control"
+                          style={{ padding: '8px 12px', fontSize: '0.88rem' }}
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  <div>
+                    <label className="form-label" style={{ fontSize: '0.8rem', marginBottom: '4px' }}>ელ-ფოსტა *</label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="parent@example.com"
+                      value={authForm.email}
+                      onChange={(e) => setAuthForm({ ...authForm, email: e.target.value })}
+                      className="form-control"
+                      style={{ padding: '8px 12px', fontSize: '0.88rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="form-label" style={{ fontSize: '0.8rem', marginBottom: '4px' }}>პაროლი *</label>
+                    <input
+                      type="password"
+                      required
+                      placeholder="მინიმუმ 6 სიმბოლო"
+                      value={authForm.password}
+                      onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
+                      className="form-control"
+                      style={{ padding: '8px 12px', fontSize: '0.88rem' }}
+                    />
+                  </div>
+
+                  {authStatus.error && (
+                    <div style={{ padding: '8px 12px', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '8px', color: '#fca5a5', fontSize: '0.8rem' }}>
+                      {authStatus.error}
+                    </div>
+                  )}
+
+                  {authStatus.success && (
+                    <div style={{ padding: '8px 12px', background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)', borderRadius: '8px', color: '#86efac', fontSize: '0.8rem' }}>
+                      {authStatus.success}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={authStatus.loading}
+                    style={{
+                      marginTop: '6px',
+                      padding: '11px',
+                      background: authStatus.loading ? 'rgba(196, 30, 58, 0.5)' : '#c41e3a',
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontWeight: 700,
+                      fontSize: '0.88rem',
+                      cursor: authStatus.loading ? 'not-allowed' : 'pointer',
+                      transition: 'background 0.2s'
+                    }}
+                  >
+                    {authStatus.loading
+                      ? 'მუშავდება...'
+                      : authMode === 'register'
+                      ? 'რეგისტრაცია & დაკავშირება'
+                      : 'შესვლა'}
+                  </button>
+                </form>
+
+                {/* Benefits mini list */}
+                <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(255, 255, 255, 0.4)', marginBottom: '10px' }}>
+                    რატომ უნდა დარეგისტრირდეთ?
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.65)' }}>
+                      <CheckCircle2 size={14} color="#4ade80" /> განაცხადის სტატუსის ონლაინ მონიტორინგი
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.65)' }}>
+                      <CheckCircle2 size={14} color="#4ade80" /> შედეგებისა და შეტყობინებების მიღება
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.65)' }}>
+                      <CheckCircle2 size={14} color="#4ade80" /> 100% დაცული პერსონალური საბუთები
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </div>
+
         </div>
 
       </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          .admissions-two-col {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }
