@@ -262,22 +262,13 @@ export default function AdmissionsSection() {
   };
 
   return (
-    <section className="admissions-section" id="admissions" style={{ position: 'relative', overflow: 'hidden', padding: 'clamp(80px, 10vh, 120px) 0 80px', background: '#0e0c0e' }}>
+    <section className="admissions-section screen-height-section" id="admissions" style={{ position: 'relative', overflow: 'hidden', padding: '24px 0', background: '#0e0c0e', minHeight: '100vh', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', boxSizing: 'border-box' }}>
       <div className="container" style={{ position: 'relative', zIndex: 2, width: '92%', maxWidth: '1360px', margin: '0 auto' }}>
-        
-        {/* Section Header */}
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <span className="section-eyebrow" style={{ color: '#ff8598' }}>მიღება სკოლაში</span>
-          <h2 className="section-title" style={{ margin: '8px 0 14px' }}>მისაღები პროცედურა და სწავლის საფასური</h2>
-          <p className="section-desc" style={{ maxWidth: '680px', margin: '0 auto', color: 'rgba(255,255,255,0.7)' }}>
-            გაეცანით სწავლის ღირებულებას, პაკეტებსა და შეღავათებს, შემდეგ კი შეავსეთ ონლაინ განაცხადი.
-          </p>
-        </div>
 
         {/* ======================================================== */}
         {/* MOCKUP 5: LUXURY PRICING & TUITION DASHBOARD             */}
         {/* ======================================================== */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginBottom: '50px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
           {/* 1. TOP SUMMARY HEADER CARD (Mockup 5 Top Box) */}
           <div
