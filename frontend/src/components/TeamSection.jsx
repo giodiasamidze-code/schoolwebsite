@@ -336,18 +336,16 @@ export default function TeamSection() {
 
     rAFRef.current = requestAnimationFrame(frame);
 
-    // ── Wheel → smooth per-card impulse ──────────────────────────────────
-    // Each wheel tick nudges the position by exactly one card width with
-    // a short eased glide — fast spinning accumulates cards but never
-    // races away uncontrollably.
-    const SNAP_VEL = 18;          // pixels/frame for a single-card glide
+    // ── Wheel → gentle per-tick impulse ──────────────────────────────────────
+    // Physics: total displacement = SNAP_VEL / (1 - friction) = 2.5 / 0.07 ≈ 36px
+    // One card = 112px → 3 wheel ticks ≈ 1 card change (as user requested)
+    const SNAP_VEL = 2.5;
     const onWheel = (e) => {
       e.preventDefault();
       const d = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
       const dir = d > 0 ? 1 : -1;
-      // Accumulate at most ±2 cards worth of velocity for a comfortable feel
-      const target = Math.max(-SNAP_VEL * 2, Math.min(SNAP_VEL * 2, velocityRef.current + dir * SNAP_VEL));
-      velocityRef.current = target;
+      // Cap at 3 ticks worth so fast spinning stays predictable
+      velocityRef.current = Math.max(-SNAP_VEL * 3, Math.min(SNAP_VEL * 3, velocityRef.current + dir * SNAP_VEL));
     };
     el.addEventListener('wheel', onWheel, { passive: false });
 
