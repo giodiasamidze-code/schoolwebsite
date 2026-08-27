@@ -258,128 +258,117 @@ export default function TeamSection() {
   const lastMouseXRef = useRef(0);
   const lastTimeRef = useRef(0);
   const rAFRef = useRef(null);
+  const activeIdxRef = useRef(0);         // mirror — keeps rAF closure fresh
   const [isDragging, setIsDragging] = useState(false);
 
-  // Tripled list for infinite seamless wrapping
+  // keep ref mirror in sync with React state
+  useEffect(() => { activeIdxRef.current = activeTeacherIndex; }, [activeTeacherIndex]);
+
+  // Tripled list for seamless infinite wrapping (a / b / c copies)
   const infiniteList = [
-    ...teachersList.map((t, idx) => ({ ...t, _origIdx: idx, _key: `set0-${idx}-${t.id}` })),
-    ...teachersList.map((t, idx) => ({ ...t, _origIdx: idx, _key: `set1-${idx}-${t.id}` })),
-    ...teachersList.map((t, idx) => ({ ...t, _origIdx: idx, _key: `set2-${idx}-${t.id}` }))
+    ...teachersList.map((t, idx) => ({ ...t, _origIdx: idx, _key: `a-${idx}-${t.id}` })),
+    ...teachersList.map((t, idx) => ({ ...t, _origIdx: idx, _key: `b-${idx}-${t.id}` })),
+    ...teachersList.map((t, idx) => ({ ...t, _origIdx: idx, _key: `c-${idx}-${t.id}` }))
   ];
 
   useEffect(() => {
     const el = carouselRef.current;
     if (!el) return;
 
-    const itemWidth = 112; // 100px width + 12px gap
-    const singleSetWidth = teachersList.length * itemWidth;
+    const ITEM_W = 112;                              // 100px card + 12px gap
+    const N = teachersList.length;
+    const singleSetW = N * ITEM_W;
 
-    // Initialize posRef to middle set
-    posRef.current = singleSetWidth;
-    el.scrollLeft = posRef.current;
+    // Jump to middle copy — both wrap directions are available
+    posRef.current = singleSetW;
+    el.scrollLeft = singleSetW;
 
-    const updatePhysics = () => {
-      if (!el) return;
-
+    const frame = () => {
+      // ── Physics ─────────────────────────────────────────────────────────
       if (!isInteractingRef.current) {
-        // Apply smooth inertia and friction damping
-        if (Math.abs(velocityRef.current) > 0.08) {
+        if (Math.abs(velocityRef.current) > 0.05) {
           posRef.current += velocityRef.current;
-          velocityRef.current *= 0.94; // Realistic heavy rotary wheel friction
+          velocityRef.current *= 0.93;               // flywheel friction
         } else {
           velocityRef.current = 0;
         }
       }
 
-      // Infinite seamless boundary modulo wrap
-      if (singleSetWidth > 0) {
-        if (posRef.current >= singleSetWidth * 2) {
-          posRef.current -= singleSetWidth;
-        } else if (posRef.current <= 0) {
-          posRef.current += singleSetWidth;
-        }
-      }
+      // ── Seamless modulo — keep posRef in [singleSetW, singleSetW*2) ────
+      // Jumping between copies is invisible because they are identical.
+      while (posRef.current >= singleSetW * 2) posRef.current -= singleSetW;
+      while (posRef.current < singleSetW)       posRef.current += singleSetW;
 
       el.scrollLeft = posRef.current;
 
-      // 3D Cylindrical Perspective Transform on visible cards
-      const containerRect = el.getBoundingClientRect();
-      const containerCenter = containerRect.left + containerRect.width / 2;
-      const cards = el.querySelectorAll('.teacher-wheel-card');
+      // ── 3-D cylindrical transform ────────────────────────────────────────
+      const cRect = el.getBoundingClientRect();
+      const cx = cRect.left + cRect.width / 2;
+      const cards = el.querySelectorAll('.twc');
 
-      let closestIdx = activeTeacherIndex;
-      let minDistance = Infinity;
+      let bestIdx = activeIdxRef.current;
+      let bestDist = Infinity;
 
       cards.forEach((card) => {
-        const rect = card.getBoundingClientRect();
-        const cardCenter = rect.left + rect.width / 2;
-        const dist = cardCenter - containerCenter;
-        const normalizedDist = Math.max(-1.5, Math.min(1.5, dist / (containerRect.width * 0.45)));
+        const r = card.getBoundingClientRect();
+        const dx = r.left + r.width / 2 - cx;
+        const norm = Math.max(-1.4, Math.min(1.4, dx / (cRect.width * 0.42)));
+        const rotY  = norm * -36;
+        const sc    = Math.max(0.78, 1 - Math.abs(norm) * 0.22);
+        const tz    = (1 - Math.abs(norm)) * 22;
+        const alpha = Math.max(0.4, 1 - Math.abs(norm) * 0.58);
+        card.style.transform = `perspective(900px) translateZ(${tz}px) rotateY(${rotY}deg) scale(${sc})`;
+        card.style.opacity   = alpha;
 
-        // 3D rotary cylinder curvature calculations
-        const rotateY = normalizedDist * -38;
-        const scale = Math.max(0.8, 1 - Math.abs(normalizedDist) * 0.2);
-        const translateZ = Math.max(-60, (1 - Math.abs(normalizedDist)) * 25);
-        const opacity = Math.max(0.45, 1 - Math.abs(normalizedDist) * 0.55);
-
-        card.style.transform = `perspective(800px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
-        card.style.opacity = opacity;
-
-        if (Math.abs(dist) < minDistance) {
-          minDistance = Math.abs(dist);
-          const origIdx = parseInt(card.getAttribute('data-orig-idx'), 10);
-          if (!isNaN(origIdx)) {
-            closestIdx = origIdx;
-          }
+        if (Math.abs(dx) < bestDist) {
+          bestDist = Math.abs(dx);
+          const oi = parseInt(card.dataset.origIdx, 10);
+          if (!isNaN(oi)) bestIdx = oi;
         }
       });
 
-      if (closestIdx !== activeTeacherIndex && minDistance < 55) {
-        setActiveTeacherIndex(closestIdx);
+      if (bestIdx !== activeIdxRef.current && bestDist < 58) {
+        setActiveTeacherIndex(bestIdx);
       }
 
-      rAFRef.current = requestAnimationFrame(updatePhysics);
+      rAFRef.current = requestAnimationFrame(frame);
     };
 
-    rAFRef.current = requestAnimationFrame(updatePhysics);
+    rAFRef.current = requestAnimationFrame(frame);
 
-    // Wheel listener for smooth torque impulse
-    const handleWheel = (e) => {
+    // ── Wheel → spin impulse ─────────────────────────────────────────────
+    const onWheel = (e) => {
       e.preventDefault();
-      const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-      // Add realistic spin velocity impulse
-      velocityRef.current += delta * 0.4;
-      // Clamp max angular spin speed
-      velocityRef.current = Math.max(-50, Math.min(50, velocityRef.current));
+      const d = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+      velocityRef.current = Math.max(-55, Math.min(55, velocityRef.current + d * 0.38));
     };
-
-    el.addEventListener('wheel', handleWheel, { passive: false });
+    el.addEventListener('wheel', onWheel, { passive: false });
 
     return () => {
-      if (rAFRef.current) cancelAnimationFrame(rAFRef.current);
-      el.removeEventListener('wheel', handleWheel);
+      cancelAnimationFrame(rAFRef.current);
+      el.removeEventListener('wheel', onWheel);
     };
-  }, [teachersList.length, activeTeacherIndex]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [teachersList.length]); // intentionally NO activeTeacherIndex dep — loop must never restart
 
-  // Pointer Drag Handlers (Unified for Mouse & Touch)
+  // ── Pointer / Touch drag ─────────────────────────────────────────────────
   const handlePointerDown = (e) => {
     isInteractingRef.current = true;
     setIsDragging(true);
-    lastMouseXRef.current = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+    lastMouseXRef.current = e.touches ? e.touches[0].clientX : e.clientX;
     lastTimeRef.current = performance.now();
     velocityRef.current = 0;
   };
 
   const handlePointerMove = (e) => {
     if (!isInteractingRef.current) return;
-    const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
     const now = performance.now();
-    const dx = lastMouseXRef.current - clientX;
+    const dx = lastMouseXRef.current - cx;
     const dt = Math.max(1, now - lastTimeRef.current);
-
     posRef.current += dx;
     velocityRef.current = (dx / dt) * 16;
-    lastMouseXRef.current = clientX;
+    lastMouseXRef.current = cx;
     lastTimeRef.current = now;
   };
 
@@ -388,24 +377,18 @@ export default function TeamSection() {
     setIsDragging(false);
   };
 
-  const centerOnTeacher = (targetOrigIdx) => {
-    setActiveTeacherIndex(targetOrigIdx);
+  // Animate wheel toward a clicked card
+  const centerOnTeacher = (targetIdx) => {
+    setActiveTeacherIndex(targetIdx);
     const el = carouselRef.current;
     if (!el) return;
-    const containerCenter = el.getBoundingClientRect().left + el.clientWidth / 2;
-    const cards = el.querySelectorAll(`.teacher-wheel-card[data-orig-idx="${targetOrigIdx}"]`);
-    let bestDelta = 0;
-    let minD = Infinity;
-    cards.forEach((card) => {
-      const rect = card.getBoundingClientRect();
-      const cardCenter = rect.left + rect.width / 2;
-      const d = cardCenter - containerCenter;
-      if (Math.abs(d) < minD) {
-        minD = Math.abs(d);
-        bestDelta = d;
-      }
+    const cx = el.getBoundingClientRect().left + el.clientWidth / 2;
+    let bestDelta = 0, minD = Infinity;
+    el.querySelectorAll(`.twc[data-orig-idx="${targetIdx}"]`).forEach((card) => {
+      const d = card.getBoundingClientRect().left + card.offsetWidth / 2 - cx;
+      if (Math.abs(d) < minD) { minD = Math.abs(d); bestDelta = d; }
     });
-    velocityRef.current = bestDelta * 0.25;
+    velocityRef.current = bestDelta * 0.22;
   };
 
   return (
@@ -761,7 +744,7 @@ export default function TeamSection() {
                 <div
                   key={t._key}
                   data-orig-idx={t._origIdx}
-                  className="teacher-wheel-card"
+                  className="twc"
                   onClick={() => centerOnTeacher(t._origIdx)}
                   style={{
                     flex: '0 0 100px',
@@ -770,7 +753,7 @@ export default function TeamSection() {
                     flexDirection: 'column',
                     alignItems: 'center',
                     textAlign: 'center',
-                    transition: isDragging ? 'none' : 'transform 0.08s ease-out',
+                    transition: 'none',
                     transformStyle: 'preserve-3d',
                     willChange: 'transform, opacity'
                   }}
