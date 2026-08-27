@@ -1,127 +1,130 @@
-import React, { useState, useEffect } from 'react';
-import { X, Briefcase, GraduationCap, Award, Calendar, Quote } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Award, GraduationCap, Briefcase, Calendar, Info, ChevronLeft, ChevronRight } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 
 export default function TeamSection() {
-  const [activeSubject, setActiveSubject] = useState('all');
   const [selectedTeacher, setSelectedTeacher] = useState(null);
+  const [activeTeacherIndex, setActiveTeacherIndex] = useState(4); // Default to Elene Beridze or middle
   const [dynamicTeachers, setDynamicTeachers] = useState([]);
+  const carouselRef = useRef(null);
 
-  const subjectCategories = [
-    { id: 'all', label: 'ყველა საგანი' },
-    { id: 'stem', label: 'მათემატიკა და STEM' },
-    { id: 'languages', label: 'ენები და ლიტერატურა' },
-    { id: 'social', label: 'საზოგადოებრივი მეცნიერებები' },
-    { id: 'arts-sports', label: 'ხელოვნება და სპორტი' }
-  ];
-
-  const director = {
-    name: 'ელენე ბაქრაძე',
-    role: 'სკოლის დირექტორი',
-    quote: 'აკადემიაში ჩვენ გვწამს, რომ განათლება არის არა ჭურჭლის ავსება, არამედ ცეცხლის დანთება. ჩვენი მიზანია აღვზარდოთ მოაზროვნე, პასუხისმგებლიანი და თავისუფალი პიროვნებები, რომლებიც შეცვლიან სამყაროს უკეთესობისკენ.',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400&h=400',
-    education: 'PhD განათლების მენეჯმენტში (ჰარვარდის უნივერსიტეტი), თსუ ასოცირებული პროფესორი.',
-    experience: '18 წელი საგანმანათლებლო სფეროში, აქედან 8 წელი საერთაშორისო სკოლების მართვაში.',
-    certifications: 'IB სკოლების ხელმძღვანელთა საერთაშორისო სერტიფიკატი.',
-    yearsAtSchool: '6 წელი'
-  };
-
-  const teachers = [
+  const defaultTeachers = [
     {
       id: 1,
-      name: 'გიორგი მახარაძე',
-      role: 'მათემატიკისა და კოდირების პედაგოგი',
-      subject: 'მათემატიკა, ალგებრა-გეომეტრია, კომპიუტერული მეცნიერებები',
-      category: 'stem',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400&h=400',
-      education: 'თბილისის სახელმწიფო უნივერსიტეტი (მათემატიკის ბაკალავრი), მიუნხენის ტექნიკური უნივერსიტეტი (მაგისტრი).',
-      experience: '9 წელი მათემატიკისა და კომპიუტერული მეცნიერებების სწავლებაში.',
-      certifications: 'Google Certified Educator Level 2, Cambridge Mathematics Trainer.',
-      yearsAtSchool: '4 წელი'
+      name: 'დავით გიორგაძე',
+      latinName: 'David Giorgadze',
+      role: 'ისტორიის პედაგოგი',
+      subject: 'მსოფლიო ისტორია და დიპლომატია',
+      badge: 'Kasha',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400&h=400',
+      education: 'თბილისის სახელმწიფო უნივერსიტეტი (ისტორიის დოქტორი), CEU მაგისტრი.',
+      experience: '14 წელი საზოგადოებრივი მეცნიერებების სწავლებაში.',
+      certifications: 'IB Global Politics & History Certified Examiner.',
+      yearsAtSchool: '5 წელი (Solomon Institutions)'
     },
     {
       id: 2,
-      name: 'ნინო დევდარიანი',
-      role: 'ინგლისური ენისა და ლიტერატურის პედაგოგი',
-      subject: 'ინგლისური ენა, ბილინგვური კურსები',
-      category: 'languages',
-      image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400&h=400',
-      education: 'ილიას სახელმწიფო უნივერსიტეტი (ბაკალავრი), ლონდონის საუნივერსიტეტო კოლეჯი (UCL, მაგისტრი).',
-      experience: '12 წელი ბილინგვური სწავლების მიმართულებით.',
-      certifications: 'CELTA (Certificate in English Language Teaching to Adults), DELTA Module 1.',
-      yearsAtSchool: '6 წელი'
+      name: 'ლუკა გიორგაძე',
+      latinName: 'Luka Giorgadze',
+      role: 'კომპიუტერული მეცნიერებები',
+      subject: 'ინფორმატიკა, რობოტოტექნიკა და AI',
+      badge: 'Istaka',
+      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400&h=400',
+      education: 'მიუნხენის ტექნიკური უნივერსიტეტი (MSc Computer Science).',
+      experience: '9 წელი კოდირებისა და ალგორითმების პრაქტიკაში.',
+      certifications: 'Google Certified Educator Level 2, Cambridge ICT Trainer.',
+      yearsAtSchool: '4 წელი (Solomon Institutions)'
     },
     {
       id: 3,
-      name: 'დავით კოპალეიშვილი',
-      role: 'ფიზიკისა და ბუნებისმეტყველების პედაგოგი',
-      subject: 'ფიზიკა, ბუნებისმეტყველება, STEM ლაბორატორია',
-      category: 'stem',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400&h=400',
-      education: 'თსუ ფიზიკის ფაკულტეტი (ბაკალავრი, მაგისტრი).',
-      experience: '10 წელი ფიზიკისა და STEM დისციპლინების სწავლებაში.',
-      certifications: 'ეროვნული სასწავლო ოლიმპიადების მენტორი, AP Physics Certified Teacher.',
-      yearsAtSchool: '5 წელი'
+      name: 'მარიამ კალანდაძე',
+      latinName: 'Mariam Kalandadze',
+      role: 'ინგლისური ენის პედაგოგი',
+      subject: 'ინგლისური ენა და ლიტერატურა',
+      badge: 'Uzerziana',
+      image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400&h=400',
+      education: 'ლონდონის საუნივერსიტეტო კოლეჯი (UCL, MA Applied Linguistics).',
+      experience: '11 წელი საერთაშორისო პროგრამებში სწავლება.',
+      certifications: 'CELTA, DELTA Module 1, Cambridge IGCSE Examiner.',
+      yearsAtSchool: '6 წელი (Solomon Institutions)'
     },
     {
       id: 4,
-      name: 'თამარ ჩხეიძე',
-      role: 'ქართული ენისა და ლიტერატურის პედაგოგი',
-      subject: 'ქართული ენა და ლიტერატურა, აკადემიური წერა (EE)',
-      category: 'languages',
-      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400&h=400',
-      education: 'თსუ ფილოლოგიის ფაკულტეტი (ბაკალავრი, მაგისტრი).',
-      experience: '14 წელი ქართული ენისა და აკადემიური წერის სწავლებაში.',
-      certifications: 'ეროვნული გამოცდების შემფასებელი, IB Extended Essay (EE) კოორდინატორი.',
-      yearsAtSchool: '7 წელი'
+      name: 'დავით ცეცხლაძე',
+      latinName: 'David Tsetskhladze',
+      role: 'ფიზიკის პედაგოგი',
+      subject: 'თეორიული და ექსპერიმენტული ფიზიკა',
+      badge: 'Fiziky',
+      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400&h=400',
+      education: 'თსu ზუსტ და საბუნებისმეტყველო მეცნიერებათა ფაკულტეტი (PhD).',
+      experience: '12 წელი STEM და ოლიმპიადების მომზადებაში.',
+      certifications: 'AP Physics Certified Master Teacher.',
+      yearsAtSchool: '5 წელი (Solomon Institutions)'
     },
     {
       id: 5,
-      name: 'ლევან გორგაძე',
-      role: 'ისტორიისა და გლობალური პოლიტიკის პედაგოგი',
-      subject: 'მსოფლიო ისტორია, გლობალური პოლიტიკა, შემეცნების თეორია (TOK)',
-      category: 'social',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400&h=400',
-      education: 'თსუ ისტორიის ფაკულტეტი (ბაკალავრი), ცენტრალური ევროპის უნივერსიტეტი (CEU, მაგისტრი).',
-      experience: '11 წელი საზოგადოებრივი მეცნიერებების სწავლებაში.',
-      certifications: 'IB TOK და Global Politics სერტიფიცირებული პედაგოგი.',
-      yearsAtSchool: '4 წელი'
+      name: 'ელენე ბერიძე',
+      latinName: 'Elene Beridze',
+      role: 'მათემატიკის პედაგოგი',
+      subject: 'მათემატიკა, უმაღლესი ალგებრა და ანალიზი',
+      badge: 'stoira',
+      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400&h=400',
+      education: 'მათემატიკის დოქტორი (თსუ), ოქსფორდის უნივერსიტეტის პოსტდოქტორი.',
+      experience: '15 წელი მათემატიკური დისციპლინების სწავლებაში.',
+      certifications: 'Cambridge International Diploma, IB HL Mathematics Trainer.',
+      yearsAtSchool: '7 წელი (Solomon Institutions)'
     },
     {
       id: 6,
-      name: 'ქეთევან ტაბატაძე',
-      role: 'ბიოლოგიისა და ქიმიის პედაგოგი',
-      subject: 'ქიმია, ბიოლოგია, გარემოსდაცვითი მეცნიერებები',
-      category: 'stem',
-      image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400&h=400',
-      education: 'თბილისის სახელმწიფო სამედიცინო უნივერსიტეტი (აკადემიური ხარისხი ბიოლოგიაში).',
-      experience: '8 წელი ქიმია-ბიოლოგიის მიმართულებით.',
-      certifications: 'Cambridge IGCSE Biology & Chemistry Certified Teacher.',
-      yearsAtSchool: '3 წელი'
+      name: 'დავით ცეცხლაძე',
+      latinName: 'David Tsetskhladze',
+      role: 'ქიმიის პედაგოგი',
+      subject: 'ზოგადი და ორგანული ქიმია',
+      badge: 'Fizika',
+      image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400&h=400',
+      education: 'თბილისის სახელმწიფო სამედიცინო უნივერსიტეტი (MSc).',
+      experience: '8 წელი ქიმიისა და ლაბორატორიული კვლევების ხელმძღვანელობაში.',
+      certifications: 'Cambridge IGCSE Chemistry Certified Educator.',
+      yearsAtSchool: '4 წელი (Solomon Institutions)'
     },
     {
       id: 7,
-      name: 'ირაკლი კალანდაძე',
-      role: 'ხელოვნებისა და ფიზიკური აღზრდის პედაგოგი',
-      subject: 'სახვითი ხელოვნება, მძლეოსნობა, სპორტის სექციები',
-      category: 'arts-sports',
-      image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400&h=400',
-      education: 'თბილისის სახელმწიფო სამხატვრო აკადემია (ბაკალავრი), ფიზიკური აღზრდისა და სპორტის სახელმწიფო სასწავლო უნივერსიტეტი.',
-      experience: '10 წელი სპორტული და შემოქმედებითი მიმართულებით.',
-      certifications: 'ლიცენზირებული მწვრთნელი კალათბურთსა და სახვით ხელოვნებაში.',
-      yearsAtSchool: '5 წელი'
+      name: 'ელენე ღრიანდაძე',
+      latinName: 'Elene Griandadze',
+      role: 'ბიოლოგიის პედაგოგი',
+      subject: 'გენეტიკა და მოლეკულური ბიოლოგია',
+      badge: 'Uzerziana',
+      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400&h=400',
+      education: 'ილიას სახელმწიფო უნივერსიტეტი (ბიოლოგიის მაგისტრი).',
+      experience: '10 წელი საბუნებისმეტყველო მეცნიერებათა სწავლებაში.',
+      certifications: 'IB Biology Diploma Programme Category 2.',
+      yearsAtSchool: '5 წელი (Solomon Institutions)'
     },
     {
       id: 8,
-      name: 'ანა მებურიშვილი',
-      role: 'ეკონომიკისა და გეოგრაფიის პედაგოგი',
-      subject: 'ეკონომიკა და ბიზნესი, გეოგრაფია, გლობალური პერსპექტივები',
-      category: 'social',
-      image: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400&h=400',
-      education: 'თსუ ეკონომიკისა და ბიზნესის ფაკულტეტი (ბაკალავრი, მაგისტრი).',
+      name: 'ლუკა გიორგაძე',
+      latinName: 'Luka Giorgadze',
+      role: 'გეოგრაფიისა და ეკონომიკის პედაგოგი',
+      subject: 'გლობალური ეკონომიკა და გეოპოლიტიკა',
+      badge: 'S1772',
+      image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400&h=400',
+      education: 'თსუ ეკონომიკისა და ბიზნესის ფაკულტეტი (მაგისტრი).',
       experience: '7 წელი ეკონომიკისა და გეოგრაფიის სწავლებაში.',
-      certifications: 'AP Economics Certified Educator, Cambridge Global Perspectives Trainer.',
-      yearsAtSchool: '3 წელი'
+      certifications: 'AP Economics & Cambridge Global Perspectives.',
+      yearsAtSchool: '3 წელი (Solomon Institutions)'
+    },
+    {
+      id: 9,
+      name: 'მარიამ კალანდაძე',
+      latinName: 'Mariam Kalandadze',
+      role: 'ქართული ენისა და ლიტერატურის პედაგოგი',
+      subject: 'ქართული ენა და აკადემიური წერა',
+      badge: 'Utrrziana',
+      image: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400&h=400',
+      education: 'თსუ ფილოლოგიის ფაკულტეტი (ბაკალავრი, მაგისტრი).',
+      experience: '13 წელი ქართული ენისა და ლიტერატურის სწავლებაში.',
+      certifications: 'ეროვნული სასწავლო გამოცდების ექსპერტი, IB EE კოორდინატორი.',
+      yearsAtSchool: '6 წელი (Solomon Institutions)'
     }
   ];
 
@@ -130,156 +133,623 @@ export default function TeamSection() {
       try {
         const { data, error } = await supabase.from('teachers').select('*');
         if (!error && data && data.length > 0) {
-          const mapped = data.map((t) => ({
-            id: t.id,
+          const mapped = data.map((t, idx) => ({
+            id: t.id || idx + 1,
             name: t.full_name,
+            latinName: t.full_name,
             role: `${t.subject} პედაგოგი`,
             subject: t.subject,
-            category: 'stem',
-            image: t.photo_url || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400&h=400',
-            education: t.education || 'უმაღლესი განათლება',
-            experience: t.experience_years || 'მრავალწლიანი გამოცდილება',
+            badge: t.subject,
+            image: t.photo_url || defaultTeachers[idx % defaultTeachers.length].image,
+            education: t.education || 'უმაღლესი აკადემიური განათლება',
+            experience: t.experience_years ? `${t.experience_years} წელი` : 'მრავალწლიანი გამოცდილება',
             certifications: t.certifications || 'სერტიფიცირებული პედაგოგი',
-            yearsAtSchool: t.years_at_school || '1 წელი'
+            yearsAtSchool: t.years_at_school ? `${t.years_at_school} (Solomon Institutions)` : 'Solomon Institutions'
           }));
           setDynamicTeachers(mapped);
         }
       } catch (err) {
-        console.error('Error fetching teachers from Supabase:', err);
+        console.error('Error fetching teachers:', err);
       }
     }
     loadTeachers();
   }, []);
 
-  const allTeachersList = [...dynamicTeachers, ...teachers];
+  const teachersList = dynamicTeachers.length > 0 ? dynamicTeachers : defaultTeachers;
+  const activeTeacher = teachersList[activeTeacherIndex] || teachersList[0];
 
-  const filteredTeachers = activeSubject === 'all'
-    ? allTeachersList
-    : allTeachersList.filter(t => t.category === activeSubject);
+  const scrollCarousel = (dir) => {
+    if (carouselRef.current) {
+      const scrollAmount = dir === 'left' ? -260 : 260;
+      carouselRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
 
   return (
-    <section className="team-section" id="teachers" style={{ position: 'relative', overflow: 'hidden', padding: '90px 0 60px' }}>
-      
-      {/* Luxury Background Watermark */}
-      <div className="section-watermark">
-        FACULTY
-      </div>
+    <section
+      id="teachers"
+      style={{
+        position: 'relative',
+        background: '#121214',
+        padding: 'clamp(80px, 10vh, 120px) 0 90px',
+        overflow: 'hidden',
+        color: '#f0ece8'
+      }}
+    >
+      {/* Chalkboard Math Formulas Background Overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          opacity: 0.18,
+          pointerEvents: 'none',
+          backgroundImage: `
+            radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 40%),
+            radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.08) 0%, transparent 40%)
+          `
+        }}
+      />
 
-      <div className="container" style={{ position: 'relative', zIndex: 2, width: '92%', maxWidth: '1360px', margin: '0 auto' }}>
-        <span className="section-eyebrow">ჩვენი გუნდი</span>
-        <h2 className="section-title">აკადემიური ლიდერები და მასწავლებლები</h2>
-        <p className="section-desc">
-          სკოლის წარმატებას განაპირობებენ მაღალი კვალიფიკაციის მქონე პროფესიონალები, რომლებიც მუდმივად ზრუნავენ სწავლების ხარისხის განვითარებაზე.
-        </p>
+      {/* SVG Math & Geometric Formulas Decorative Chalkboard Engravings */}
+      <svg
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none',
+          opacity: 0.22
+        }}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <style>{`
+            .formula-text { font-family: 'Times New Roman', Times, serif; font-style: italic; fill: #d4af37; font-size: 26px; }
+            .formula-text-sm { font-family: 'Times New Roman', Times, serif; font-style: italic; fill: #d4af37; font-size: 19px; }
+          `}</style>
+        </defs>
 
-        {/* Director Spotlight Section */}
-        <div className="director-card spotlight-card" style={{ maxWidth: '1000px', margin: '0 auto 48px' }}>
-          <div className="director-image-wrapper">
-            <img src={director.image} alt={director.name} className="director-headshot" />
-          </div>
-          <div className="director-content">
-            <Quote className="quote-icon text-gold" size={32} />
-            <p className="director-quote">{director.quote}</p>
-            <h3 className="director-name">{director.name}</h3>
-            <span className="director-role">{director.role}</span>
-            <button 
-              className="btn btn-outline btn-sm mt-4"
-              onClick={() => setSelectedTeacher(director)}
+        {/* Left Side Formulas */}
+        <text x="3%" y="18%" className="formula-text">∫ f(x) dx</text>
+        <text x="2%" y="45%" className="formula-text">∫ x dx</text>
+        <text x="4%" y="58%" className="formula-text">√a² + b²</text>
+        <text x="3%" y="72%" className="formula-text-sm">ₙCᵣ</text>
+        
+        {/* Left 3D Wireframe Cone */}
+        <g transform="translate(60, 680) scale(0.65)">
+          <ellipse cx="60" cy="110" rx="55" ry="18" fill="none" stroke="#d4af37" strokeWidth="1" strokeDasharray="3 3" />
+          <line x1="60" y1="10" x2="5" y2="110" stroke="#d4af37" strokeWidth="1.2" />
+          <line x1="60" y1="10" x2="115" y2="110" stroke="#d4af37" strokeWidth="1.2" />
+          <line x1="60" y1="10" x2="60" y2="110" stroke="#d4af37" strokeWidth="1" strokeDasharray="2 2" />
+        </g>
+
+        {/* Right Side Formulas */}
+        <text x="90%" y="22%" className="formula-text">∫ x dx</text>
+        <text x="88%" y="42%" className="formula-text">√a² + b²</text>
+        <text x="92%" y="56%" className="formula-text-sm">ₙCᵣ</text>
+
+        {/* Right 3D Wireframe Cone */}
+        <g transform="translate(1320, 680) scale(0.65)">
+          <ellipse cx="60" cy="110" rx="55" ry="18" fill="none" stroke="#d4af37" strokeWidth="1" strokeDasharray="3 3" />
+          <line x1="60" y1="10" x2="5" y2="110" stroke="#d4af37" strokeWidth="1.2" />
+          <line x1="60" y1="10" x2="115" y2="110" stroke="#d4af37" strokeWidth="1.2" />
+          <line x1="60" y1="10" x2="60" y2="110" stroke="#d4af37" strokeWidth="1" strokeDasharray="2 2" />
+          <text x="75" y="65" className="formula-text-sm" style={{ fontSize: '14px' }}>h</text>
+        </g>
+      </svg>
+
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 2,
+          width: '92%',
+          maxWidth: '1240px',
+          margin: '0 auto'
+        }}
+      >
+        {/* Ornate Gold Crown & Filigree Top Border */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '32px'
+          }}
+        >
+          {/* Top Filigree Flourish with Crown and Shield */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '16px',
+              width: '100%',
+              maxWidth: '560px'
+            }}
+          >
+            {/* Left flourish line */}
+            <div
+              style={{
+                flex: 1,
+                height: '1px',
+                background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.7))'
+              }}
+            />
+
+            {/* Shield & Crown Crest Icon */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                filter: 'drop-shadow(0 2px 8px rgba(212, 175, 55, 0.4))'
+              }}
             >
-              სრული რეზიუმე
-            </button>
+              <svg width="48" height="48" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Crown */}
+                <path
+                  d="M22 20 L26 26 L32 18 L38 26 L42 20 L40 28 L24 28 Z"
+                  fill="#d4af37"
+                  stroke="#f5e2a3"
+                  strokeWidth="1"
+                />
+                <circle cx="32" cy="16" r="2" fill="#f5e2a3" />
+                <circle cx="22" cy="18" r="1.5" fill="#f5e2a3" />
+                <circle cx="42" cy="18" r="1.5" fill="#f5e2a3" />
+
+                {/* Shield */}
+                <path
+                  d="M20 28 C20 28 32 30 32 30 C32 30 44 28 44 28 C44 42 32 50 32 50 C32 50 20 42 20 28 Z"
+                  fill="rgba(24, 18, 12, 0.9)"
+                  stroke="#d4af37"
+                  strokeWidth="1.8"
+                />
+                <path
+                  d="M24 32 C24 32 32 33.5 32 33.5 C32 33.5 40 32 40 32 C40 40 32 46 32 46 C32 46 24 40 24 32 Z"
+                  fill="none"
+                  stroke="rgba(212, 175, 55, 0.5)"
+                  strokeWidth="1"
+                />
+
+                {/* Crest Emblems: 'S' inside Shield */}
+                <text x="27" y="42" fill="#e8c86d" fontSize="13" fontWeight="bold" fontFamily="serif">
+                  S
+                </text>
+              </svg>
+            </div>
+
+            {/* Right flourish line */}
+            <div
+              style={{
+                flex: 1,
+                height: '1px',
+                background: 'linear-gradient(90deg, rgba(212, 175, 55, 0.7), transparent)'
+              }}
+            />
           </div>
         </div>
 
-        {/* Subject Filter pills */}
-        <div className="filters-container">
-          {subjectCategories.map((sub) => (
-            <button
-              key={sub.id}
-              className={`filter-pill ${activeSubject === sub.id ? 'active' : ''}`}
-              onClick={() => setActiveSubject(sub.id)}
-            >
-              {sub.label}
-            </button>
-          ))}
-        </div>
+        {/* Central Spotlight Teacher Showcase Card (Exact Mockup 2 Center Card) */}
+        <div
+          style={{
+            maxWidth: '780px',
+            margin: '0 auto 48px',
+            background: 'rgba(22, 20, 18, 0.95)',
+            border: '1.5px solid rgba(212, 175, 55, 0.75)',
+            borderRadius: '16px',
+            padding: 'clamp(24px, 4vw, 36px)',
+            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.75), inset 0 0 25px rgba(212, 175, 55, 0.08)',
+            display: 'grid',
+            gridTemplateColumns: 'minmax(140px, 190px) 1fr',
+            gap: 'clamp(20px, 3.5vw, 36px)',
+            alignItems: 'center',
+            transition: 'all 0.35s ease'
+          }}
+        >
+          {/* Left: Portrait in Golden Rounded Frame */}
+          <div
+            style={{
+              position: 'relative',
+              width: '100%',
+              aspectRatio: '1 / 1.15',
+              borderRadius: '14px',
+              border: '1.5px solid rgba(212, 175, 55, 0.65)',
+              overflow: 'hidden',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.6)'
+            }}
+          >
+            <img
+              src={activeTeacher.image}
+              alt={activeTeacher.name}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover'
+              }}
+            />
+          </div>
 
-        {/* Teachers Grid with Spotlight Cards */}
-        <div className="card-grid">
-          {filteredTeachers.map((teacher) => (
-            <div key={teacher.id} className="card teacher-card spotlight-card fade-in">
-              <div className="teacher-avatar">
-                <img src={teacher.image} alt={teacher.name} className="teacher-headshot" />
-              </div>
-              <h3 className="teacher-name">{teacher.name}</h3>
-              <span className="teacher-role">{teacher.role}</span>
-              <span className="teacher-subject-tag">{teacher.subject}</span>
-              <button 
-                className="teacher-details-btn"
-                onClick={() => setSelectedTeacher(teacher)}
+          {/* Right: Teacher Credentials & Bio */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {/* Header: Quote + Name */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+              <span
+                style={{
+                  fontFamily: 'serif',
+                  fontSize: '2.4rem',
+                  lineHeight: 0.9,
+                  color: 'rgba(212, 175, 55, 0.85)'
+                }}
               >
-                დეტალურად &rarr;
+                ”
+              </span>
+              <div>
+                <h3
+                  style={{
+                    fontFamily: "'Noto Serif Georgian', Georgia, serif",
+                    fontSize: 'clamp(1.35rem, 2.2vw, 1.7rem)',
+                    fontWeight: 600,
+                    color: '#ffffff',
+                    lineHeight: 1.15,
+                    margin: 0
+                  }}
+                >
+                  {activeTeacher.name}
+                </h3>
+                <p
+                  style={{
+                    fontFamily: "'Noto Sans Georgian', sans-serif",
+                    fontSize: '0.92rem',
+                    color: '#c4a66a',
+                    fontWeight: 500,
+                    marginTop: '2px',
+                    marginBottom: '10px'
+                  }}
+                >
+                  {activeTeacher.role}
+                </p>
+              </div>
+            </div>
+
+            {/* Metadata Rows (Matches Mockup 2 format) */}
+            <div style={{ fontSize: '0.86rem', lineHeight: 1.6, color: '#ded7cd' }}>
+              <p style={{ margin: '3px 0' }}>
+                <strong style={{ color: '#c4a66a', fontWeight: 600 }}>განათლება: </strong>
+                <span>{activeTeacher.education}</span>
+              </p>
+              <p style={{ margin: '3px 0' }}>
+                <strong style={{ color: '#c4a66a', fontWeight: 600 }}>გამოცდილება: </strong>
+                <span>{activeTeacher.experience}</span>
+              </p>
+              <p style={{ margin: '3px 0' }}>
+                <strong style={{ color: '#c4a66a', fontWeight: 600 }}>სერტიფიკატი: </strong>
+                <span>{activeTeacher.certifications}</span>
+              </p>
+              <p style={{ margin: '3px 0' }}>
+                <strong style={{ color: '#c4a66a', fontWeight: 600 }}>მუშაობის პერიოდი: </strong>
+                <span>{activeTeacher.yearsAtSchool}</span>
+              </p>
+            </div>
+
+            {/* Gold Action Button: Shesaxeb Meti ⓘ */}
+            <div style={{ marginTop: '10px' }}>
+              <button
+                type="button"
+                onClick={() => setSelectedTeacher(activeTeacher)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '9px 24px',
+                  borderRadius: '8px',
+                  background: 'linear-gradient(180deg, #9e7526 0%, #7d5b1b 100%)',
+                  color: '#ffffff',
+                  border: '1px solid rgba(255, 230, 160, 0.4)',
+                  fontSize: '0.88rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.4)',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'linear-gradient(180deg, #b88628 0%, #8f671f 100%)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'linear-gradient(180deg, #9e7526 0%, #7d5b1b 100%)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <span>შესახებ მეტი</span>
+                <Info size={14} />
               </button>
             </div>
-          ))}
+          </div>
+        </div>
+
+        {/* Bottom Arc / Horizontal Curved Gallery Carousel (Mockup 2) */}
+        <div style={{ position: 'relative', width: '100%', marginTop: '16px' }}>
+          {/* Navigation arrow buttons */}
+          <button
+            type="button"
+            onClick={() => scrollCarousel('left')}
+            style={{
+              position: 'absolute',
+              left: '-18px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              zIndex: 10,
+              width: '38px',
+              height: '38px',
+              borderRadius: '50%',
+              background: 'rgba(24, 20, 16, 0.9)',
+              border: '1px solid rgba(212, 175, 55, 0.5)',
+              color: '#d4af37',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.6)'
+            }}
+          >
+            <ChevronLeft size={20} />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => scrollCarousel('right')}
+            style={{
+              position: 'absolute',
+              right: '-18px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              zIndex: 10,
+              width: '38px',
+              height: '38px',
+              borderRadius: '50%',
+              background: 'rgba(24, 20, 16, 0.9)',
+              border: '1px solid rgba(212, 175, 55, 0.5)',
+              color: '#d4af37',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.6)'
+            }}
+          >
+            <ChevronRight size={20} />
+          </button>
+
+          {/* Carousel Scroll Track */}
+          <div
+            ref={carouselRef}
+            style={{
+              display: 'flex',
+              gap: '14px',
+              overflowX: 'auto',
+              padding: '12px 6px 20px',
+              scrollSnapType: 'x mandatory',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none'
+            }}
+          >
+            {teachersList.map((t, idx) => {
+              const isActive = idx === activeTeacherIndex;
+              return (
+                <div
+                  key={t.id || idx}
+                  onClick={() => setActiveTeacherIndex(idx)}
+                  style={{
+                    flex: '0 0 115px',
+                    cursor: 'pointer',
+                    scrollSnapAlign: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    transition: 'all 0.25s ease',
+                    transform: isActive ? 'scale(1.06) translateY(-4px)' : 'scale(0.96)',
+                    opacity: isActive ? 1 : 0.72
+                  }}
+                >
+                  {/* Portrait Card */}
+                  <div
+                    style={{
+                      width: '100px',
+                      height: '118px',
+                      borderRadius: '10px',
+                      overflow: 'hidden',
+                      border: isActive
+                        ? '2px solid #d4af37'
+                        : '1px solid rgba(212, 175, 55, 0.35)',
+                      boxShadow: isActive
+                        ? '0 0 16px rgba(212, 175, 55, 0.5), 0 8px 16px rgba(0,0,0,0.8)'
+                        : '0 4px 12px rgba(0,0,0,0.5)',
+                      background: '#1a1412',
+                      marginBottom: '6px'
+                    }}
+                  >
+                    <img
+                      src={t.image}
+                      alt={t.name}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                      }}
+                    />
+                  </div>
+
+                  {/* Name and Subject Badge */}
+                  <span
+                    style={{
+                      fontFamily: "'Noto Serif Georgian', Georgia, serif",
+                      fontSize: '0.78rem',
+                      fontWeight: 600,
+                      color: isActive ? '#f5e2a3' : 'rgba(255, 255, 255, 0.85)',
+                      lineHeight: 1.2,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 1,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      maxWidth: '110px'
+                    }}
+                  >
+                    {t.name}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '0.68rem',
+                      color: isActive ? '#d4af37' : 'rgba(212, 175, 55, 0.65)',
+                      marginTop: '2px',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 1,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      maxWidth: '110px'
+                    }}
+                  >
+                    {t.badge || t.role}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* Luxury Gold Divider */}
-      <div className="luxury-divider" style={{ marginTop: '50px' }}>
-        <div className="luxury-divider-line" />
-        <span className="luxury-divider-star">✦ ✦ ✦</span>
-        <div className="luxury-divider-line" />
-      </div>
-
-      {/* CV Modal Overlay */}
+      {/* Detailed Modal Profile for Teacher */}
       {selectedTeacher && (
-        <div className="modal-overlay" onClick={() => setSelectedTeacher(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setSelectedTeacher(null)}>
-              <X size={20} />
+        <div
+          className="modal-overlay"
+          onClick={() => setSelectedTeacher(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            background: 'rgba(0, 0, 0, 0.82)',
+            backdropFilter: 'blur(10px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px'
+          }}
+        >
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: '#161311',
+              border: '1.5px solid rgba(212, 175, 55, 0.7)',
+              borderRadius: '20px',
+              maxWidth: '650px',
+              width: '100%',
+              padding: '36px 32px',
+              boxShadow: '0 24px 70px rgba(0,0,0,0.85)',
+              position: 'relative',
+              color: '#ffffff'
+            }}
+          >
+            <button
+              onClick={() => setSelectedTeacher(null)}
+              style={{
+                position: 'absolute',
+                top: '18px',
+                right: '18px',
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: 'none',
+                borderRadius: '50%',
+                width: '34px',
+                height: '34px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#fff',
+                cursor: 'pointer'
+              }}
+            >
+              <X size={18} />
             </button>
-            
-            <div className="modal-header">
-              <div className="modal-avatar">
-                <img src={selectedTeacher.image} alt={selectedTeacher.name} className="modal-headshot" />
+
+            <div style={{ display: 'flex', gap: '24px', alignItems: 'center', marginBottom: '24px' }}>
+              <div
+                style={{
+                  width: '110px',
+                  height: '125px',
+                  borderRadius: '12px',
+                  border: '1.5px solid #d4af37',
+                  overflow: 'hidden',
+                  flexShrink: 0
+                }}
+              >
+                <img
+                  src={selectedTeacher.image}
+                  alt={selectedTeacher.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
               </div>
               <div>
-                <h3 className="modal-teacher-name">{selectedTeacher.name}</h3>
-                <span className="modal-teacher-role">{selectedTeacher.role}</span>
+                <h2
+                  style={{
+                    fontFamily: "'Noto Serif Georgian', serif",
+                    fontSize: '1.6rem',
+                    color: '#f5e2a3',
+                    marginBottom: '4px'
+                  }}
+                >
+                  {selectedTeacher.name}
+                </h2>
+                <p style={{ color: '#d4af37', fontSize: '0.95rem', fontWeight: 600 }}>
+                  {selectedTeacher.role}
+                </p>
+                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem' }}>
+                  {selectedTeacher.subject}
+                </p>
               </div>
             </div>
 
-            <div className="modal-body">
-              <div className="cv-item">
-                <GraduationCap className="cv-icon" />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '14px',
+                fontSize: '0.92rem',
+                lineHeight: 1.7,
+                borderTop: '1px solid rgba(212, 175, 55, 0.2)',
+                paddingTop: '20px'
+              }}
+            >
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <GraduationCap size={20} color="#d4af37" style={{ flexShrink: 0, marginTop: '2px' }} />
                 <div>
-                  <h4>განათლება</h4>
-                  <p>{selectedTeacher.education}</p>
-                </div>
-              </div>
-              
-              <div className="cv-item">
-                <Briefcase className="cv-icon" />
-                <div>
-                  <h4>გამოცდილება</h4>
-                  <p>{selectedTeacher.experience}</p>
-                </div>
-              </div>
-
-              <div className="cv-item">
-                <Award className="cv-icon" />
-                <div>
-                  <h4>სერტიფიკატები</h4>
-                  <p>{selectedTeacher.certifications}</p>
+                  <strong style={{ color: '#f5e2a3' }}>განათლება: </strong>
+                  <span style={{ color: 'rgba(255,255,255,0.85)' }}>{selectedTeacher.education}</span>
                 </div>
               </div>
 
-              <div className="cv-item">
-                <Calendar className="cv-icon" />
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <Briefcase size={20} color="#d4af37" style={{ flexShrink: 0, marginTop: '2px' }} />
                 <div>
-                  <h4>აკადემიაში მუშაობის პერიოდი</h4>
-                  <p>{selectedTeacher.yearsAtSchool}</p>
+                  <strong style={{ color: '#f5e2a3' }}>გამოცდილება: </strong>
+                  <span style={{ color: 'rgba(255,255,255,0.85)' }}>{selectedTeacher.experience}</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <Award size={20} color="#d4af37" style={{ flexShrink: 0, marginTop: '2px' }} />
+                <div>
+                  <strong style={{ color: '#f5e2a3' }}>სერტიფიკატები: </strong>
+                  <span style={{ color: 'rgba(255,255,255,0.85)' }}>{selectedTeacher.certifications}</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <Calendar size={20} color="#d4af37" style={{ flexShrink: 0, marginTop: '2px' }} />
+                <div>
+                  <strong style={{ color: '#f5e2a3' }}>მუშაობის პერიოდი: </strong>
+                  <span style={{ color: 'rgba(255,255,255,0.85)' }}>{selectedTeacher.yearsAtSchool}</span>
                 </div>
               </div>
             </div>

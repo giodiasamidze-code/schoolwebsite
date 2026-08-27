@@ -76,27 +76,28 @@ p {
   width: 90%;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 5.5rem 0;
+  padding: clamp(5rem, 8vh, 7.5rem) 0;
 }
 
 .section-title {
   text-align: center;
-  font-size: clamp(1.9rem, 3.5vw, 2.6rem);
-  margin-bottom: 1.25rem;
+  font-size: clamp(2.1rem, 3.8vw, 3rem);
+  margin-bottom: 1.5rem;
   position: relative;
   color: #ffffff;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.18;
 }
 
 .section-title::after {
   content: "";
   display: block;
-  width: 36px;
+  width: 42px;
   height: 2px;
   background: #c41e3a;
   border-radius: 2px;
-  margin: 1rem auto 0;
+  margin: 1.25rem auto 0;
 }
 
 .section-eyebrow {
@@ -104,20 +105,20 @@ p {
   text-align: center;
   font-family: var(--font-sans);
   text-transform: uppercase;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.4);
-  letter-spacing: 0.2em;
-  margin-bottom: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.22em;
+  margin-bottom: 1rem;
 }
 
 .section-desc {
   text-align: center;
-  max-width: 640px;
-  margin: 0 auto 3.5rem;
+  max-width: 680px;
+  margin: 0 auto 4.5rem;
   color: var(--text-muted);
-  font-size: 1.1rem;
-  line-height: 1.7;
+  font-size: 1.12rem;
+  line-height: 1.78;
 }
 
 /* Buttons */
@@ -177,23 +178,23 @@ p {
 /* Cards (Glassmorphism Dark Velvet) */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+  margin-top: 2.5rem;
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding-bottom: 2rem;
+  border-radius: 20px;
+  padding-bottom: 2.25rem;
   transition: var(--transition-smooth);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
 }
 
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
   border-color: rgba(196, 30, 58, 0.45);
   box-shadow: 0 20px 48px rgba(139, 0, 0, 0.25);
 }
@@ -558,9 +559,10 @@ section {
 
 /* Stats Bar Styles */
 .stats-bar {
-  padding: 3.5rem 0;
+  padding: clamp(4rem, 6vh, 5.5rem) 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.015);
 }
 
 .stats-container {
@@ -568,8 +570,8 @@ section {
   max-width: var(--max-width);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 3.5rem;
   text-align: center;
 }
 
@@ -581,20 +583,21 @@ section {
 
 .stat-number {
   font-family: var(--font-serif);
-  font-size: 3.5rem;
+  font-size: clamp(2.6rem, 4.5vw, 3.8rem);
   font-weight: 700;
-  line-height: 1.1;
-  margin-bottom: 0.5rem;
-  color: var(--accent-secondary);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.75rem;
+  color: #ffffff;
 }
 
 .stat-label {
   font-family: var(--font-sans);
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.52);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 500;
+  letter-spacing: 0.12em;
+  font-weight: 600;
 }
 
 /* Programs Section Styles */
@@ -716,29 +719,29 @@ section {
 /* Team Section Styles */
 .director-card {
   display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 3rem;
+  grid-template-columns: 220px 1fr;
+  gap: clamp(2.5rem, 5vw, 4rem);
   background: rgba(28, 10, 14, 0.96);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 3rem;
+  padding: clamp(2.5rem, 4vw, 3.75rem);
   border-radius: 24px;
-  margin-bottom: 4rem;
+  margin-bottom: 4.5rem;
   align-items: center;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(16px);
 }
 
 .director-image-wrapper {
   background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 24px;
-  width: 180px;
-  height: 180px;
+  border-radius: 20px;
+  width: 210px;
+  height: 210px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--accent-secondary);
+  border: 1px solid rgba(212, 175, 55, 0.45);
   overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
 }
 
 .director-headshot, .teacher-headshot, .modal-headshot {
@@ -754,31 +757,34 @@ section {
 }
 
 .quote-icon {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .director-quote {
   font-family: var(--font-serif);
-  font-size: 1.25rem;
+  font-size: clamp(1.2rem, 1.8vw, 1.45rem);
   font-style: italic;
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
+  line-height: 1.75;
+  margin-bottom: 1.75rem;
   color: #f5eee8;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
 .director-name {
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   font-weight: 700;
   color: #ffffff;
+  letter-spacing: -0.015em;
 }
 
 .director-role {
   font-family: var(--font-sans);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #ff8598;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
 .teacher-card {
@@ -1031,13 +1037,14 @@ section {
 
 .pricing-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   margin-bottom: 2rem;
   text-align: left;
 }
 
 .pricing-table th, .pricing-table td {
-  padding: 1rem;
+  padding: 1.15rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 0.95rem;
 }
@@ -1045,15 +1052,33 @@ section {
 .pricing-table th {
   font-family: var(--font-sans);
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.05em;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .pricing-table td.font-semibold {
+  font-family: var(--font-serif);
   font-weight: 700;
+  font-size: 1.15rem;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.pricing-table td.rate-monthly {
+  font-family: var(--font-sans);
+  font-weight: 600;
   color: var(--accent-secondary);
+}
+
+.pricing-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.pricing-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .extra-costs {

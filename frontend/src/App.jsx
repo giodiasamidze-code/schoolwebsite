@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
+import StatsBar from './components/StatsBar';
 import TeamSection from './components/TeamSection';
 import NewsSection from './components/NewsSection';
 import AdmissionsSection from './components/AdmissionsSection';
@@ -64,7 +65,6 @@ export default function App() {
     <div className="app-wrapper" style={{ position: 'relative', minHeight: '100vh' }}>
       <DynamicBackground />
       <CustomCursor />
-      <Header />
       {path === '/parent-account' ? (
         <ParentAccountPage />
       ) : (
@@ -74,6 +74,7 @@ export default function App() {
           ) : (
             <>
               <Hero />
+              <StatsBar />
               <TeamSection />
               <NewsSection />
               <AdmissionsSection />

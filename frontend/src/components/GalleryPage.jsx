@@ -51,7 +51,7 @@ const PLACEHOLDERS = [
 ];
 
 export default function GalleryPage() {
-  const { user, role } = useAuth();
+  const { user, role, navigate } = useAuth();
   const [photos, setPhotos]           = useState([]);
   const [loading, setLoading]         = useState(true);
   const [activeCategory, setCategory] = useState('all');
@@ -163,6 +163,41 @@ export default function GalleryPage() {
         width: '90%', maxWidth: '1200px', margin: '0 auto',
         paddingTop: '48px', marginBottom: '40px'
       }}>
+        {/* Back to Home Button */}
+        <button
+          onClick={() => {
+            navigate('/');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '8px 16px',
+            borderRadius: '100px',
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            color: 'rgba(255, 255, 255, 0.8)',
+            fontSize: '0.86rem',
+            fontWeight: 500,
+            cursor: 'pointer',
+            marginBottom: '20px',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(212, 175, 55, 0.15)';
+            e.currentTarget.style.borderColor = '#d4af37';
+            e.currentTarget.style.color = '#fde047';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+            e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)';
+          }}
+        >
+          ← მთავარ გვერდზე დაბრუნება
+        </button>
+
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
           <div>
             <p style={{ fontSize: '0.78rem', fontWeight: 600, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '10px' }}>
