@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Award, GraduationCap, Briefcase, Calendar, Info, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Award, GraduationCap, Briefcase, Calendar, Info, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 
 export default function TeamSection() {
   const [selectedTeacher, setSelectedTeacher] = useState(null);
-  const [activeTeacherIndex, setActiveTeacherIndex] = useState(4); // Default to Elene Beridze or middle
+  const [activeTeacherIndex, setActiveTeacherIndex] = useState(0);
   const [dynamicTeachers, setDynamicTeachers] = useState([]);
   const carouselRef = useRef(null);
 
@@ -155,7 +155,9 @@ export default function TeamSection() {
     loadTeachers();
   }, []);
 
-  const teachersList = dynamicTeachers.length > 0 ? dynamicTeachers : defaultTeachers;
+  const teachersList = dynamicTeachers.length > 0
+    ? [...dynamicTeachers, ...defaultTeachers.slice(dynamicTeachers.length)]
+    : defaultTeachers;
   const activeTeacher = teachersList[activeTeacherIndex] || teachersList[0];
 
   const scrollCarousel = (dir) => {
@@ -177,7 +179,7 @@ export default function TeamSection() {
         flexDirection: 'column',
         justifyContent: 'center',
         boxSizing: 'border-box',
-        padding: '20px 0',
+        padding: '16px 0 12px',
         overflow: 'hidden',
         color: '#f0ece8'
       }}
@@ -248,8 +250,8 @@ export default function TeamSection() {
         style={{
           position: 'relative',
           zIndex: 2,
-          width: '92%',
-          maxWidth: '1240px',
+          width: '94%',
+          maxWidth: '1280px',
           margin: '0 auto'
         }}
       >
@@ -260,7 +262,7 @@ export default function TeamSection() {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            marginBottom: '12px'
+            marginBottom: '10px'
           }}
         >
           {/* Top Filigree Flourish with Crown and Shield */}
@@ -341,15 +343,15 @@ export default function TeamSection() {
         <div
           style={{
             maxWidth: '780px',
-            margin: '0 auto 16px',
+            margin: '0 auto 12px',
             background: 'rgba(22, 20, 18, 0.95)',
             border: '1.5px solid rgba(212, 175, 55, 0.75)',
             borderRadius: '16px',
-            padding: 'clamp(14px, 2.2vh, 22px) clamp(18px, 2.5vw, 28px)',
+            padding: 'clamp(12px, 1.8vh, 18px) clamp(16px, 2.2vw, 24px)',
             boxShadow: '0 20px 50px rgba(0, 0, 0, 0.75), inset 0 0 25px rgba(212, 175, 55, 0.08)',
             display: 'grid',
-            gridTemplateColumns: 'minmax(120px, 150px) 1fr',
-            gap: 'clamp(16px, 2.5vw, 28px)',
+            gridTemplateColumns: 'minmax(110px, 140px) 1fr',
+            gap: 'clamp(14px, 2vw, 24px)',
             alignItems: 'center',
             transition: 'all 0.35s ease'
           }}
@@ -360,7 +362,7 @@ export default function TeamSection() {
               position: 'relative',
               width: '100%',
               aspectRatio: '1 / 1.15',
-              borderRadius: '14px',
+              borderRadius: '12px',
               border: '1.5px solid rgba(212, 175, 55, 0.65)',
               overflow: 'hidden',
               boxShadow: '0 8px 24px rgba(0, 0, 0, 0.6)'
@@ -378,13 +380,13 @@ export default function TeamSection() {
           </div>
 
           {/* Right: Teacher Credentials & Bio */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {/* Header: Quote + Name */}
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
               <span
                 style={{
                   fontFamily: 'serif',
-                  fontSize: '2.4rem',
+                  fontSize: '2.2rem',
                   lineHeight: 0.9,
                   color: 'rgba(212, 175, 55, 0.85)'
                 }}
@@ -395,7 +397,7 @@ export default function TeamSection() {
                 <h3
                   style={{
                     fontFamily: "'Noto Serif Georgian', Georgia, serif",
-                    fontSize: 'clamp(1.35rem, 2.2vw, 1.7rem)',
+                    fontSize: 'clamp(1.25rem, 1.9vw, 1.55rem)',
                     fontWeight: 600,
                     color: '#ffffff',
                     lineHeight: 1.15,
@@ -407,11 +409,11 @@ export default function TeamSection() {
                 <p
                   style={{
                     fontFamily: "'Noto Sans Georgian', sans-serif",
-                    fontSize: '0.92rem',
+                    fontSize: '0.86rem',
                     color: '#c4a66a',
                     fontWeight: 500,
                     marginTop: '2px',
-                    marginBottom: '10px'
+                    marginBottom: '6px'
                   }}
                 >
                   {activeTeacher.role}
@@ -420,27 +422,27 @@ export default function TeamSection() {
             </div>
 
             {/* Metadata Rows (Matches Mockup 2 format) */}
-            <div style={{ fontSize: '0.86rem', lineHeight: 1.6, color: '#ded7cd' }}>
-              <p style={{ margin: '3px 0' }}>
+            <div style={{ fontSize: '0.82rem', lineHeight: 1.5, color: '#ded7cd' }}>
+              <p style={{ margin: '2px 0' }}>
                 <strong style={{ color: '#c4a66a', fontWeight: 600 }}>განათლება: </strong>
                 <span>{activeTeacher.education}</span>
               </p>
-              <p style={{ margin: '3px 0' }}>
+              <p style={{ margin: '2px 0' }}>
                 <strong style={{ color: '#c4a66a', fontWeight: 600 }}>გამოცდილება: </strong>
                 <span>{activeTeacher.experience}</span>
               </p>
-              <p style={{ margin: '3px 0' }}>
+              <p style={{ margin: '2px 0' }}>
                 <strong style={{ color: '#c4a66a', fontWeight: 600 }}>სერტიფიკატი: </strong>
                 <span>{activeTeacher.certifications}</span>
               </p>
-              <p style={{ margin: '3px 0' }}>
+              <p style={{ margin: '2px 0' }}>
                 <strong style={{ color: '#c4a66a', fontWeight: 600 }}>მუშაობის პერიოდი: </strong>
                 <span>{activeTeacher.yearsAtSchool}</span>
               </p>
             </div>
 
             {/* Gold Action Button: Shesaxeb Meti ⓘ */}
-            <div style={{ marginTop: '10px' }}>
+            <div style={{ marginTop: '6px' }}>
               <button
                 type="button"
                 onClick={() => setSelectedTeacher(activeTeacher)}
@@ -448,12 +450,12 @@ export default function TeamSection() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
-                  padding: '9px 24px',
+                  padding: '7px 20px',
                   borderRadius: '8px',
                   background: 'linear-gradient(180deg, #9e7526 0%, #7d5b1b 100%)',
                   color: '#ffffff',
                   border: '1px solid rgba(255, 230, 160, 0.4)',
-                  fontSize: '0.88rem',
+                  fontSize: '0.84rem',
                   fontWeight: 600,
                   cursor: 'pointer',
                   boxShadow: '0 4px 14px rgba(0, 0, 0, 0.4)',
@@ -469,38 +471,49 @@ export default function TeamSection() {
                 }}
               >
                 <span>შესახებ მეტი</span>
-                <Info size={14} />
+                <Info size={13} />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Bottom Arc / Horizontal Curved Gallery Carousel (Mockup 2) */}
-        <div style={{ position: 'relative', width: '100%', marginTop: '16px' }}>
+        {/* Bottom 3D Curved Gallery Carousel Strip (Mockup 2) */}
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            background: 'linear-gradient(180deg, rgba(24, 18, 16, 0.7) 0%, rgba(16, 12, 14, 0.85) 100%)',
+            borderTop: '1.5px solid rgba(212, 175, 55, 0.45)',
+            borderBottom: '1.5px solid rgba(212, 175, 55, 0.45)',
+            borderRadius: '16px',
+            padding: '8px 12px',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(212, 175, 55, 0.05)'
+          }}
+        >
           {/* Navigation arrow buttons */}
           <button
             type="button"
             onClick={() => scrollCarousel('left')}
             style={{
               position: 'absolute',
-              left: '-18px',
+              left: '-14px',
               top: '50%',
               transform: 'translateY(-50%)',
               zIndex: 10,
-              width: '38px',
-              height: '38px',
+              width: '34px',
+              height: '34px',
               borderRadius: '50%',
-              background: 'rgba(24, 20, 16, 0.9)',
-              border: '1px solid rgba(212, 175, 55, 0.5)',
+              background: 'rgba(24, 20, 16, 0.95)',
+              border: '1.5px solid rgba(212, 175, 55, 0.65)',
               color: '#d4af37',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.6)'
+              boxShadow: '0 4px 12px rgba(0,0,0,0.8)'
             }}
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={18} />
           </button>
 
           <button
@@ -508,24 +521,24 @@ export default function TeamSection() {
             onClick={() => scrollCarousel('right')}
             style={{
               position: 'absolute',
-              right: '-18px',
+              right: '-14px',
               top: '50%',
               transform: 'translateY(-50%)',
               zIndex: 10,
-              width: '38px',
-              height: '38px',
+              width: '34px',
+              height: '34px',
               borderRadius: '50%',
-              background: 'rgba(24, 20, 16, 0.9)',
-              border: '1px solid rgba(212, 175, 55, 0.5)',
+              background: 'rgba(24, 20, 16, 0.95)',
+              border: '1.5px solid rgba(212, 175, 55, 0.65)',
               color: '#d4af37',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.6)'
+              boxShadow: '0 4px 12px rgba(0,0,0,0.8)'
             }}
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={18} />
           </button>
 
           {/* Carousel Scroll Track */}
@@ -533,9 +546,9 @@ export default function TeamSection() {
             ref={carouselRef}
             style={{
               display: 'flex',
-              gap: '14px',
+              gap: '12px',
               overflowX: 'auto',
-              padding: '12px 6px 20px',
+              padding: '6px 4px',
               scrollSnapType: 'x mandatory',
               scrollbarWidth: 'none',
               msOverflowStyle: 'none'
@@ -548,7 +561,7 @@ export default function TeamSection() {
                   key={t.id || idx}
                   onClick={() => setActiveTeacherIndex(idx)}
                   style={{
-                    flex: '0 0 115px',
+                    flex: '0 0 100px',
                     cursor: 'pointer',
                     scrollSnapAlign: 'center',
                     display: 'flex',
@@ -556,25 +569,25 @@ export default function TeamSection() {
                     alignItems: 'center',
                     textAlign: 'center',
                     transition: 'all 0.25s ease',
-                    transform: isActive ? 'scale(1.06) translateY(-4px)' : 'scale(0.96)',
-                    opacity: isActive ? 1 : 0.72
+                    transform: isActive ? 'scale(1.06) translateY(-2px)' : 'scale(0.95)',
+                    opacity: isActive ? 1 : 0.75
                   }}
                 >
                   {/* Portrait Card */}
                   <div
                     style={{
-                      width: '100px',
-                      height: '118px',
-                      borderRadius: '10px',
+                      width: '88px',
+                      height: '102px',
+                      borderRadius: '8px',
                       overflow: 'hidden',
                       border: isActive
                         ? '2px solid #d4af37'
                         : '1px solid rgba(212, 175, 55, 0.35)',
                       boxShadow: isActive
-                        ? '0 0 16px rgba(212, 175, 55, 0.5), 0 8px 16px rgba(0,0,0,0.8)'
+                        ? '0 0 16px rgba(212, 175, 55, 0.6), 0 8px 16px rgba(0,0,0,0.8)'
                         : '0 4px 12px rgba(0,0,0,0.5)',
                       background: '#1a1412',
-                      marginBottom: '6px'
+                      marginBottom: '4px'
                     }}
                   >
                     <img
@@ -592,29 +605,29 @@ export default function TeamSection() {
                   <span
                     style={{
                       fontFamily: "'Noto Serif Georgian', Georgia, serif",
-                      fontSize: '0.78rem',
+                      fontSize: '0.74rem',
                       fontWeight: 600,
                       color: isActive ? '#f5e2a3' : 'rgba(255, 255, 255, 0.85)',
-                      lineHeight: 1.2,
+                      lineHeight: 1.15,
                       display: '-webkit-box',
                       WebkitLineClamp: 1,
                       WebkitBoxOrient: 'vertical',
                       overflow: 'hidden',
-                      maxWidth: '110px'
+                      maxWidth: '96px'
                     }}
                   >
                     {t.name}
                   </span>
                   <span
                     style={{
-                      fontSize: '0.68rem',
+                      fontSize: '0.64rem',
                       color: isActive ? '#d4af37' : 'rgba(212, 175, 55, 0.65)',
-                      marginTop: '2px',
+                      marginTop: '1px',
                       display: '-webkit-box',
                       WebkitLineClamp: 1,
                       WebkitBoxOrient: 'vertical',
                       overflow: 'hidden',
-                      maxWidth: '110px'
+                      maxWidth: '96px'
                     }}
                   >
                     {t.badge || t.role}
@@ -623,6 +636,46 @@ export default function TeamSection() {
               );
             })}
           </div>
+        </div>
+
+        {/* Centered Down Navigation Button (D icon in user's drawing) */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
+          <a
+            href="#news"
+            onClick={(e) => {
+              e.preventDefault();
+              const el = document.querySelector('#news');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            title="შემდეგი სექცია"
+            style={{
+              width: '38px',
+              height: '38px',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(42, 30, 20, 0.95) 0%, rgba(20, 14, 12, 0.95) 100%)',
+              border: '1.5px solid rgba(212, 175, 55, 0.75)',
+              color: '#f5e2a3',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.7), 0 0 14px rgba(212,175,55,0.35)',
+              transition: 'all 0.25s ease',
+              textDecoration: 'none'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(3px) scale(1.1)';
+              e.currentTarget.style.borderColor = '#f5e2a3';
+              e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.8), 0 0 20px rgba(212,175,55,0.6)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0) scale(1)';
+              e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.75)';
+              e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.7), 0 0 14px rgba(212,175,55,0.35)';
+            }}
+          >
+            <ChevronDown size={20} color="#f5e2a3" />
+          </a>
         </div>
       </div>
 
