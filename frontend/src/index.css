@@ -1667,18 +1667,3 @@ section {
     overflow: hidden !important;
   }
 }
-
-@media (max-width: 899px) {
-  #news {
-    height: auto !important;
-    min-height: auto !important;
-    padding: 40px 0 !important;
-  }
-  .news-split-card {
-    grid-template-columns: 1fr !important;
-  }
-  .news-detail-content-grid {
-    grid-template-columns: 1fr !important;
-  }
-}
-

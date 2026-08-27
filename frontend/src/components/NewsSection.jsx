@@ -1,149 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { BookOpen, Calculator, Atom, BookText, Telescope, Microscope, Cpu, Monitor, Info, X, Calendar, User, ArrowRight, Sparkles, CheckCircle2, ChevronRight, ChevronLeft } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { BookOpen, Calculator, Atom, BookText, Telescope, Microscope, Cpu, Monitor, Info, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 
 export default function NewsSection() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedNewsId, setSelectedNewsId] = useState(null);
+  const [activeStoryIndex, setActiveStoryIndex] = useState(0);
+  const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [dbNews, setDbNews] = useState([]);
-  const carouselRef = useRef(null);
-
-  const defaultNews = [
-    {
-      id: 'news-1',
-      category: 'projects',
-      categoryLabel: 'პროექტები & ინიციატივები',
-      badgeNum: '01',
-      title: 'აკადემიის ახალი პროექტები და ინოვაციური ინიციატივები',
-      shortTitle: 'ინოვაციური პროექტები',
-      date: '24 მაისი, 2026',
-      readTime: '4 წთ საკითხავი',
-      presenter: {
-        name: 'დავით გიორგაძე',
-        role: 'ისტორიისა და საერთაშორისო ურთიერთობების კათედრა',
-        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300&h=300'
-      },
-      image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=1000',
-      description: 'აკადემიის ახალი პროექტები აერთიანებს ინტერდისციპლინურ კვლევებსა და თანამედროვე სასწავლო მეთოდოლოგიას. მოსწავლეები მუშაობენ რეალურ სამეცნიერო და ჰუმანიტარულ ქეისებზე, რაც ავითარებს კრიტიკულ აზროვნებას, გუნდურ მუშაობასა და კვლევით უნარ-ჩვევებს.',
-      bullets: [
-        'საერთაშორისო აკადემიური გაცვლითი პროექტები პარტნიორ უნივერსიტეტებთან',
-        'სტუდენტური დებატების ლიგა და დიპლომატიური სიმულაციები',
-        'საზოგადოებრივი ინიციატივები და ადგილობრივი თემის მხარდაჭერა'
-      ]
-    },
-    {
-      id: 'news-2',
-      category: 'stem',
-      categoryLabel: 'ეკოლოგიური კვლევა & STEM',
-      badgeNum: '02',
-      title: 'ეკოლოგიური კვლევა & STEM ინოვაციები ბიოტექნოლოგიაში',
-      shortTitle: 'ეკოლოგია & STEM',
-      date: '18 მაისი, 2026',
-      readTime: '5 წთ საკითხავი',
-      presenter: {
-        name: 'ანა კაპანაძე',
-        role: 'ქიმიისა და ბიოტექნოლოგიის ლაბორატორიის ხელმძღვანელი',
-        image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=300&h=300'
-      },
-      image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1000',
-      description: 'ეკოლოგიური კვლევის ლაბორატორია ატარებს კომპლექსურ სამუშაოებს ბუნებრივი ეკოსისტემების მდგრადობისა და თანამედროვე რობოტოტექნიკის გამოყენებით. მოსწავლეები ქმნიან ავტონომიურ სენსორულ სისტემებს ნიადაგისა და ჰაერის მონიტორინგისთვის.',
-      bullets: [
-        'ახალი მცენარეების კლასიფიკაცია და გენეტიკური დახასიათება',
-        'ნიადაგის ჯანმრთელობისა და ტენიანობის სენსორული მონიტორინგი',
-        'ეკოსისტემის დაცვის ინიციატივები და ურბანული ეკოლოგია',
-        'ბიოლოგიური ნიმუშების სპექტრომეტრული ანალიზი'
-      ]
-    },
-    {
-      id: 'news-3',
-      category: 'achievements',
-      categoryLabel: 'აკადემიური მიღწევები',
-      badgeNum: '03',
-      title: 'აკადემიის მოსწავლეებმა საერთაშორისო ოლიმპიადაზე ოქროს მედლები მოიპოვეს',
-      shortTitle: 'საერთაშორისო ოლიმპიადა',
-      date: '10 მაისი, 2026',
-      readTime: '3 წთ საკითხავი',
-      presenter: {
-        name: 'ელენე ბერიძე',
-        role: 'მათემატიკის დეპარტამენტის ხელმძღვანელი',
-        image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=300&h=300'
-      },
-      image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1000',
-      description: 'აკადემიის მათემატიკისა და კომპიუტერული მეცნიერებების გუნდმა ევროპის ახალგაზრდულ ოლიმპიადაზე 3 ოქროსა და 2 ვერცხლის მედალი მოიპოვა. ეს გამარჯვება აკადემიის მაღალი სტანდარტებისა და მასწავლებელთა თავდაუზოგავი შრომის შედეგია.',
-      bullets: [
-        'მათემატიკური ანალიზისა და ალგორითმების ტურში უმაღლესი ქულები',
-        'მსოფლიოს 42 ქვეყნის წარმომადგენელთა შორის პირველი გუნდური ადგილი',
-        'სრული სტიპენდიები წამყვანი უნივერსიტეტების მოსამზადებელ კურსებზე'
-      ]
-    },
-    {
-      id: 'news-4',
-      category: 'life',
-      categoryLabel: 'სასკოლო ცხოვრება',
-      badgeNum: '04',
-      title: 'საგაზაფხულო ხელოვნებისა და მუსიკის ფესტივალი აკადემიის კამპუსში',
-      shortTitle: 'ხელოვნების ფესტივალი',
-      date: '2 მაისი, 2026',
-      readTime: '4 წთ საკითხავი',
-      presenter: {
-        name: 'ქეთევან დოლიძე',
-        role: 'ხელოვნებისა და მუსიკალური განათლების კურატორი',
-        image: 'https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&q=80&w=300&h=300'
-      },
-      image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=1000',
-      description: 'ყოველწლიური საგაზაფხულო ფესტივალი აერთიანებს სახვითი ხელოვნების გამოფენას, კლასიკური მუსიკის ორკესტრის პერფორმანსსა და თეატრალურ დადგმებს. ღონისძიებაზე წარმოდგენილი იყო მოსწავლეთა 80-ზე მეტი ორიგინალური ნამუშევარი.',
-      bullets: [
-        'მოსწავლეთა საავტორო ნამუშევრების საქველმოქმედო აუქციონი',
-        'სიმფონიური ორკესტრისა და გუნდის ერთობლივი კონცერტი',
-        'ინტერაქციული ვორქშოფები მოწვეულ მხატვრებთან ერთად'
-      ]
-    },
-    {
-      id: 'news-5',
-      category: 'stem',
-      categoryLabel: 'ეკოლოგიური კვლევა & STEM',
-      badgeNum: '05',
-      title: 'რობოტოტექნიკისა და ხელოვნური ინტელექტის ჰაკათონი',
-      shortTitle: 'AI და რობოტოტექნიკა',
-      date: '25 აპრილი, 2026',
-      readTime: '5 წთ საკითხავი',
-      presenter: {
-        name: 'ლუკა გიორგაძე',
-        role: 'ინფორმატიკისა და AI კლუბის მენტორი',
-        image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=300&h=300'
-      },
-      image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=1000',
-      description: '48-საათიანი სასკოლო ჰაკათონის ფარგლებში მოსწავლეებმა შექმნეს ინოვაციური პროტოტიპები: ჭკვიანი ენერგოდამზოგავი სისტემები, ავტონომიური რობოტები და ხელოვნური ინტელექტის ასისტენტები განათლებისთვის.',
-      bullets: [
-        '12 გუნდის მიერ შექმნილი ფუნქციური აპარატურული პროტოტიპი',
-        'სამრეწველო სენსორებისა და მიკროკონტროლერების ინტეგრაცია',
-        'ინვესტორთა და IT ექსპერტთა ჟიურის მიერ გამარჯვებულთა დაჯილდოება'
-      ]
-    },
-    {
-      id: 'news-6',
-      category: 'projects',
-      categoryLabel: 'პროექტები & ინიციატივები',
-      badgeNum: '06',
-      title: 'ასტროფიზიკის ღია ობსერვატორია და კოსმოსური დაკვირვებები',
-      shortTitle: 'კოსმოსური დაკვირვებები',
-      date: '15 აპრილი, 2026',
-      readTime: '3 წთ საკითხავი',
-      presenter: {
-        name: 'ალექსანდრე ჩხეიძე',
-        role: 'ასტრონომიისა და ფიზიკის პედაგოგი',
-        image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=300&h=300'
-      },
-      image: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&q=80&w=1000',
-      description: 'აკადემიის ახალი ციფრული ტელესკოპის მეშვეობით მოსწავლეებმა პლანეტარული ნისლეულებისა და მთვარის კრატერების მაღალი გარჩევადობის ფოტომასალა მოიპოვეს, რომელიც საერთაშორისო ასტრონომიულ ბაზაში განთავსდა.',
-      bullets: [
-        'ღამის ასტრონომიული დაკვირვებები და სპექტროსკოპია',
-        'კოსმოსური მონაცემების ციფრული დამუშავება Python-ის გამოყენებით',
-        'ღია ლექციები ასტროფიზიკისა და კოსმოლოგიის მიმართულებით'
-      ]
-    }
-  ];
 
   useEffect(() => {
     async function loadNews() {
@@ -155,416 +18,363 @@ export default function NewsSection() {
           .order('published_at', { ascending: false });
 
         if (!error && data && data.length > 0) {
-          const formatted = data.map((item, idx) => ({
-            id: `db-${item.id}`,
-            category: item.category || 'projects',
-            categoryLabel: item.category || 'სიახლეები',
-            badgeNum: String(idx + 1).padStart(2, '0'),
-            title: item.title,
-            shortTitle: item.title.length > 32 ? `${item.title.substring(0, 32)}...` : item.title,
-            date: item.published_at ? new Date(item.published_at).toLocaleDateString('ka-GE') : '2026',
-            readTime: '3 წთ საკითხავი',
-            presenter: {
-              name: item.author_name || 'სოლომონ აკადემია',
-              role: 'პედაგოგიური გუნდი',
-              image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300&h=300'
-            },
-            image: item.image_url || defaultNews[idx % defaultNews.length].image,
-            description: item.content || item.summary || '',
-            bullets: item.key_points ? (Array.isArray(item.key_points) ? item.key_points : [item.key_points]) : []
-          }));
-          setDbNews(formatted);
+          setDbNews(data);
         }
       } catch (err) {
-        console.error('Error fetching news from Supabase:', err);
+        console.error('Error fetching news:', err);
       }
     }
     loadNews();
   }, []);
 
-  const allNewsList = dbNews.length > 0 ? [...dbNews, ...defaultNews] : defaultNews;
-
-  // Filter categories
-  const categories = [
-    { id: 'all', label: 'ყველა სიახლე' },
-    { id: 'projects', label: 'პროექტები & ინიციატივები' },
-    { id: 'stem', label: 'ეკოლოგიური კვლევა & STEM' },
-    { id: 'achievements', label: 'აკადემიური მიღწევები' },
-    { id: 'life', label: 'სასკოლო ცხოვრება' }
+  const stories = [
+    // Story 1 - Mockup 3: აკადემიის ახალი პროექტები და ინიციატივები
+    {
+      id: 'mockup-story-1',
+      title: 'აკადემიის ახალი პროექტები და ინიციატივები',
+      badgeNum: '99',
+      presenter: {
+        name: 'David Giorgadze',
+        geoName: 'დავით გიორგაძე',
+        subject: 'History',
+        geoSubject: 'ისტორია',
+        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300&h=300'
+      },
+      mentor: {
+        name: 'Elene Beridze',
+        geoName: 'ელენე ბერიძე',
+        education: 'Gnatleba: PhD Mathematics (Oxford / TSU)',
+        experience: 'Gamotsdileba: 15 წელი აკადემიურ სივრცეში',
+        period: 'Mushavokis Period: Solomon Institutions',
+        image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200&h=200'
+      },
+      categories: [
+        { id: 'hist', label: 'History', geoLabel: 'ისტორია', icon: BookOpen },
+        { id: 'math', label: 'Math', geoLabel: 'მათემატიკა', icon: Calculator },
+        { id: 'phys', label: 'Physics', geoLabel: 'ფიზიკა', icon: Atom },
+        { id: 'lit', label: 'Literature', geoLabel: 'ლიტერატურა', icon: BookText }
+      ],
+      labImage: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=800',
+      description: `აკადემიის ახალი პროექტები და ინიციატივები აერთიანებს ინტერდისციპლინურ კვლევებსა და ინოვაციურ სასწავლო მეთოდებს. მოსწავლეები მუშაობენ რეალურ სამეცნიერო და ჰუმანიტარულ ქეისებზე, რაც ავითარებს კრიტიკულ აზროვნებას, გუნდურ მუშაობასა და კვლევით უნარ-ჩვევებს.`,
+      bullets: []
+    },
+    // Story 2 - Mockup 4: ეკოლოგიური კვლევა და STEM ინოვაციები
+    {
+      id: 'mockup-story-2',
+      title: 'ეკოლოგიური კვლევა & STEM ინოვაციები',
+      badgeNum: '03',
+      presenter: {
+        name: 'Ana Kapanadze',
+        geoName: 'ანა კაპანაძე',
+        subject: 'ქიმია',
+        geoSubject: 'ქიმია და ბიოტექნოლოგია',
+        image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=300&h=300'
+      },
+      mentor: {
+        name: 'ლევან მაისურაძე',
+        geoName: 'ლევან მაისურაძე',
+        education: "განათლება: K'embridzhis Universit'eti, Biologia",
+        experience: "პუბლიკაციები: 'Nature', 'Journal of Biological Chemistry'",
+        period: "მუშაობის პერიოდი: K'embridzhis Universit'eti & Solomon",
+        image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200&h=200'
+      },
+      categories: [
+        { id: 'astro', label: 'ასტრონომია', geoLabel: 'ასტრონომია', icon: Telescope },
+        { id: 'bio', label: 'ბიოლოგია', geoLabel: 'ბიოლოგია', icon: Microscope },
+        { id: 'eng', label: 'ინჟინერია', geoLabel: 'ინჟინერია', icon: Cpu },
+        { id: 'cs', label: 'კომპიუტერული მეცნიერება', geoLabel: 'IT & AI', icon: Monitor }
+      ],
+      labImage: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800',
+      description: `ეკოლოგიური კვლევის ლაბორატორია ატარებს კომპლექსურ კვლევებს ბუნებრივი ეკოსისტემების მდგრადობისა და თანამედროვე რობოტოტექნიკის გამოყენებით.`,
+      bullets: [
+        'ახალი მცენარეების კლასიფიკაცია და გენეტიკური დახასიათება',
+        'ნიადაგის ჯანმრთელობისა და ტენიანობის სენსორული მონიტორინგი',
+        'ეკოსისტემის დაცვის ინიციატივები და ურბანული ეკოლოგია',
+        'მრავალფეროვანი ველური ბუნების კონსერვაცია',
+        'ბიოლოგიური ნიმუშების სპექტრომეტრული ანალიზი',
+        'ახალი კვლევის მეთოდები და ავტონომიური რობოტული ზონდები'
+      ]
+    }
   ];
 
-  const filteredNews = selectedCategory === 'all'
-    ? allNewsList
-    : allNewsList.filter((item) => item.category === selectedCategory);
-
-  // Initialize selected news if not set or if current selection is filtered out
-  const activePost = filteredNews.find((item) => item.id === selectedNewsId) || filteredNews[0] || allNewsList[0];
-
-  const handleSelectNews = (id) => {
-    setSelectedNewsId(id);
-  };
-
-  const handleCategoryChange = (catId) => {
-    setSelectedCategory(catId);
-    const firstInCat = (catId === 'all' ? allNewsList : allNewsList.filter((item) => item.category === catId))[0];
-    if (firstInCat) {
-      setSelectedNewsId(firstInCat.id);
-    }
-  };
-
-  const scrollCarousel = (direction) => {
-    if (carouselRef.current) {
-      const scrollAmount = direction === 'left' ? -260 : 260;
-      carouselRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  };
+  const currentStory = stories[activeStoryIndex] || stories[0];
 
   return (
     <section
       id="news"
       style={{
         position: 'relative',
-        background: '#f7f4ee',
-        color: '#2a1a14',
+        background: '#121214',
         minHeight: '100vh',
+        height: '100vh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         boxSizing: 'border-box',
-        padding: 'clamp(32px, 5vh, 60px) 0',
-        overflow: 'hidden'
+        padding: '16px 0',
+        overflow: 'hidden',
+        color: '#f0ece8'
       }}
     >
+      {/* Chalkboard Math Formulas Background Overlay */}
+      <svg
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none',
+          opacity: 0.22
+        }}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <style>{`
+            .formula-chalk { font-family: 'Times New Roman', Times, serif; font-style: italic; fill: #d4af37; font-size: 26px; }
+            .formula-chalk-sm { font-family: 'Times New Roman', Times, serif; font-style: italic; fill: #d4af37; font-size: 20px; }
+          `}</style>
+        </defs>
+
+        <text x="2%" y="15%" className="formula-chalk">f = ∫₀^∞ f(x)(x+)dx</text>
+        <text x="3%" y="42%" className="formula-chalk">∫ x dx</text>
+        <text x="2%" y="60%" className="formula-chalk">ₙCᵣ</text>
+
+        <text x="91%" y="18%" className="formula-chalk">∫ x dx</text>
+        <text x="89%" y="38%" className="formula-chalk">√a² + b²</text>
+        <text x="92%" y="54%" className="formula-chalk-sm">ₙCᵣ</text>
+        <text x="90%" y="66%" className="formula-chalk-sm">√</text>
+
+        {/* Wireframe Geometric Cone Bottom Left */}
+        <g transform="translate(50, 640) scale(0.6)">
+          <ellipse cx="60" cy="110" rx="55" ry="18" fill="none" stroke="#d4af37" strokeWidth="1" strokeDasharray="3 3" />
+          <line x1="60" y1="10" x2="5" y2="110" stroke="#d4af37" strokeWidth="1.2" />
+          <line x1="60" y1="10" x2="115" y2="110" stroke="#d4af37" strokeWidth="1.2" />
+        </g>
+
+        {/* Wireframe Torus / Cone Bottom Right */}
+        <g transform="translate(1330, 640) scale(0.6)">
+          <ellipse cx="60" cy="110" rx="55" ry="18" fill="none" stroke="#d4af37" strokeWidth="1" strokeDasharray="3 3" />
+          <line x1="60" y1="10" x2="5" y2="110" stroke="#d4af37" strokeWidth="1.2" />
+          <line x1="60" y1="10" x2="115" y2="110" stroke="#d4af37" strokeWidth="1.2" />
+        </g>
+      </svg>
+
       <div
         style={{
           position: 'relative',
           zIndex: 2,
           width: '92%',
-          maxWidth: '1280px',
+          maxWidth: '1240px',
           margin: '0 auto'
         }}
       >
-        {/* Section Header: Title & Subtitle */}
-        <div style={{ textAlign: 'center', marginBottom: 'clamp(18px, 2.5vh, 28px)' }}>
-          <span
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              color: '#8b1528',
-              fontSize: '0.84rem',
-              fontWeight: 700,
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              marginBottom: '6px'
-            }}
-          >
-            <Sparkles size={14} color="#8b1528" />
-            აკადემიური ცხოვრება & მიღწევები
-          </span>
+        {/* Section Heading: სიახლეები */}
+        <div style={{ textAlign: 'center', marginBottom: '14px' }}>
           <h2
             style={{
               fontFamily: "'Noto Serif Georgian', Georgia, serif",
-              fontSize: 'clamp(2rem, 3.4vw, 2.8rem)',
-              fontWeight: 600,
-              color: '#201014',
-              letterSpacing: '-0.01em',
-              margin: '0 0 16px'
+              fontSize: 'clamp(2rem, 3.5vw, 2.9rem)',
+              fontWeight: 400,
+              color: '#f6f4ee',
+              letterSpacing: '0.02em',
+              margin: '0 0 6px',
+              textShadow: '0 2px 14px rgba(0,0,0,0.8)'
             }}
           >
-            სიახლეები და აქტივობები
+            სიახლეები
           </h2>
 
-          {/* Category Filter Pills (Burgundy Active, Outlined Inactive) */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              flexWrap: 'wrap',
-              gap: '8px',
-              maxWidth: '900px',
-              margin: '0 auto'
-            }}
-          >
-            {categories.map((cat) => {
-              const isActive = selectedCategory === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => handleCategoryChange(cat.id)}
-                  style={{
-                    padding: '8px 18px',
-                    borderRadius: '100px',
-                    border: isActive
-                      ? '1px solid #7a1324'
-                      : '1px solid rgba(122, 19, 36, 0.22)',
-                    background: isActive ? '#7a1324' : '#ffffff',
-                    color: isActive ? '#ffffff' : '#4a2e2b',
-                    fontSize: '0.84rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    boxShadow: isActive
-                      ? '0 4px 14px rgba(122, 19, 36, 0.25)'
-                      : '0 2px 6px rgba(0, 0, 0, 0.04)',
-                    transition: 'all 0.22s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.borderColor = '#7a1324';
-                      e.currentTarget.style.color = '#7a1324';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.borderColor = 'rgba(122, 19, 36, 0.22)';
-                      e.currentTarget.style.color = '#4a2e2b';
-                    }
-                  }}
-                >
-                  {cat.label}
-                </button>
-              );
-            })}
+          {/* Story Switcher Tabs */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '12px' }}>
+            {stories.map((s, idx) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => setActiveStoryIndex(idx)}
+                style={{
+                  padding: '7px 20px',
+                  borderRadius: '100px',
+                  border: idx === activeStoryIndex ? '1px solid #d4af37' : '1px solid rgba(212, 175, 55, 0.25)',
+                  background: idx === activeStoryIndex ? 'rgba(212, 175, 55, 0.18)' : 'rgba(20, 16, 14, 0.6)',
+                  color: idx === activeStoryIndex ? '#f5e2a3' : 'rgba(255, 255, 255, 0.65)',
+                  fontSize: '0.84rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  backdropFilter: 'blur(8px)'
+                }}
+              >
+                {idx === 0 ? 'პროექტები & ინიციატივები' : 'ეკოლოგიური კვლევა & STEM'}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Main Content Card (Two-Part Split: Left Carousel Thumbnails, Right Detail Area) */}
+        {/* Ornate Gold Framed Container (Exact Mockups 3 & 4 Layout) */}
         <div
           style={{
-            background: '#ffffff',
-            border: '1px solid rgba(122, 19, 36, 0.12)',
-            borderRadius: '20px',
-            boxShadow: '0 16px 45px rgba(60, 25, 20, 0.07)',
-            padding: 'clamp(18px, 2.8vw, 32px)',
+            position: 'relative',
+            background: 'rgba(22, 20, 18, 0.94)',
+            border: '1.5px solid rgba(212, 175, 55, 0.75)',
+            borderRadius: '18px',
+            padding: 'clamp(20px, 3.5vw, 36px)',
+            boxShadow: '0 24px 60px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(212, 175, 55, 0.06)',
             display: 'grid',
-            gridTemplateColumns: 'minmax(280px, 380px) 1fr',
+            gridTemplateColumns: 'minmax(0, 1.15fr) minmax(0, 1.35fr)',
             gap: 'clamp(20px, 3vw, 36px)',
             alignItems: 'stretch'
           }}
-          className="news-split-card"
+          className="news-showcase-grid"
         >
-          {/* LEFT: Horizontal / Scrollable Carousel of Thumbnails */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              borderRight: '1px solid rgba(0, 0, 0, 0.07)',
-              paddingRight: 'clamp(14px, 2vw, 24px)'
-            }}
-          >
-            {/* Header of Left Column with Arrows */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '12px'
-              }}
-            >
-              <span
+          {/* LEFT SIDE: Presenter Card + 2x2 Subject Buttons + Lab Photo */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            
+            {/* Top row of Left Side: Presenter Card + 2x2 Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '14px' }}>
+              
+              {/* Presenter / Author Card with Quote/Badge */}
+              <div
                 style={{
-                  fontFamily: "'Noto Serif Georgian', Georgia, serif",
-                  fontSize: '0.92rem',
-                  fontWeight: 600,
-                  color: '#7a1324'
+                  background: 'rgba(18, 15, 14, 0.9)',
+                  border: '1px solid rgba(212, 175, 55, 0.5)',
+                  borderRadius: '12px',
+                  padding: '12px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                  position: 'relative'
                 }}
               >
-                სტატიების სია ({filteredNews.length})
-              </span>
+                {/* Photo in Gold Frame */}
+                <div
+                  style={{
+                    position: 'relative',
+                    width: '78px',
+                    height: '84px',
+                    borderRadius: '10px',
+                    border: '1.5px solid rgba(212, 175, 55, 0.65)',
+                    overflow: 'hidden',
+                    marginBottom: '8px'
+                  }}
+                >
+                  <img
+                    src={currentStory.presenter.image}
+                    alt={currentStory.presenter.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                  {/* Badge Number Pill (e.g. 99 or 03) */}
+                  <span
+                    style={{
+                      position: 'absolute',
+                      bottom: '2px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      background: '#b88628',
+                      color: '#ffffff',
+                      fontSize: '0.68rem',
+                      fontWeight: 800,
+                      padding: '1px 8px',
+                      borderRadius: '100px',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.6)'
+                    }}
+                  >
+                    {currentStory.badgeNum}
+                  </span>
+                </div>
 
-              <div style={{ display: 'flex', gap: '6px' }}>
-                <button
-                  type="button"
-                  onClick={() => scrollCarousel('left')}
-                  title="წინა"
+                {/* Presenter Name & Role */}
+                <span
                   style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    border: '1px solid rgba(122, 19, 36, 0.25)',
-                    background: '#ffffff',
-                    color: '#7a1324',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#7a1324';
-                    e.currentTarget.style.color = '#ffffff';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#ffffff';
-                    e.currentTarget.style.color = '#7a1324';
+                    fontFamily: "'Noto Serif Georgian', Georgia, serif",
+                    fontSize: '0.86rem',
+                    fontWeight: 600,
+                    color: '#ffffff',
+                    lineHeight: 1.2
                   }}
                 >
-                  <ChevronLeft size={16} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => scrollCarousel('right')}
-                  title="შემდეგი"
+                  {currentStory.presenter.geoName}
+                </span>
+                <span
                   style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    border: '1px solid rgba(122, 19, 36, 0.25)',
-                    background: '#ffffff',
-                    color: '#7a1324',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#7a1324';
-                    e.currentTarget.style.color = '#ffffff';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#ffffff';
-                    e.currentTarget.style.color = '#7a1324';
+                    fontSize: '0.74rem',
+                    color: '#c4a66a',
+                    marginTop: '2px'
                   }}
                 >
-                  <ChevronRight size={16} />
-                </button>
+                  {currentStory.presenter.geoSubject}
+                </span>
+              </div>
+
+              {/* 2x2 Category / Subject Selector Buttons */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                {currentStory.categories.map((cat) => {
+                  const IconComponent = cat.icon;
+                  const isSelected = selectedSubject === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setSelectedSubject(isSelected ? null : cat.id)}
+                      style={{
+                        background: isSelected ? 'rgba(212, 175, 55, 0.22)' : 'rgba(18, 15, 14, 0.8)',
+                        border: isSelected ? '1.5px solid #d4af37' : '1px solid rgba(212, 175, 55, 0.35)',
+                        borderRadius: '10px',
+                        padding: '10px 6px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '5px',
+                        color: isSelected ? '#f5e2a3' : '#d4af37',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        boxShadow: isSelected ? '0 0 10px rgba(212, 175, 55, 0.3)' : 'none'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isSelected) e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.7)';
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isSelected) e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.35)';
+                      }}
+                    >
+                      <IconComponent size={20} />
+                      <span style={{ fontSize: '0.68rem', fontWeight: 600, color: '#f0ece8' }}>
+                        {cat.geoLabel}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Horizontal Scroll-Snap Carousel Container */}
-            <div
-              ref={carouselRef}
-              data-lenis-prevent="true"
-              data-lenis-prevent-wheel="true"
-              style={{
-                display: 'flex',
-                gap: '12px',
-                overflowX: 'auto',
-                padding: '6px 2px 14px',
-                scrollSnapType: 'x mandatory',
-                scrollbarWidth: 'thin',
-                msOverflowStyle: 'auto',
-                WebkitOverflowScrolling: 'touch',
-                touchAction: 'pan-x'
-              }}
-            >
-              {filteredNews.map((item) => {
-                const isSelected = activePost.id === item.id;
-                return (
-                  <div
-                    key={item.id}
-                    onClick={() => handleSelectNews(item.id)}
-                    style={{
-                      flex: '0 0 160px',
-                      scrollSnapAlign: 'start',
-                      cursor: 'pointer',
-                      borderRadius: '12px',
-                      overflow: 'hidden',
-                      background: isSelected ? '#fbf7f0' : '#ffffff',
-                      border: isSelected
-                        ? '2px solid #7a1324'
-                        : '1px solid rgba(0, 0, 0, 0.1)',
-                      boxShadow: isSelected
-                        ? '0 6px 18px rgba(122, 19, 36, 0.2)'
-                        : '0 2px 8px rgba(0, 0, 0, 0.04)',
-                      opacity: isSelected ? 1 : 0.65,
-                      transform: isSelected ? 'scale(1.02) translateY(-2px)' : 'scale(0.98)',
-                      transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-                      display: 'flex',
-                      flexDirection: 'column'
-                    }}
-                  >
-                    {/* Thumbnail Image with Gold Number Badge */}
-                    <div style={{ position: 'relative', width: '100%', height: '94px', overflow: 'hidden' }}>
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          transition: 'transform 0.3s ease'
-                        }}
-                      />
-                      <span
-                        style={{
-                          position: 'absolute',
-                          top: '6px',
-                          left: '6px',
-                          background: isSelected ? '#7a1324' : 'rgba(28, 18, 14, 0.75)',
-                          color: '#ffffff',
-                          fontSize: '0.68rem',
-                          fontWeight: 700,
-                          padding: '1px 7px',
-                          borderRadius: '6px',
-                          backdropFilter: 'blur(4px)'
-                        }}
-                      >
-                        {item.badgeNum}
-                      </span>
-                    </div>
-
-                    {/* Thumbnail Title & Date */}
-                    <div style={{ padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                      <span
-                        style={{
-                          fontSize: '0.66rem',
-                          color: '#8b1528',
-                          fontWeight: 600,
-                          textTransform: 'uppercase'
-                        }}
-                      >
-                        {item.categoryLabel}
-                      </span>
-                      <h4
-                        style={{
-                          fontFamily: "'Noto Serif Georgian', Georgia, serif",
-                          fontSize: '0.78rem',
-                          fontWeight: 600,
-                          color: '#201014',
-                          lineHeight: 1.25,
-                          margin: 0,
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden'
-                        }}
-                      >
-                        {item.title}
-                      </h4>
-                      <span style={{ fontSize: '0.64rem', color: '#88746c', marginTop: '2px' }}>
-                        {item.date}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Quick Category Tag Indicator */}
+            {/* Bottom Lab Photography Banner */}
             <div
               style={{
-                marginTop: '10px',
-                padding: '8px 12px',
-                background: '#fcfaf7',
-                borderRadius: '8px',
-                border: '1px solid rgba(122, 19, 36, 0.08)',
-                fontSize: '0.76rem',
-                color: '#6e564c',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
+                position: 'relative',
+                borderRadius: '12px',
+                border: '1px solid rgba(212, 175, 55, 0.4)',
+                overflow: 'hidden',
+                height: '190px',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.6)'
               }}
             >
-              <Info size={14} color="#7a1324" />
-              <span>დააწკაპუნეთ ბარათზე სრული დეტალების სანახავად</span>
+              <img
+                src={currentStory.labImage}
+                alt="Research Laboratory"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(to top, rgba(10, 6, 8, 0.7) 0%, transparent 60%)'
+                }}
+              />
             </div>
           </div>
 
-          {/* RIGHT: Detail Area for the Currently Selected Post */}
+          {/* RIGHT SIDE: Mentor Mini Profile + Project Headline + Content + Shesaxeb Meti Button */}
           <div
             style={{
               display: 'flex',
@@ -573,233 +383,144 @@ export default function NewsSection() {
               gap: '16px'
             }}
           >
-            {/* Top Row: Author/Teacher Info & Category Badge */}
+            {/* Top Mentor Mini Profile */}
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: '12px',
-                paddingBottom: '14px',
-                borderBottom: '1px solid rgba(0, 0, 0, 0.07)'
+                gap: '14px',
+                background: 'rgba(18, 15, 14, 0.8)',
+                border: '1px solid rgba(212, 175, 55, 0.4)',
+                borderRadius: '12px',
+                padding: '12px 16px'
               }}
             >
-              {/* Author Photo and Name */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div
-                  style={{
-                    width: '46px',
-                    height: '46px',
-                    borderRadius: '50%',
-                    overflow: 'hidden',
-                    border: '2px solid #8b1528',
-                    flexShrink: 0,
-                    boxShadow: '0 2px 8px rgba(122, 19, 36, 0.15)'
-                  }}
-                >
-                  <img
-                    src={activePost.presenter.image}
-                    alt={activePost.presenter.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                </div>
-                <div>
-                  <h4
-                    style={{
-                      fontFamily: "'Noto Serif Georgian', Georgia, serif",
-                      fontSize: '0.94rem',
-                      fontWeight: 600,
-                      color: '#201014',
-                      margin: 0
-                    }}
-                  >
-                    {activePost.presenter.name}
-                  </h4>
-                  <p style={{ margin: 0, fontSize: '0.76rem', color: '#88746c' }}>
-                    {activePost.presenter.role}
-                  </p>
-                </div>
-              </div>
-
-              {/* Date & Category Tag */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    fontSize: '0.78rem',
-                    color: '#6e564c'
-                  }}
-                >
-                  <Calendar size={13} color="#8b1528" />
-                  {activePost.date}
-                </span>
-                <span
-                  style={{
-                    background: 'rgba(122, 19, 36, 0.08)',
-                    color: '#7a1324',
-                    border: '1px solid rgba(122, 19, 36, 0.2)',
-                    fontSize: '0.74rem',
-                    fontWeight: 600,
-                    padding: '2px 10px',
-                    borderRadius: '100px'
-                  }}
-                >
-                  {activePost.categoryLabel}
-                </span>
-              </div>
-            </div>
-
-            {/* Middle: Feature Image & Story Headline */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'minmax(140px, 220px) 1fr',
-                gap: '18px',
-                alignItems: 'start'
-              }}
-              className="news-detail-content-grid"
-            >
-              {/* Feature Image */}
               <div
                 style={{
-                  position: 'relative',
-                  width: '100%',
-                  height: '160px',
-                  borderRadius: '12px',
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: '10px',
+                  border: '1.5px solid rgba(212, 175, 55, 0.6)',
                   overflow: 'hidden',
-                  border: '1px solid rgba(0, 0, 0, 0.08)',
-                  boxShadow: '0 6px 18px rgba(0, 0, 0, 0.06)'
+                  flexShrink: 0
                 }}
               >
                 <img
-                  src={activePost.image}
-                  alt={activePost.title}
+                  src={currentStory.mentor.image}
+                  alt={currentStory.mentor.name}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               </div>
 
-              {/* Title & Description */}
-              <div>
-                <h3
+              <div style={{ fontSize: '0.8rem', lineHeight: 1.45, color: '#ded7cd' }}>
+                <h4
                   style={{
                     fontFamily: "'Noto Serif Georgian', Georgia, serif",
-                    fontSize: 'clamp(1.15rem, 1.7vw, 1.45rem)',
-                    fontWeight: 600,
-                    color: '#201014',
-                    lineHeight: 1.3,
-                    margin: '0 0 8px'
+                    fontSize: '1.05rem',
+                    color: '#ffffff',
+                    margin: '0 0 2px'
                   }}
                 >
-                  {activePost.title}
-                </h3>
-                <p
-                  style={{
-                    fontFamily: "'Noto Sans Georgian', sans-serif",
-                    fontSize: '0.86rem',
-                    lineHeight: 1.65,
-                    color: '#4e3b33',
-                    margin: 0
-                  }}
-                >
-                  {activePost.description}
+                  {currentStory.mentor.geoName}
+                </h4>
+                <p style={{ margin: 0, color: '#c4a66a', fontSize: '0.76rem' }}>
+                  {currentStory.mentor.education}
+                </p>
+                <p style={{ margin: 0, color: 'rgba(255, 255, 255, 0.65)', fontSize: '0.74rem' }}>
+                  {currentStory.mentor.period}
                 </p>
               </div>
             </div>
 
-            {/* Bullet Points of Highlights (if available) */}
-            {activePost.bullets && activePost.bullets.length > 0 && (
-              <div
+            {/* Main Headline & Description */}
+            <div>
+              <h3
                 style={{
-                  background: '#fcfaf7',
-                  border: '1px solid rgba(122, 19, 36, 0.1)',
-                  borderRadius: '12px',
-                  padding: '12px 16px'
+                  fontFamily: "'Noto Serif Georgian', Georgia, serif",
+                  fontSize: 'clamp(1.25rem, 2vw, 1.55rem)',
+                  fontWeight: 600,
+                  color: '#f5e2a3',
+                  lineHeight: 1.3,
+                  marginBottom: '12px'
                 }}
               >
-                <span
-                  style={{
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    color: '#7a1324',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.04em',
-                    display: 'block',
-                    marginBottom: '6px'
-                  }}
-                >
-                  ძირითადი მიმართულებები და შედეგები:
-                </span>
+                {currentStory.title}
+              </h3>
+
+              <p
+                style={{
+                  fontSize: '0.88rem',
+                  lineHeight: 1.7,
+                  color: 'rgba(255, 255, 255, 0.85)',
+                  marginBottom: currentStory.bullets.length > 0 ? '12px' : '0'
+                }}
+              >
+                {currentStory.description}
+              </p>
+
+              {/* Bullets (Mockup 4 style) */}
+              {currentStory.bullets.length > 0 && (
                 <ul
                   style={{
-                    listStyleType: 'none',
-                    padding: 0,
+                    listStyleType: 'disc',
+                    paddingLeft: '20px',
                     margin: 0,
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '5px'
+                    gap: '4px',
+                    fontSize: '0.84rem',
+                    color: '#ded7cd',
+                    lineHeight: 1.5
                   }}
                 >
-                  {activePost.bullets.map((point, idx) => (
-                    <li
-                      key={idx}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '8px',
-                        fontSize: '0.82rem',
-                        lineHeight: 1.45,
-                        color: '#3e2a22'
-                      }}
-                    >
-                      <CheckCircle2 size={14} color="#7a1324" style={{ flexShrink: 0, marginTop: '3px' }} />
-                      <span>{point}</span>
+                  {currentStory.bullets.map((bullet, bIdx) => (
+                    <li key={bIdx} style={{ color: 'rgba(255, 255, 255, 0.82)' }}>
+                      <span>{bullet}</span>
                     </li>
                   ))}
                 </ul>
-              </div>
-            )}
+              )}
+            </div>
 
-            {/* Bottom Actions: Full Article Button */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingTop: '6px' }}>
+            {/* Action Button: Shesaxeb Meti ⓘ */}
+            <div>
               <button
                 type="button"
-                onClick={() => setSelectedArticle(activePost)}
+                onClick={() => setSelectedArticle(currentStory)}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
                   padding: '9px 24px',
                   borderRadius: '8px',
-                  background: 'linear-gradient(180deg, #8b1528 0%, #700f1f 100%)',
+                  background: 'linear-gradient(180deg, #9e7526 0%, #7d5b1b 100%)',
                   color: '#ffffff',
-                  border: '1px solid rgba(212, 175, 55, 0.35)',
-                  fontSize: '0.86rem',
+                  border: '1px solid rgba(255, 230, 160, 0.4)',
+                  fontSize: '0.88rem',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(122, 19, 36, 0.25)',
+                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.4)',
                   transition: 'all 0.2s ease'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(180deg, #a31930 0%, #821224 100%)';
+                  e.currentTarget.style.background = 'linear-gradient(180deg, #b88628 0%, #8f671f 100%)';
                   e.currentTarget.style.transform = 'translateY(-1px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(180deg, #8b1528 0%, #700f1f 100%)';
+                  e.currentTarget.style.background = 'linear-gradient(180deg, #9e7526 0%, #7d5b1b 100%)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                <span>სრულად ნახვა</span>
-                <ArrowRight size={14} />
+                <span>შესახებ მეტი</span>
+                <Info size={14} />
               </button>
             </div>
+
           </div>
         </div>
       </div>
 
-      {/* Article Detail Reading Modal */}
+      {/* Article Detail Modal */}
       {selectedArticle && (
         <div
           className="modal-overlay"
@@ -808,8 +529,8 @@ export default function NewsSection() {
             position: 'fixed',
             inset: 0,
             zIndex: 1000,
-            background: 'rgba(20, 12, 14, 0.75)',
-            backdropFilter: 'blur(8px)',
+            background: 'rgba(0, 0, 0, 0.82)',
+            backdropFilter: 'blur(10px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -820,27 +541,24 @@ export default function NewsSection() {
             className="modal-content"
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: '#fdfbf7',
-              border: '1.5px solid rgba(122, 19, 36, 0.25)',
+              background: '#161311',
+              border: '1.5px solid rgba(212, 175, 55, 0.7)',
               borderRadius: '20px',
-              maxWidth: '720px',
+              maxWidth: '680px',
               width: '100%',
-              maxHeight: '90vh',
-              overflowY: 'auto',
-              padding: 'clamp(24px, 4vw, 36px)',
-              boxShadow: '0 24px 70px rgba(40, 15, 20, 0.3)',
+              padding: '36px 32px',
+              boxShadow: '0 24px 70px rgba(0,0,0,0.85)',
               position: 'relative',
-              color: '#2b1a14'
+              color: '#ffffff'
             }}
           >
-            {/* Close Button */}
             <button
               onClick={() => setSelectedArticle(null)}
               style={{
                 position: 'absolute',
                 top: '18px',
                 right: '18px',
-                background: 'rgba(122, 19, 36, 0.08)',
+                background: 'rgba(255, 255, 255, 0.08)',
                 border: 'none',
                 borderRadius: '50%',
                 width: '34px',
@@ -848,125 +566,42 @@ export default function NewsSection() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#7a1324',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#7a1324';
-                e.currentTarget.style.color = '#ffffff';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(122, 19, 36, 0.08)';
-                e.currentTarget.style.color = '#7a1324';
+                color: '#fff',
+                cursor: 'pointer'
               }}
             >
               <X size={18} />
             </button>
 
-            {/* Modal Image */}
-            <div
-              style={{
-                borderRadius: '12px',
-                overflow: 'hidden',
-                height: '240px',
-                marginBottom: '20px',
-                border: '1px solid rgba(122, 19, 36, 0.15)',
-                boxShadow: '0 6px 18px rgba(0, 0, 0, 0.06)'
-              }}
-            >
+            <div style={{ borderRadius: '12px', overflow: 'hidden', height: '220px', marginBottom: '20px', border: '1px solid rgba(212, 175, 55, 0.3)' }}>
               <img
-                src={selectedArticle.image}
+                src={selectedArticle.labImage}
                 alt={selectedArticle.title}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
 
-            {/* Modal Meta Tag */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-              <span
-                style={{
-                  background: '#7a1324',
-                  color: '#ffffff',
-                  fontSize: '0.74rem',
-                  fontWeight: 600,
-                  padding: '2px 10px',
-                  borderRadius: '100px'
-                }}
-              >
-                {selectedArticle.categoryLabel}
-              </span>
-              <span style={{ fontSize: '0.78rem', color: '#88746c', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                <Calendar size={13} color="#7a1324" />
-                {selectedArticle.date}
-              </span>
-            </div>
-
-            {/* Modal Title */}
             <h2
               style={{
-                fontFamily: "'Noto Serif Georgian', Georgia, serif",
-                fontSize: 'clamp(1.4rem, 2.2vw, 1.8rem)',
-                color: '#201014',
-                lineHeight: 1.3,
-                marginBottom: '14px'
+                fontFamily: "'Noto Serif Georgian', serif",
+                fontSize: '1.6rem',
+                color: '#f5e2a3',
+                marginBottom: '12px'
               }}
             >
               {selectedArticle.title}
             </h2>
 
-            {/* Author Info Card */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                background: '#f7f2ea',
-                padding: '10px 14px',
-                borderRadius: '10px',
-                marginBottom: '18px'
-              }}
-            >
-              <img
-                src={selectedArticle.presenter.image}
-                alt={selectedArticle.presenter.name}
-                style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
-              />
-              <div>
-                <span style={{ fontSize: '0.88rem', fontWeight: 600, color: '#201014', display: 'block' }}>
-                  {selectedArticle.presenter.name}
-                </span>
-                <span style={{ fontSize: '0.74rem', color: '#7a1324' }}>
-                  {selectedArticle.presenter.role}
-                </span>
-              </div>
-            </div>
-
-            {/* Modal Full Description */}
-            <p
-              style={{
-                fontFamily: "'Noto Sans Georgian', sans-serif",
-                fontSize: '0.94rem',
-                lineHeight: 1.8,
-                color: '#3e2a22',
-                marginBottom: '18px'
-              }}
-            >
+            <p style={{ fontSize: '0.94rem', lineHeight: 1.8, color: 'rgba(255,255,255,0.85)', marginBottom: '16px' }}>
               {selectedArticle.description}
             </p>
 
-            {/* Modal Bullets */}
             {selectedArticle.bullets && selectedArticle.bullets.length > 0 && (
-              <div style={{ background: '#f8f4ed', borderRadius: '12px', padding: '16px 20px' }}>
-                <h4 style={{ fontFamily: "'Noto Serif Georgian', serif", fontSize: '0.94rem', color: '#7a1324', margin: '0 0 10px' }}>
-                  დეტალური პუნქტები და შედეგები:
-                </h4>
-                <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.88rem', color: '#3e2a22', lineHeight: 1.6 }}>
-                  {selectedArticle.bullets.map((b, i) => (
-                    <li key={i}>{b}</li>
-                  ))}
-                </ul>
-              </div>
+              <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.9rem', color: '#ded7cd' }}>
+                {selectedArticle.bullets.map((b, i) => (
+                  <li key={i}>{b}</li>
+                ))}
+              </ul>
             )}
           </div>
         </div>
