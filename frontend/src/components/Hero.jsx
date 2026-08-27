@@ -1,260 +1,52 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useAuth } from './AuthContext';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
   const { navigate } = useAuth();
-  const heroSectionRef = useRef(null);
-  const leftDoorRef = useRef(null);
-  const rightDoorRef = useRef(null);
-  const heroContentRef = useRef(null);
-  const revealBoxRef = useRef(null);
-
-  useEffect(() => {
-    // Respect user's accessibility setting
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
-
-    const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
-
-      // Only run pinned split animation on tablet & desktop (>= 768px)
-      mm.add('(min-width: 768px)', () => {
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: heroSectionRef.current,
-            start: 'top top',
-            end: '+=1100',
-            pin: true,
-            scrub: 1,
-            anticipatePin: 1
-          }
-        });
-
-        // 1. Initial Hero Text/CTA fades out smoothly
-        tl.to(heroContentRef.current, {
-          opacity: 0,
-          y: -50,
-          scale: 0.95,
-          duration: 0.3,
-          ease: 'power1.out'
-        }, 0);
-
-        // 2. The building photo splits into two halves (Left moves left, Right moves right)
-        tl.to(leftDoorRef.current, {
-          xPercent: -102,
-          opacity: 0.2,
-          duration: 0.75,
-          ease: 'power2.inOut'
-        }, 0.12);
-
-        tl.to(rightDoorRef.current, {
-          xPercent: 102,
-          opacity: 0.2,
-          duration: 0.75,
-          ease: 'power2.inOut'
-        }, 0.12);
-
-        // 3. Center transitional quote is revealed in the gap
-        tl.fromTo(revealBoxRef.current,
-          { opacity: 0, scale: 0.88, y: 35 },
-          { opacity: 1, scale: 1.02, y: 0, duration: 0.6, ease: 'power2.out' },
-          0.25
-        );
-
-        // 4. Settle before releasing pin to the next section
-        tl.to(revealBoxRef.current, {
-          opacity: 0.95,
-          scale: 1,
-          duration: 0.15
-        }, 0.85);
-      });
-    }, heroSectionRef);
-
-    return () => ctx.revert();
-  }, []);
 
   return (
     <section
       id="hero"
-      ref={heroSectionRef}
+      className="sticky-hero-section"
       style={{
-        position: 'relative',
-        minHeight: '100vh',
+        position: 'sticky',
+        top: 0,
+        height: '100vh',
+        minHeight: '600px',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         overflow: 'hidden',
-        background: '#090507'
+        background: '#090507',
+        zIndex: 1,
+        paddingTop: 'clamp(28px, 4.5vh, 55px)'
       }}
     >
-      {/* ======================================================== */}
-      {/* LAYER 1: REVEALED INSPIRATIONAL QUOTE (Behind the Split) */}
-      {/* ======================================================== */}
-      <div
-        ref={revealBoxRef}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          zIndex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center',
-          padding: '0 24px',
-          background: 'radial-gradient(ellipse at 50% 50%, #1e0910 0%, #120408 50%, #080204 100%)',
-          pointerEvents: 'none',
-          opacity: 0
-        }}
-      >
-        {/* Ambient Gold Glow */}
-        <div
+      {/* Background Architectural Palace (Single High-Res Image) */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 0, overflow: 'hidden' }}>
+        <img
+          src="/images/hero_building_bg.jpg"
+          alt="Solomon Academy Architecture"
           style={{
-            position: 'absolute',
-            width: '450px',
-            height: '450px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.18) 0%, rgba(196, 30, 58, 0.1) 50%, transparent 75%)',
-            filter: 'blur(50px)',
-            pointerEvents: 'none'
-          }}
-        />
-
-        {/* Revealed Classical Emblem */}
-        <div
-          style={{
-            marginBottom: '20px',
-            filter: 'drop-shadow(0 4px 16px rgba(212, 175, 55, 0.5))',
-            position: 'relative',
-            zIndex: 2
-          }}
-        >
-          <svg width="60" height="60" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="32" cy="32" r="30" stroke="#d4af37" strokeWidth="1.2" strokeDasharray="3 3" />
-            <circle cx="32" cy="32" r="26" stroke="#f5e2a3" strokeWidth="1.6" />
-            <polygon points="32,14 17,24 47,24" fill="#d4af37" />
-            <rect x="19" y="24" width="26" height="2.5" fill="#f5e2a3" />
-            <rect x="22" y="27" width="3" height="13" fill="#d4af37" rx="0.5" />
-            <rect x="28.5" y="27" width="3" height="13" fill="#d4af37" rx="0.5" />
-            <rect x="35" y="27" width="3" height="13" fill="#d4af37" rx="0.5" />
-            <rect x="41.5" y="27" width="3" height="13" fill="#d4af37" rx="0.5" />
-            <rect x="17" y="41" width="30" height="2" fill="#f5e2a3" />
-            <rect x="15" y="43" width="34" height="3" fill="#d4af37" rx="0.5" />
-          </svg>
-        </div>
-
-        {/* Eyebrow */}
-        <span
-          style={{
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            letterSpacing: '0.22em',
-            textTransform: 'uppercase',
-            color: '#ff8598',
-            marginBottom: '14px',
-            position: 'relative',
-            zIndex: 2
-          }}
-        >
-          სოლომონ აკადემია
-        </span>
-
-        {/* Main Inspirational Quote */}
-        <h2
-          style={{
-            fontFamily: "'Noto Serif Georgian', Georgia, serif",
-            fontSize: 'clamp(1.8rem, 4.2vw, 3.4rem)',
-            fontWeight: 700,
-            lineHeight: 1.3,
-            color: '#ffffff',
-            maxWidth: '840px',
-            margin: '0 auto 16px',
-            textShadow: '0 4px 25px rgba(0, 0, 0, 0.9), 0 0 35px rgba(196, 30, 58, 0.4)',
-            letterSpacing: '0.01em',
-            position: 'relative',
-            zIndex: 2
-          }}
-        >
-          „სკოლა, სადაც ცოდნა ძალაა და ყოველი ნაბიჯი — წარმატება“
-        </h2>
-
-        {/* Flanked Subtitle */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '16px',
             width: '100%',
-            maxWidth: '520px',
-            marginTop: '10px',
-            position: 'relative',
-            zIndex: 2
-          }}
-        >
-          <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.6))' }} />
-          <p
-            style={{
-              fontSize: 'clamp(0.85rem, 1.1vw, 0.98rem)',
-              color: 'rgba(255, 230, 160, 0.85)',
-              margin: 0,
-              letterSpacing: '0.06em',
-              fontWeight: 500
-            }}
-          >
-            აკადემიური სრულყოფილება · ინოვაცია · მომავალი
-          </p>
-          <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, rgba(212, 175, 55, 0.6), transparent)' }} />
-        </div>
-      </div>
-
-      {/* ======================================================== */}
-      {/* LAYER 2: SPLIT DOORS (Left & Right Halves of Palace Bg)  */}
-      {/* ======================================================== */}
-      
-      {/* Left Door */}
-      <div
-        ref={leftDoorRef}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '50%',
-          height: '100%',
-          overflow: 'hidden',
-          zIndex: 3,
-          borderRight: '1px solid rgba(212, 175, 55, 0.35)',
-          boxShadow: '4px 0 25px rgba(0, 0, 0, 0.6)'
-        }}
-      >
-        <img
-          src="/images/hero_building_bg.jpg"
-          alt="Solomon Academy Architecture Left"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100vw',
             height: '100%',
             objectFit: 'cover',
-            objectPosition: 'center 45%',
+            objectPosition: 'center 48%',
             filter: 'brightness(0.95) contrast(1.04)'
           }}
         />
-        {/* Soft Vignette Overlay for Left Door */}
+        {/* Soft Vignette Overlay */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'radial-gradient(ellipse at 50% 25%, rgba(10, 6, 8, 0.4) 0%, rgba(10, 6, 8, 0.2) 40%, rgba(10, 6, 8, 0.85) 100%)'
+            background:
+              'radial-gradient(ellipse at 50% 20%, rgba(10, 6, 8, 0.4) 0%, rgba(10, 6, 8, 0.2) 40%, rgba(10, 6, 8, 0.85) 100%)'
           }}
         />
+        {/* Subtle Bottom Fade */}
         <div
           style={{
             position: 'absolute',
@@ -262,77 +54,23 @@ export default function Hero() {
             left: 0,
             right: 0,
             height: '180px',
-            background: 'linear-gradient(to bottom, transparent, rgba(15, 15, 17, 0.95))'
+            background: 'linear-gradient(to bottom, transparent, rgba(12, 9, 11, 0.95))'
           }}
         />
       </div>
 
-      {/* Right Door */}
+      {/* Hero Central Content */}
       <div
-        ref={rightDoorRef}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: '50%',
-          width: '50%',
-          height: '100%',
-          overflow: 'hidden',
-          zIndex: 3,
-          borderLeft: '1px solid rgba(212, 175, 55, 0.35)',
-          boxShadow: '-4px 0 25px rgba(0, 0, 0, 0.6)'
-        }}
-      >
-        <img
-          src="/images/hero_building_bg.jpg"
-          alt="Solomon Academy Architecture Right"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: '-50vw',
-            width: '100vw',
-            height: '100%',
-            objectFit: 'cover',
-            objectPosition: 'center 45%',
-            filter: 'brightness(0.95) contrast(1.04)'
-          }}
-        />
-        {/* Soft Vignette Overlay for Right Door */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'radial-gradient(ellipse at 50% 25%, rgba(10, 6, 8, 0.4) 0%, rgba(10, 6, 8, 0.2) 40%, rgba(10, 6, 8, 0.85) 100%)'
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '180px',
-            background: 'linear-gradient(to bottom, transparent, rgba(15, 15, 17, 0.95))'
-          }}
-        />
-      </div>
-
-      {/* ======================================================== */}
-      {/* LAYER 3: HERO CENTRAL CONTENT (Crest, Title, CTA Button) */}
-      {/* ======================================================== */}
-      <div
-        ref={heroContentRef}
         style={{
           position: 'relative',
-          zIndex: 5,
+          zIndex: 3,
           width: '92%',
           maxWidth: '1000px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          textAlign: 'center',
-          paddingTop: 'clamp(40px, 6vh, 80px)',
-          paddingBottom: '40px'
+          textAlign: 'center'
         }}
       >
         {/* Golden Classical Temple Crest with Horizontal Wings */}
@@ -368,18 +106,14 @@ export default function Hero() {
             <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="32" cy="32" r="29" stroke="#d4af37" strokeWidth="1.2" strokeDasharray="2 2" />
               <circle cx="32" cy="32" r="26" stroke="#e8c86d" strokeWidth="1.5" />
-              
               <polygon points="32,15 18,24 46,24" fill="#d4af37" />
               <rect x="20" y="24" width="24" height="2" fill="#f5e2a3" />
-              
               <rect x="22" y="27" width="3" height="13" fill="#d4af37" rx="0.5" />
               <rect x="28.5" y="27" width="3" height="13" fill="#d4af37" rx="0.5" />
               <rect x="35" y="27" width="3" height="13" fill="#d4af37" rx="0.5" />
               <rect x="41.5" y="27" width="3" height="13" fill="#d4af37" rx="0.5" />
-              
               <rect x="18" y="41" width="28" height="2" fill="#f5e2a3" />
               <rect x="16" y="43" width="32" height="3" fill="#d4af37" rx="0.5" />
-              
               <path d="M12 36 C10 30 14 24 18 20" stroke="#d4af37" strokeWidth="1.2" strokeLinecap="round" />
               <path d="M52 36 C54 30 50 24 46 20" stroke="#d4af37" strokeWidth="1.2" strokeLinecap="round" />
             </svg>

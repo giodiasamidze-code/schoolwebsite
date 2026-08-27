@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
-import StatsBar from './components/StatsBar';
 import TeamSection from './components/TeamSection';
 import NewsSection from './components/NewsSection';
 import AdmissionsSection from './components/AdmissionsSection';
@@ -74,15 +73,17 @@ export default function App() {
           ) : (
             <>
               <Hero />
-              <StatsBar />
-              <TeamSection />
-              <NewsSection />
-              <AdmissionsSection />
+              <div className="page-overlap-content" style={{ position: 'relative', zIndex: 2, background: '#0c0608', boxShadow: '0 -25px 60px rgba(0, 0, 0, 0.9)', borderTop: '1px solid rgba(212, 175, 55, 0.25)' }}>
+                <TeamSection />
+                <NewsSection />
+                <AdmissionsSection />
+                <Footer />
+              </div>
             </>
           )}
         </main>
       )}
-      <Footer />
+      {path === '/parent-account' || path === '/gallery' ? <Footer /> : null}
     </div>
   );
 }

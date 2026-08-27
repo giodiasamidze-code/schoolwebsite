@@ -1622,3 +1622,29 @@ section {
 .mobile-login-btn:hover {
   color: #ff8598;
 }
+
+/* ======================================================= */
+/* Simple Section Overlap Scroll Transition (Hero -> Next) */
+/* ======================================================= */
+.sticky-hero-section {
+  position: sticky !important;
+  top: 0 !important;
+  height: 100vh !important;
+  min-height: 600px !important;
+  z-index: 1 !important;
+}
+
+.page-overlap-content {
+  position: relative !important;
+  z-index: 2 !important;
+  background: var(--bg-primary, #0c0608) !important;
+  box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.95) !important;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sticky-hero-section {
+    position: relative !important;
+    height: auto !important;
+  }
+}
