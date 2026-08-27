@@ -105,7 +105,13 @@ export default function NewsSection() {
       style={{
         position: 'relative',
         background: '#121214',
-        padding: 'clamp(80px, 10vh, 120px) 0 90px',
+        minHeight: '100vh',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        boxSizing: 'border-box',
+        padding: '16px 0',
         overflow: 'hidden',
         color: '#f0ece8'
       }}
@@ -163,15 +169,15 @@ export default function NewsSection() {
         }}
       >
         {/* Section Heading: სიახლეები */}
-        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '14px' }}>
           <h2
             style={{
               fontFamily: "'Noto Serif Georgian', Georgia, serif",
-              fontSize: 'clamp(2.4rem, 4.2vw, 3.4rem)',
+              fontSize: 'clamp(2rem, 3.5vw, 2.9rem)',
               fontWeight: 400,
               color: '#f6f4ee',
               letterSpacing: '0.02em',
-              margin: '0 0 10px',
+              margin: '0 0 6px',
               textShadow: '0 2px 14px rgba(0,0,0,0.8)'
             }}
           >

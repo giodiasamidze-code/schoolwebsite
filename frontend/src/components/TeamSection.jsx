@@ -171,7 +171,13 @@ export default function TeamSection() {
       style={{
         position: 'relative',
         background: '#121214',
-        padding: 'clamp(80px, 10vh, 120px) 0 90px',
+        minHeight: '100vh',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        boxSizing: 'border-box',
+        padding: '20px 0',
         overflow: 'hidden',
         color: '#f0ece8'
       }}
@@ -254,7 +260,7 @@ export default function TeamSection() {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            marginBottom: '32px'
+            marginBottom: '12px'
           }}
         >
           {/* Top Filigree Flourish with Crown and Shield */}
@@ -287,7 +293,7 @@ export default function TeamSection() {
                 filter: 'drop-shadow(0 2px 8px rgba(212, 175, 55, 0.4))'
               }}
             >
-              <svg width="48" height="48" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="40" height="40" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                 {/* Crown */}
                 <path
                   d="M22 20 L26 26 L32 18 L38 26 L42 20 L40 28 L24 28 Z"
@@ -335,15 +341,15 @@ export default function TeamSection() {
         <div
           style={{
             maxWidth: '780px',
-            margin: '0 auto 48px',
+            margin: '0 auto 16px',
             background: 'rgba(22, 20, 18, 0.95)',
             border: '1.5px solid rgba(212, 175, 55, 0.75)',
             borderRadius: '16px',
-            padding: 'clamp(24px, 4vw, 36px)',
+            padding: 'clamp(14px, 2.2vh, 22px) clamp(18px, 2.5vw, 28px)',
             boxShadow: '0 20px 50px rgba(0, 0, 0, 0.75), inset 0 0 25px rgba(212, 175, 55, 0.08)',
             display: 'grid',
-            gridTemplateColumns: 'minmax(140px, 190px) 1fr',
-            gap: 'clamp(20px, 3.5vw, 36px)',
+            gridTemplateColumns: 'minmax(120px, 150px) 1fr',
+            gap: 'clamp(16px, 2.5vw, 28px)',
             alignItems: 'center',
             transition: 'all 0.35s ease'
           }}
