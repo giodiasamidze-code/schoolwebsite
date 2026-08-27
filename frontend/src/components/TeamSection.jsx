@@ -120,7 +120,7 @@ export default function TeamSection() {
       role: 'ქართული ენისა და ლიტერატურის პედაგოგი',
       subject: 'ქართული ენა და აკადემიური წერა',
       badge: 'ქართული',
-      image: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400&h=400',
+      image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400&h=400',
       education: 'თსუ ფილოლოგიის ფაკულტეტი (ბაკალავრი, მაგისტრი).',
       experience: '13 წელი ქართული ენისა და ლიტერატურის სწავლებაში.',
       certifications: 'ეროვნული სასწავლო გამოცდების ექსპერტი, IB EE კოორდინატორი.',
@@ -133,7 +133,7 @@ export default function TeamSection() {
       role: 'ასტრონომიისა და STEM პედაგოგი',
       subject: 'ასტროფიზიკა და კოსმოსური კვლევები',
       badge: 'ასტრონომია',
-      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400&h=400',
+      image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400&h=400',
       education: 'ჰაიდელბერგის უნივერსიტეტი (MSc Astrophysics).',
       experience: '8 წელი ასტრონომიული ობსერვატორიისა და კლუბის ხელმძღვანელობაში.',
       certifications: 'International Astronomy Olympiad Trainer.',
@@ -146,7 +146,7 @@ export default function TeamSection() {
       role: 'ფრანგული ენის პედაგოგი',
       subject: 'ფრანგული ენა და ევროპული კულტურა',
       badge: 'ფრანგული',
-      image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400&h=400',
+      image: 'https://images.unsplash.com/photo-1580894732444-8ecded7900cd?auto=format&fit=crop&q=80&w=400&h=400',
       education: 'სორბონის უნივერსიტეტი (Paris-Sorbonne, MA FLE).',
       experience: '11 წელი უცხო ენების სწავლებაში.',
       certifications: 'DALF C2 Examiner, CIEP Accredited.',
@@ -159,7 +159,7 @@ export default function TeamSection() {
       role: 'ხელოვნებისა და არქიტექტურის პედაგოგი',
       subject: 'აკადემიური ხატვა, დიზაინი და არქიტექტურა',
       badge: 'ხელოვნება',
-      image: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&q=80&w=400&h=400',
+      image: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&q=80&w=400&h=400',
       education: 'თბილისის სამხატვრო აკადემია (MFA Architecture).',
       experience: '10 წელი დიზაინისა და პორტფოლიოს მომზადებაში.',
       certifications: 'AP Art and Design Studio Educator.',
@@ -211,7 +211,7 @@ export default function TeamSection() {
       role: 'ფილოსოფიისა და დებატების პედაგოგი',
       subject: 'კრიტიკული აზროვნება, ეთიკა და დებატები',
       badge: 'დებატები',
-      image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400&h=400',
+      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400&h=400',
       education: 'კემბრიჯის უნივერსიტეტი (MPhil Philosophy).',
       experience: '10 წელი დებატებისა და ორატორული ხელოვნების კლუბის ხელმძღვანელობაში.',
       certifications: 'Karl Popper Debate Association Certified Judge.',
@@ -251,11 +251,44 @@ export default function TeamSection() {
     : defaultTeachers;
   const activeTeacher = teachersList[activeTeacherIndex] || teachersList[0];
 
-  const scrollCarousel = (dir) => {
-    if (carouselRef.current) {
-      const scrollAmount = dir === 'left' ? -260 : 260;
-      carouselRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
+  // Mouse wheel horizontal scroll handler
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+
+    const handleWheel = (e) => {
+      if (Math.abs(e.deltaY) > 0) {
+        e.preventDefault();
+        el.scrollLeft += e.deltaY * 1.5;
+      }
+    };
+
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => el.removeEventListener('wheel', handleWheel);
+  }, []);
+
+  // Mouse drag-to-scroll handlers
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeftState, setScrollLeftState] = useState(0);
+
+  const handleMouseDown = (e) => {
+    if (!carouselRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - carouselRef.current.offsetLeft);
+    setScrollLeftState(carouselRef.current.scrollLeft);
+  };
+
+  const handleMouseLeaveOrUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging || !carouselRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - carouselRef.current.offsetLeft;
+    const walk = (x - startX) * 1.8;
+    carouselRef.current.scrollLeft = scrollLeftState - walk;
   };
 
   return (
@@ -568,7 +601,7 @@ export default function TeamSection() {
           </div>
         </div>
 
-        {/* Bottom 3D Curved Gallery Carousel Strip (Mockup 2) */}
+        {/* Bottom 3D Curved Gallery Carousel Strip (Wheel & Touch Scrollable) */}
         <div
           style={{
             position: 'relative',
@@ -581,68 +614,24 @@ export default function TeamSection() {
             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(212, 175, 55, 0.05)'
           }}
         >
-          {/* Navigation arrow buttons */}
-          <button
-            type="button"
-            onClick={() => scrollCarousel('left')}
-            style={{
-              position: 'absolute',
-              left: '-14px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              zIndex: 10,
-              width: '34px',
-              height: '34px',
-              borderRadius: '50%',
-              background: 'rgba(24, 20, 16, 0.95)',
-              border: '1.5px solid rgba(212, 175, 55, 0.65)',
-              color: '#d4af37',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.8)'
-            }}
-          >
-            <ChevronLeft size={18} />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => scrollCarousel('right')}
-            style={{
-              position: 'absolute',
-              right: '-14px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              zIndex: 10,
-              width: '34px',
-              height: '34px',
-              borderRadius: '50%',
-              background: 'rgba(24, 20, 16, 0.95)',
-              border: '1.5px solid rgba(212, 175, 55, 0.65)',
-              color: '#d4af37',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.8)'
-            }}
-          >
-            <ChevronRight size={18} />
-          </button>
-
-          {/* Carousel Scroll Track */}
+          {/* Carousel Scroll Track with Smooth Wheel / Drag / Touch Gestures */}
           <div
             ref={carouselRef}
+            onMouseDown={handleMouseDown}
+            onMouseLeave={handleMouseLeaveOrUp}
+            onMouseUp={handleMouseLeaveOrUp}
+            onMouseMove={handleMouseMove}
             style={{
               display: 'flex',
               gap: '12px',
               overflowX: 'auto',
               padding: '6px 4px',
-              scrollSnapType: 'x mandatory',
+              scrollSnapType: isDragging ? 'none' : 'x proximity',
               scrollbarWidth: 'none',
-              msOverflowStyle: 'none'
+              msOverflowStyle: 'none',
+              WebkitOverflowScrolling: 'touch',
+              cursor: isDragging ? 'grabbing' : 'grab',
+              userSelect: 'none'
             }}
           >
             {teachersList.map((t, idx) => {
@@ -684,10 +673,14 @@ export default function TeamSection() {
                     <img
                       src={t.image}
                       alt={t.name}
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400&h=400';
+                      }}
                       style={{
                         width: '100%',
                         height: '100%',
-                        objectFit: 'cover'
+                        objectFit: 'cover',
+                        pointerEvents: 'none'
                       }}
                     />
                   </div>
