@@ -336,11 +336,18 @@ export default function TeamSection() {
 
     rAFRef.current = requestAnimationFrame(frame);
 
-    // ── Wheel → spin impulse ─────────────────────────────────────────────
+    // ── Wheel → smooth per-card impulse ──────────────────────────────────
+    // Each wheel tick nudges the position by exactly one card width with
+    // a short eased glide — fast spinning accumulates cards but never
+    // races away uncontrollably.
+    const SNAP_VEL = 18;          // pixels/frame for a single-card glide
     const onWheel = (e) => {
       e.preventDefault();
       const d = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-      velocityRef.current = Math.max(-55, Math.min(55, velocityRef.current + d * 0.38));
+      const dir = d > 0 ? 1 : -1;
+      // Accumulate at most ±2 cards worth of velocity for a comfortable feel
+      const target = Math.max(-SNAP_VEL * 2, Math.min(SNAP_VEL * 2, velocityRef.current + dir * SNAP_VEL));
+      velocityRef.current = target;
     };
     el.addEventListener('wheel', onWheel, { passive: false });
 
@@ -665,39 +672,6 @@ export default function TeamSection() {
               </p>
             </div>
 
-            {/* Gold Action Button: Shesaxeb Meti ⓘ */}
-            <div style={{ marginTop: '6px' }}>
-              <button
-                type="button"
-                onClick={() => setSelectedTeacher(activeTeacher)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '7px 20px',
-                  borderRadius: '8px',
-                  background: 'linear-gradient(180deg, #9e7526 0%, #7d5b1b 100%)',
-                  color: '#ffffff',
-                  border: '1px solid rgba(255, 230, 160, 0.4)',
-                  fontSize: '0.84rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.4)',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(180deg, #b88628 0%, #8f671f 100%)';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(180deg, #9e7526 0%, #7d5b1b 100%)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                <span>შესახებ მეტი</span>
-                <Info size={13} />
-              </button>
-            </div>
           </div>
         </div>
 
