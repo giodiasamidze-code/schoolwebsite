@@ -251,44 +251,161 @@ export default function TeamSection() {
     : defaultTeachers;
   const activeTeacher = teachersList[activeTeacherIndex] || teachersList[0];
 
-  // Mouse wheel horizontal scroll handler
+  // Infinite physics carousel engine
+  const posRef = useRef(0);
+  const velocityRef = useRef(0);
+  const isInteractingRef = useRef(false);
+  const lastMouseXRef = useRef(0);
+  const lastTimeRef = useRef(0);
+  const rAFRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Tripled list for infinite seamless wrapping
+  const infiniteList = [
+    ...teachersList.map((t, idx) => ({ ...t, _origIdx: idx, _key: `set0-${idx}-${t.id}` })),
+    ...teachersList.map((t, idx) => ({ ...t, _origIdx: idx, _key: `set1-${idx}-${t.id}` })),
+    ...teachersList.map((t, idx) => ({ ...t, _origIdx: idx, _key: `set2-${idx}-${t.id}` }))
+  ];
+
   useEffect(() => {
     const el = carouselRef.current;
     if (!el) return;
 
-    const handleWheel = (e) => {
-      if (Math.abs(e.deltaY) > 0) {
-        e.preventDefault();
-        el.scrollLeft += e.deltaY * 1.5;
+    const itemWidth = 112; // 100px width + 12px gap
+    const singleSetWidth = teachersList.length * itemWidth;
+
+    // Initialize posRef to middle set
+    posRef.current = singleSetWidth;
+    el.scrollLeft = posRef.current;
+
+    const updatePhysics = () => {
+      if (!el) return;
+
+      if (!isInteractingRef.current) {
+        // Apply smooth inertia and friction damping
+        if (Math.abs(velocityRef.current) > 0.08) {
+          posRef.current += velocityRef.current;
+          velocityRef.current *= 0.94; // Realistic heavy rotary wheel friction
+        } else {
+          velocityRef.current = 0;
+        }
       }
+
+      // Infinite seamless boundary modulo wrap
+      if (singleSetWidth > 0) {
+        if (posRef.current >= singleSetWidth * 2) {
+          posRef.current -= singleSetWidth;
+        } else if (posRef.current <= 0) {
+          posRef.current += singleSetWidth;
+        }
+      }
+
+      el.scrollLeft = posRef.current;
+
+      // 3D Cylindrical Perspective Transform on visible cards
+      const containerRect = el.getBoundingClientRect();
+      const containerCenter = containerRect.left + containerRect.width / 2;
+      const cards = el.querySelectorAll('.teacher-wheel-card');
+
+      let closestIdx = activeTeacherIndex;
+      let minDistance = Infinity;
+
+      cards.forEach((card) => {
+        const rect = card.getBoundingClientRect();
+        const cardCenter = rect.left + rect.width / 2;
+        const dist = cardCenter - containerCenter;
+        const normalizedDist = Math.max(-1.5, Math.min(1.5, dist / (containerRect.width * 0.45)));
+
+        // 3D rotary cylinder curvature calculations
+        const rotateY = normalizedDist * -38;
+        const scale = Math.max(0.8, 1 - Math.abs(normalizedDist) * 0.2);
+        const translateZ = Math.max(-60, (1 - Math.abs(normalizedDist)) * 25);
+        const opacity = Math.max(0.45, 1 - Math.abs(normalizedDist) * 0.55);
+
+        card.style.transform = `perspective(800px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
+        card.style.opacity = opacity;
+
+        if (Math.abs(dist) < minDistance) {
+          minDistance = Math.abs(dist);
+          const origIdx = parseInt(card.getAttribute('data-orig-idx'), 10);
+          if (!isNaN(origIdx)) {
+            closestIdx = origIdx;
+          }
+        }
+      });
+
+      if (closestIdx !== activeTeacherIndex && minDistance < 55) {
+        setActiveTeacherIndex(closestIdx);
+      }
+
+      rAFRef.current = requestAnimationFrame(updatePhysics);
+    };
+
+    rAFRef.current = requestAnimationFrame(updatePhysics);
+
+    // Wheel listener for smooth torque impulse
+    const handleWheel = (e) => {
+      e.preventDefault();
+      const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+      // Add realistic spin velocity impulse
+      velocityRef.current += delta * 0.4;
+      // Clamp max angular spin speed
+      velocityRef.current = Math.max(-50, Math.min(50, velocityRef.current));
     };
 
     el.addEventListener('wheel', handleWheel, { passive: false });
-    return () => el.removeEventListener('wheel', handleWheel);
-  }, []);
 
-  // Mouse drag-to-scroll handlers
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeftState, setScrollLeftState] = useState(0);
+    return () => {
+      if (rAFRef.current) cancelAnimationFrame(rAFRef.current);
+      el.removeEventListener('wheel', handleWheel);
+    };
+  }, [teachersList.length, activeTeacherIndex]);
 
-  const handleMouseDown = (e) => {
-    if (!carouselRef.current) return;
+  // Pointer Drag Handlers (Unified for Mouse & Touch)
+  const handlePointerDown = (e) => {
+    isInteractingRef.current = true;
     setIsDragging(true);
-    setStartX(e.pageX - carouselRef.current.offsetLeft);
-    setScrollLeftState(carouselRef.current.scrollLeft);
+    lastMouseXRef.current = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+    lastTimeRef.current = performance.now();
+    velocityRef.current = 0;
   };
 
-  const handleMouseLeaveOrUp = () => {
+  const handlePointerMove = (e) => {
+    if (!isInteractingRef.current) return;
+    const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+    const now = performance.now();
+    const dx = lastMouseXRef.current - clientX;
+    const dt = Math.max(1, now - lastTimeRef.current);
+
+    posRef.current += dx;
+    velocityRef.current = (dx / dt) * 16;
+    lastMouseXRef.current = clientX;
+    lastTimeRef.current = now;
+  };
+
+  const handlePointerUp = () => {
+    isInteractingRef.current = false;
     setIsDragging(false);
   };
 
-  const handleMouseMove = (e) => {
-    if (!isDragging || !carouselRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - carouselRef.current.offsetLeft;
-    const walk = (x - startX) * 1.8;
-    carouselRef.current.scrollLeft = scrollLeftState - walk;
+  const centerOnTeacher = (targetOrigIdx) => {
+    setActiveTeacherIndex(targetOrigIdx);
+    const el = carouselRef.current;
+    if (!el) return;
+    const containerCenter = el.getBoundingClientRect().left + el.clientWidth / 2;
+    const cards = el.querySelectorAll(`.teacher-wheel-card[data-orig-idx="${targetOrigIdx}"]`);
+    let bestDelta = 0;
+    let minD = Infinity;
+    cards.forEach((card) => {
+      const rect = card.getBoundingClientRect();
+      const cardCenter = rect.left + rect.width / 2;
+      const d = cardCenter - containerCenter;
+      if (Math.abs(d) < minD) {
+        minD = Math.abs(d);
+        bestDelta = d;
+      }
+    });
+    velocityRef.current = bestDelta * 0.25;
   };
 
   return (
@@ -601,56 +718,61 @@ export default function TeamSection() {
           </div>
         </div>
 
-        {/* Bottom 3D Curved Gallery Carousel Strip (Wheel & Touch Scrollable) */}
+        {/* Bottom 3D Infinite Cylindrical Rotary Physics Wheel */}
         <div
           style={{
             position: 'relative',
             width: '100%',
-            background: 'linear-gradient(180deg, rgba(24, 18, 16, 0.7) 0%, rgba(16, 12, 14, 0.85) 100%)',
+            background: 'linear-gradient(180deg, rgba(24, 18, 16, 0.75) 0%, rgba(14, 10, 12, 0.9) 100%)',
             borderTop: '1.5px solid rgba(212, 175, 55, 0.45)',
             borderBottom: '1.5px solid rgba(212, 175, 55, 0.45)',
             borderRadius: '16px',
-            padding: '8px 12px',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(212, 175, 55, 0.05)'
+            padding: '8px 8px',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.7), inset 0 0 25px rgba(212, 175, 55, 0.06)',
+            perspective: '1000px',
+            overflow: 'hidden'
           }}
         >
-          {/* Carousel Scroll Track with Smooth Wheel / Drag / Touch Gestures */}
+          {/* Scroll Track with Infinite 3D Inertia Physics */}
           <div
             ref={carouselRef}
-            onMouseDown={handleMouseDown}
-            onMouseLeave={handleMouseLeaveOrUp}
-            onMouseUp={handleMouseLeaveOrUp}
-            onMouseMove={handleMouseMove}
+            onMouseDown={handlePointerDown}
+            onMouseLeave={handlePointerUp}
+            onMouseUp={handlePointerUp}
+            onMouseMove={handlePointerMove}
+            onTouchStart={handlePointerDown}
+            onTouchEnd={handlePointerUp}
+            onTouchMove={handlePointerMove}
             style={{
               display: 'flex',
               gap: '12px',
-              overflowX: 'auto',
+              overflowX: 'hidden',
               padding: '6px 4px',
-              scrollSnapType: isDragging ? 'none' : 'x proximity',
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
-              WebkitOverflowScrolling: 'touch',
               cursor: isDragging ? 'grabbing' : 'grab',
-              userSelect: 'none'
+              userSelect: 'none',
+              willChange: 'scroll-position, transform'
             }}
           >
-            {teachersList.map((t, idx) => {
-              const isActive = idx === activeTeacherIndex;
+            {infiniteList.map((t) => {
+              const isCenterActive = t._origIdx === activeTeacherIndex;
               return (
                 <div
-                  key={t.id || idx}
-                  onClick={() => setActiveTeacherIndex(idx)}
+                  key={t._key}
+                  data-orig-idx={t._origIdx}
+                  className="teacher-wheel-card"
+                  onClick={() => centerOnTeacher(t._origIdx)}
                   style={{
                     flex: '0 0 100px',
                     cursor: 'pointer',
-                    scrollSnapAlign: 'center',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     textAlign: 'center',
-                    transition: 'all 0.25s ease',
-                    transform: isActive ? 'scale(1.06) translateY(-2px)' : 'scale(0.95)',
-                    opacity: isActive ? 1 : 0.75
+                    transition: isDragging ? 'none' : 'transform 0.08s ease-out',
+                    transformStyle: 'preserve-3d',
+                    willChange: 'transform, opacity'
                   }}
                 >
                   {/* Portrait Card */}
@@ -660,11 +782,11 @@ export default function TeamSection() {
                       height: '102px',
                       borderRadius: '8px',
                       overflow: 'hidden',
-                      border: isActive
+                      border: isCenterActive
                         ? '2px solid #d4af37'
                         : '1px solid rgba(212, 175, 55, 0.35)',
-                      boxShadow: isActive
-                        ? '0 0 16px rgba(212, 175, 55, 0.6), 0 8px 16px rgba(0,0,0,0.8)'
+                      boxShadow: isCenterActive
+                        ? '0 0 18px rgba(212, 175, 55, 0.7), 0 8px 16px rgba(0,0,0,0.8)'
                         : '0 4px 12px rgba(0,0,0,0.5)',
                       background: '#1a1412',
                       marginBottom: '4px'
@@ -691,7 +813,7 @@ export default function TeamSection() {
                       fontFamily: "'Noto Serif Georgian', Georgia, serif",
                       fontSize: '0.74rem',
                       fontWeight: 600,
-                      color: isActive ? '#f5e2a3' : 'rgba(255, 255, 255, 0.85)',
+                      color: isCenterActive ? '#f5e2a3' : 'rgba(255, 255, 255, 0.85)',
                       lineHeight: 1.15,
                       display: '-webkit-box',
                       WebkitLineClamp: 1,
@@ -705,7 +827,7 @@ export default function TeamSection() {
                   <span
                     style={{
                       fontSize: '0.64rem',
-                      color: isActive ? '#d4af37' : 'rgba(212, 175, 55, 0.65)',
+                      color: isCenterActive ? '#d4af37' : 'rgba(212, 175, 55, 0.65)',
                       marginTop: '1px',
                       display: '-webkit-box',
                       WebkitLineClamp: 1,
