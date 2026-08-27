@@ -1,66 +1,50 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
+import Lenis from 'lenis';
 
 /**
- * SmoothScroll — global momentum/inertia scroll for the whole page.
- * When the user spins the mouse wheel:
- *   - velocity builds up gradually (ease-in feel)
- *   - after releasing the wheel, velocity decays with friction (ease-out feel)
- * Does NOT interfere with elements that call e.preventDefault() on their own
- * wheel events (e.g. the teacher carousel), because those events never reach
- * the document listener.
+ * SmoothScroll — powered by Lenis (same library used by fraxbit.com,
+ * Vercel, Linear, and other premium sites).
+ *
+ * Characteristics:
+ *  - Silky smooth continuous scroll (NOT section-snapping)
+ *  - Ease-in acceleration, exponential ease-out deceleration
+ *  - Consistent across browsers (overrides each browser's native scroll)
+ *  - Works with touch on mobile (disabled automatically)
+ *  - Does NOT touch elements that call e.preventDefault() on wheel
+ *    (e.g. the teacher carousel widget)
  */
 export default function SmoothScroll() {
-  const velocityRef = useRef(0);
-  const rAFRef = useRef(null);
-  const targetRef = useRef(window.scrollY);
-  const currentRef = useRef(window.scrollY);
-
   useEffect(() => {
-    const FRICTION = 0.88;      // higher = slides longer (0–1)
-    const SPEED_FACTOR = 0.55;  // scales raw deltaY into velocity units
-    const MAX_VEL = 180;        // max pixels/frame (prevents mega-jumps)
+    const lenis = new Lenis({
+      // How quickly the scroll "catches up" to the input (0–1, lower = longer glide)
+      lerp: 0.07,
+      // Multiplier for wheel delta — controls how far each tick moves
+      wheelMultiplier: 1.0,
+      // Smooth behaviour on touch devices (set false to keep native touch)
+      smoothTouch: false,
+      // Normalize scroll direction
+      syncTouch: false,
+      // Easing function — expo out for a silky deceleration tail
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    });
 
-    const onWheel = (e) => {
-      // If the target element (or any ancestor) handles this wheel event
-      // by calling preventDefault, this listener won't fire — which is
-      // exactly what we want for the teacher carousel and similar widgets.
-
-      e.preventDefault();
-
-      const delta = e.deltaY * SPEED_FACTOR;
-      // Accumulate velocity (ease-in: spinning faster adds more speed)
-      velocityRef.current = Math.max(
-        -MAX_VEL,
-        Math.min(MAX_VEL, velocityRef.current + delta)
-      );
+    // Integrate with requestAnimationFrame for perfect 60/120fps rendering
+    let rafId;
+    const raf = (time) => {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
     };
+    rafId = requestAnimationFrame(raf);
 
-    const loop = () => {
-      if (Math.abs(velocityRef.current) > 0.3) {
-        // Apply velocity to scroll position
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        const next = Math.max(0, Math.min(maxScroll, window.scrollY + velocityRef.current));
-        window.scrollTo(0, next);
-
-        // Ease-out friction — decay until nearly zero
-        velocityRef.current *= FRICTION;
-      } else {
-        velocityRef.current = 0;
-      }
-
-      rAFRef.current = requestAnimationFrame(loop);
-    };
-
-    rAFRef.current = requestAnimationFrame(loop);
-
-    // passive: false so we can call preventDefault()
-    window.addEventListener('wheel', onWheel, { passive: false });
+    // Expose lenis globally so other components can scroll programmatically
+    window.__lenis = lenis;
 
     return () => {
-      cancelAnimationFrame(rAFRef.current);
-      window.removeEventListener('wheel', onWheel);
+      cancelAnimationFrame(rafId);
+      lenis.destroy();
+      delete window.__lenis;
     };
   }, []);
 
-  return null; // no UI — effect only
+  return null;
 }

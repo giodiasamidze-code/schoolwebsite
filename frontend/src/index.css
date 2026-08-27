@@ -45,9 +45,10 @@
 }
 
 html {
-  /* scroll-behavior: smooth — disabled; SmoothScroll component handles inertia */
+  /* Lenis smooth scroll handles all scrolling; keep CSS at auto */
   scroll-behavior: auto;
 }
+
 
 body {
   background-color: #0c0608;
