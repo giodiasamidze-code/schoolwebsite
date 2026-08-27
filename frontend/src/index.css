@@ -45,7 +45,8 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth — disabled; SmoothScroll component handles inertia */
+  scroll-behavior: auto;
 }
 
 body {

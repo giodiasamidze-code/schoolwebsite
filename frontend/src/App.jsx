@@ -11,6 +11,7 @@ import AdminDashboard from './components/AdminDashboard';
 import AdminLoginPage from './components/AdminLoginPage';
 import ParentAccountPage from './components/ParentAccountPage';
 import CustomCursor from './components/CustomCursor';
+import SmoothScroll from './components/SmoothScroll';
 import DynamicBackground from './components/DynamicBackground';
 import { useAuth } from './components/AuthContext';
 
@@ -63,6 +64,7 @@ export default function App() {
   return (
     <div className="app-wrapper" style={{ position: 'relative', minHeight: '100vh' }}>
       <DynamicBackground />
+      <SmoothScroll />
       <CustomCursor />
       {path === '/parent-account' ? (
         <ParentAccountPage />
