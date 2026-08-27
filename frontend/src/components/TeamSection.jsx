@@ -336,16 +336,17 @@ export default function TeamSection() {
 
     rAFRef.current = requestAnimationFrame(frame);
 
-    // ── Wheel → gentle per-tick impulse ──────────────────────────────────────
-    // Physics: total displacement = SNAP_VEL / (1 - friction) = 2.5 / 0.07 ≈ 36px
-    // One card = 112px → 3 wheel ticks ≈ 1 card change (as user requested)
-    const SNAP_VEL = 2.5;
+    // ── Wheel → smooth responsive carousel spin ─────────────────────────────
     const onWheel = (e) => {
       e.preventDefault();
-      const d = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-      const dir = d > 0 ? 1 : -1;
-      // Cap at 3 ticks worth so fast spinning stays predictable
-      velocityRef.current = Math.max(-SNAP_VEL * 3, Math.min(SNAP_VEL * 3, velocityRef.current + dir * SNAP_VEL));
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+
+      const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+      const dir = delta > 0 ? 1 : -1;
+      
+      // Responsive impulse (8px/frame deceleration produces ~114px travel per 2-3 notches)
+      velocityRef.current = Math.max(-30, Math.min(30, velocityRef.current + dir * 8.0));
     };
     el.addEventListener('wheel', onWheel, { passive: false });
 
@@ -675,6 +676,9 @@ export default function TeamSection() {
 
         {/* Bottom 3D Infinite Cylindrical Rotary Physics Wheel */}
         <div
+          data-lenis-prevent="true"
+          data-lenis-prevent-wheel="true"
+          data-lenis-prevent-touch="true"
           style={{
             position: 'relative',
             width: '100%',
@@ -691,6 +695,9 @@ export default function TeamSection() {
           {/* Scroll Track with Infinite 3D Inertia Physics */}
           <div
             ref={carouselRef}
+            data-lenis-prevent="true"
+            data-lenis-prevent-wheel="true"
+            data-lenis-prevent-touch="true"
             onMouseDown={handlePointerDown}
             onMouseLeave={handlePointerUp}
             onMouseUp={handlePointerUp}
