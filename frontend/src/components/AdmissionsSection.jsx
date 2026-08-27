@@ -262,7 +262,7 @@ export default function AdmissionsSection() {
   };
 
   return (
-    <section className="admissions-section screen-height-section" id="admissions" style={{ position: 'relative', overflow: 'hidden', padding: '24px 0', background: '#0e0c0e', minHeight: '100vh', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', boxSizing: 'border-box' }}>
+    <section className="admissions-section" id="admissions" style={{ position: 'relative', padding: 'clamp(40px, 6vh, 70px) 0 80px', background: '#0e0c0e' }}>
       <div className="container" style={{ position: 'relative', zIndex: 2, width: '92%', maxWidth: '1360px', margin: '0 auto' }}>
 
         {/* ======================================================== */}
