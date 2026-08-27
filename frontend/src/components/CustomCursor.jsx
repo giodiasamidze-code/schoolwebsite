@@ -137,7 +137,7 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* 1. Gold Diamond Arrow Cursor (instant tracking) */}
+      {/* Gold Diamond Arrow / Cross Cursor (instant tracking) */}
       <div
         ref={dotRef}
         style={{
@@ -164,35 +164,6 @@ export default function CustomCursor() {
             : <CursorArrow size={28} />
           }
         </div>
-      </div>
-
-      {/* 2. Soft gold glow trailing halo */}
-      <div
-        ref={haloRef}
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          pointerEvents: 'none',
-          zIndex: 999997,
-          willChange: 'transform'
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            top: isHovered ? '-22px' : '-18px',
-            left: isHovered ? '-22px' : '-18px',
-            width: isHovered ? '44px' : '36px',
-            height: isHovered ? '44px' : '36px',
-            borderRadius: '50%',
-            border: `1px solid rgba(212, 175, 55, ${isHovered ? 0.65 : 0.25})`,
-            background: `rgba(212, 175, 55, ${isHovered ? 0.08 : 0.03})`,
-            boxShadow: isHovered ? '0 0 22px rgba(212, 175, 55, 0.35)' : '0 0 10px rgba(212, 175, 55, 0.15)',
-            transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-            pointerEvents: 'none'
-          }}
-        />
       </div>
     </>
   );
