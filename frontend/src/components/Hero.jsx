@@ -185,7 +185,7 @@ export default function Hero() {
           />
         </div>
 
-        {/* Primary CTA Button: შეიტყვეთ მეტი → */}
+        {/* Primary CTA Button: სკოლის გალერეა → */}
         <a
           href="/gallery"
           onClick={(e) => {
@@ -223,7 +223,7 @@ export default function Hero() {
             e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.35)';
           }}
         >
-          <span>შეიტყვეთ მეტი</span>
+          <span>სკოლის გალერეა</span>
           <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>→</span>
         </a>
       </div>
