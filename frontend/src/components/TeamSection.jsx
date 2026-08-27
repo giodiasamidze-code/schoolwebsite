@@ -826,47 +826,8 @@ export default function TeamSection() {
             })}
           </div>
         </div>
-
-        {/* Centered Down Navigation Button (D icon in user's drawing) */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
-          <a
-            href="#news"
-            onClick={(e) => {
-              e.preventDefault();
-              const el = document.querySelector('#news');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-            title="შემდეგი სექცია"
-            style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(42, 30, 20, 0.95) 0%, rgba(20, 14, 12, 0.95) 100%)',
-              border: '1.5px solid rgba(212, 175, 55, 0.75)',
-              color: '#f5e2a3',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.7), 0 0 14px rgba(212,175,55,0.35)',
-              transition: 'all 0.25s ease',
-              textDecoration: 'none'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(3px) scale(1.1)';
-              e.currentTarget.style.borderColor = '#f5e2a3';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.8), 0 0 20px rgba(212,175,55,0.6)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0) scale(1)';
-              e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.75)';
-              e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.7), 0 0 14px rgba(212,175,55,0.35)';
-            }}
-          >
-            <ChevronDown size={20} color="#f5e2a3" />
-          </a>
-        </div>
       </div>
+
 
       {/* Detailed Modal Profile for Teacher */}
       {selectedTeacher && (
