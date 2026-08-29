@@ -170,54 +170,6 @@ export default function NewsSection() {
             >
               სიახლეები
             </h2>
-
-            {/* Story Switcher Tabs (Photo 1: Tab 1 Active) */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '12px' }}>
-              <button
-                type="button"
-                style={{
-                  padding: '7px 20px',
-                  borderRadius: '100px',
-                  border: '1px solid #d4af37',
-                  background: 'rgba(212, 175, 55, 0.18)',
-                  color: '#f5e2a3',
-                  fontSize: '0.84rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  boxShadow: '0 0 14px rgba(212, 175, 55, 0.3)',
-                  backdropFilter: 'blur(8px)'
-                }}
-              >
-                პროექტები & ინიციატივები
-              </button>
-
-              <button
-                type="button"
-                onClick={() => scrollToSection('news-stem')}
-                style={{
-                  padding: '7px 20px',
-                  borderRadius: '100px',
-                  border: '1px solid rgba(212, 175, 55, 0.25)',
-                  background: 'rgba(20, 16, 14, 0.6)',
-                  color: 'rgba(255, 255, 255, 0.65)',
-                  fontSize: '0.84rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  backdropFilter: 'blur(8px)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = '#d4af37';
-                  e.currentTarget.style.color = '#f5e2a3';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.25)';
-                  e.currentTarget.style.color = 'rgba(255, 255, 255, 0.65)';
-                }}
-              >
-                ეკოლოგიური კვლევა & STEM
-              </button>
-            </div>
           </div>
 
           {/* Ornate Gold Framed Container (Exact Photo 1 Layout) */}
@@ -582,54 +534,6 @@ export default function NewsSection() {
             >
               სიახლეები
             </h2>
-
-            {/* Story Switcher Tabs (Photo 2: Tab 2 Active) */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '12px' }}>
-              <button
-                type="button"
-                onClick={() => scrollToSection('news')}
-                style={{
-                  padding: '7px 20px',
-                  borderRadius: '100px',
-                  border: '1px solid rgba(212, 175, 55, 0.25)',
-                  background: 'rgba(20, 16, 14, 0.6)',
-                  color: 'rgba(255, 255, 255, 0.65)',
-                  fontSize: '0.84rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  backdropFilter: 'blur(8px)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = '#d4af37';
-                  e.currentTarget.style.color = '#f5e2a3';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.25)';
-                  e.currentTarget.style.color = 'rgba(255, 255, 255, 0.65)';
-                }}
-              >
-                პროექტები & ინიციატივები
-              </button>
-
-              <button
-                type="button"
-                style={{
-                  padding: '7px 20px',
-                  borderRadius: '100px',
-                  border: '1px solid #d4af37',
-                  background: 'rgba(212, 175, 55, 0.18)',
-                  color: '#f5e2a3',
-                  fontSize: '0.84rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  boxShadow: '0 0 14px rgba(212, 175, 55, 0.3)',
-                  backdropFilter: 'blur(8px)'
-                }}
-              >
-                ეკოლოგიური კვლევა & STEM
-              </button>
-            </div>
           </div>
 
           {/* Ornate Gold Framed Container (Exact Photo 2 Layout) */}
