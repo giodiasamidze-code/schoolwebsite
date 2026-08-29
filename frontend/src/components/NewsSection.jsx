@@ -172,12 +172,12 @@ export default function NewsSection() {
             </h2>
           </div>
 
-          {/* 2-Column Responsive Grid (Photo Match) */}
+          {/* 2-Column Responsive Grid (Exact Photo Match) */}
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-              gap: '16px'
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: 'clamp(10px, 2.5vw, 16px)'
             }}
           >
             {projects.map((item) => (
@@ -186,8 +186,8 @@ export default function NewsSection() {
                 onClick={() => setSelectedArticle(item)}
                 style={{
                   position: 'relative',
-                  height: '280px',
-                  borderRadius: '20px',
+                  height: 'clamp(200px, 26vh, 280px)',
+                  borderRadius: 'clamp(14px, 3vw, 20px)',
                   overflow: 'hidden',
                   background: '#161311',
                   border: '1px solid rgba(212, 175, 55, 0.25)',
@@ -196,7 +196,7 @@ export default function NewsSection() {
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'flex-end',
-                  padding: '18px',
+                  padding: 'clamp(12px, 2.5vw, 18px)',
                   boxSizing: 'border-box',
                   transition: 'transform 0.2s ease'
                 }}
