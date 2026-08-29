@@ -519,23 +519,6 @@ export default function NewsSection() {
             margin: '0 auto'
           }}
         >
-          {/* Section Heading: სიახლეები */}
-          <div style={{ textAlign: 'center', marginBottom: '14px' }}>
-            <h2
-              style={{
-                fontFamily: "'Noto Serif Georgian', Georgia, serif",
-                fontSize: 'clamp(2rem, 3.5vw, 2.9rem)',
-                fontWeight: 400,
-                color: '#f6f4ee',
-                letterSpacing: '0.02em',
-                margin: '0 0 6px',
-                textShadow: '0 2px 14px rgba(0,0,0,0.8)'
-              }}
-            >
-              სიახლეები
-            </h2>
-          </div>
-
           {/* Ornate Gold Framed Container (Exact Photo 2 Layout) */}
           <div
             style={{
