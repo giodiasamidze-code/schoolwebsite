@@ -1657,7 +1657,8 @@ section {
 @media (min-width: 900px) {
   #hero,
   #teachers,
-  #news {
+  #news,
+  #news-stem {
     min-height: 100vh !important;
     height: 100vh !important;
     box-sizing: border-box !important;
@@ -1667,3 +1668,4 @@ section {
     overflow: hidden !important;
   }
 }
+
