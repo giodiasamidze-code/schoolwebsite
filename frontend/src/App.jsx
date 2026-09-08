@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
+import SpacesHub from './components/SpacesHub';
 import TeamSection from './components/TeamSection';
 import NewsSection from './components/NewsSection';
 import AdmissionsSection from './components/AdmissionsSection';
@@ -35,7 +36,7 @@ export default function App() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Standalone portals — dedicated executive header/navigation
+  // Standalone portals & full page views
   if (path === '/admin') {
     return (
       <>
@@ -44,6 +45,7 @@ export default function App() {
       </>
     );
   }
+
   if (path === '/admin-dashboard') {
     return (
       <>
@@ -52,6 +54,7 @@ export default function App() {
       </>
     );
   }
+
   if (path === '/teacher-dashboard') {
     return (
       <>
@@ -61,31 +64,41 @@ export default function App() {
     );
   }
 
+  if (path === '/gallery') {
+    return (
+      <>
+        <CustomCursor />
+        <Header />
+        <GalleryPage />
+      </>
+    );
+  }
+
+  if (path === '/parent-account') {
+    return (
+      <>
+        <CustomCursor />
+        <Header />
+        <ParentAccountPage />
+        <Footer />
+      </>
+    );
+  }
+
   return (
-    <div className="app-wrapper" style={{ position: 'relative', minHeight: '100vh' }}>
+    <div className="app-wrapper" style={{ position: 'relative', minHeight: '100vh', background: '#090507' }}>
       <DynamicBackground />
       <SmoothScroll />
       <CustomCursor />
-      {path === '/parent-account' ? (
-        <ParentAccountPage />
-      ) : (
-        <main style={{ position: 'relative', zIndex: 1 }}>
-          {path === '/gallery' ? (
-            <GalleryPage />
-          ) : (
-            <>
-              <Hero />
-              <div className="page-overlap-content" style={{ position: 'relative', zIndex: 2, background: '#0c0608', boxShadow: '0 -25px 60px rgba(0, 0, 0, 0.9)', borderTop: '1px solid rgba(212, 175, 55, 0.25)' }}>
-                <TeamSection />
-                <NewsSection />
-                <AdmissionsSection />
-                <Footer />
-              </div>
-            </>
-          )}
-        </main>
-      )}
-      {path === '/parent-account' || path === '/gallery' ? <Footer /> : null}
+      <Header />
+      <main style={{ position: 'relative', zIndex: 1 }}>
+        <Hero />
+        <SpacesHub />
+        <TeamSection />
+        <NewsSection />
+        <AdmissionsSection />
+      </main>
+      <Footer />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, GraduationCap, ArrowRight, User, LogOut, Shield } from 'lucide-react';
+import { Menu, X, ArrowRight, User, LogOut, Shield } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
 export default function Header() {
@@ -7,11 +7,12 @@ export default function Header() {
   const { path, navigate, user, role, logout } = useAuth();
 
   const navItems = [
-    { label: 'მასწავლებლები', href: '#teachers' },
+    { label: 'მთავარი', href: '#hero' },
+    { label: 'პედაგოგები', href: '#teachers' },
     { label: 'სიახლეები', href: '#news' },
+    { label: 'საფასური', href: '#admissions' },
     { label: 'გალერეა', href: '/gallery' },
-    { label: 'მიღება & ტარიფები', href: '#admissions' },
-    { label: 'კონტაქტი', href: '#contact' }
+    { label: 'კონტაქტი', href: '#footer-contact' }
   ];
 
   const handleNavClick = (e, href) => {
@@ -27,23 +28,15 @@ export default function Header() {
     if (path !== '/') {
       navigate('/');
       setTimeout(() => {
-        if (href === '#') {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          return;
-        }
         const element = document.querySelector(href);
         if (element) {
-          scrollToElement(element);
+          element.scrollIntoView({ behavior: 'smooth' });
         }
       }, 150);
     } else {
-      if (href === '#') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
-      }
       const element = document.querySelector(href);
       if (element) {
-        scrollToElement(element);
+        element.scrollIntoView({ behavior: 'smooth' });
       }
     }
   };
@@ -51,284 +44,236 @@ export default function Header() {
   const handleAuthClick = (e, mode = 'login') => {
     e.preventDefault();
     setIsOpen(false);
-    window.dispatchEvent(new CustomEvent('set-auth-mode', { detail: { mode } }));
-    handleNavClick(e, '#admissions');
+    navigate('/admin');
   };
 
-  const scrollToElement = (element) => {
-    const offset = 90;
-    const bodyRect = document.body.getBoundingClientRect().top;
-    const elementRect = element.getBoundingClientRect().top;
-    const elementPosition = elementRect - bodyRect;
-    const offsetPosition = elementPosition - offset;
-
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: 'smooth'
-    });
+  const handleRegisterClick = (e) => {
+    e.preventDefault();
+    setIsOpen(false);
+    if (path !== '/') {
+      navigate('/');
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('set-auth-mode', { detail: { mode: 'register' } }));
+        const el = document.getElementById('admissions');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 150);
+    } else {
+      window.dispatchEvent(new CustomEvent('set-auth-mode', { detail: { mode: 'register' } }));
+      const el = document.getElementById('admissions');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
-    <header className="header">
-      <div className="header-container">
-        
-        {/* Brand / Logo */}
-      <a href="#" className="logo" onClick={(e) => handleNavClick(e, '#')}>
-          <div style={{
-            width: '34px',
-            height: '34px',
-            borderRadius: '8px',
-            background: '#c41e3a',
+    <header
+      style={{
+        position: 'fixed',
+        top: '18px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: 'calc(100% - 60px)',
+        maxWidth: '1360px',
+        height: '62px',
+        background: 'rgba(25, 15, 18, 0.75)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        border: '1px solid rgba(212, 175, 55, 0.3)',
+        borderRadius: '16px',
+        zIndex: 999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 24px',
+        boxShadow: '0 10px 35px rgba(0, 0, 0, 0.5)'
+      }}
+    >
+      {/* Brand / Logo matching Photos */}
+      <a
+        href="#"
+        onClick={(e) => handleNavClick(e, '#hero')}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          textDecoration: 'none',
+          color: '#ffffff'
+        }}
+      >
+        {/* Classical Temple Gold Emblem */}
+        <div
+          style={{
+            width: '38px',
+            height: '38px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(25, 15, 18, 0.6) 100%)',
+            border: '1px solid #d4af37',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            flexShrink: 0
-          }}>
-            <GraduationCap size={19} color="#ffffff" />
-          </div>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '5px' }}>
-            <span style={{
-              fontFamily: 'var(--font-serif, Georgia, serif)',
-              fontSize: '1.1rem',
-              fontWeight: 700,
-              color: '#ffffff',
-              letterSpacing: '-0.01em'
-            }}>
-              სოლომონ
-            </span>
-            <span style={{
-              color: 'rgba(255,255,255,0.4)',
-              fontSize: '0.92rem',
-              fontWeight: 400
-            }}>აკადემია</span>
-          </div>
-        </a>
-
-        {/* Desktop Nav Items (Strictly Hidden on Mobile via CSS) */}
-        <nav className="desktop-nav">
-          {navItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="nav-link"
-              onClick={(e) => handleNavClick(e, item.href)}
-            >
-              {item.label}
-            </a>
-          ))}
-
-          {/* User Auth Profile */}
-          {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              {role === 'admin' && (
-                <button
-                  onClick={() => navigate('/admin-dashboard')}
-                  style={{
-                    padding: '6px 14px',
-                    background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '0.82rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}
-                >
-                  <Shield size={14} />
-                  ადმინ პანელი
-                </button>
-              )}
-              {role === 'teacher' && (
-                <button
-                  onClick={() => navigate('/teacher-dashboard')}
-                  style={{
-                    padding: '6px 14px',
-                    background: 'rgba(212, 175, 55, 0.15)',
-                    border: '1px solid rgba(212, 175, 55, 0.35)',
-                    color: 'var(--accent-secondary, #d4af37)',
-                    borderRadius: '8px',
-                    fontSize: '0.82rem',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
-                >
-                  მასწავლებლის კაბინეტი
-                </button>
-              )}
-              {role === 'parent' && (
-                <button
-                  onClick={() => navigate('/parent-account')}
-                  style={{
-                    padding: '6px 14px',
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    color: '#fff',
-                    borderRadius: '8px',
-                    fontSize: '0.82rem',
-                    fontWeight: 600,
-                    cursor: 'pointer'
-                  }}
-                >
-                  ჩემი ანგარიში
-                </button>
-              )}
-
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '4px 10px 4px 6px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '30px'
-              }}>
-                <div style={{
-                  width: '26px',
-                  height: '26px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
-                  color: '#fff',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  {(user.name || user.email || 'U')[0].toUpperCase()}
-                </div>
-                <span style={{ fontSize: '0.8rem', color: '#fff', fontWeight: 600 }}>
-                  {(user.name || user.email || '').split(' ')[0]}
-                </span>
-                <button
-                  onClick={logout}
-                  title="გამოსვლა"
-                  style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}
-                >
-                  <LogOut size={14} />
-                </button>
-              </div>
-            </div>
-          ) : null}
-
-          {/* Online Application CTA Button */}
-          <a
-            href="#admissions"
-            onClick={(e) => handleAuthClick(e, 'register')}
-            style={{
-              padding: '8px 18px',
-              background: '#c41e3a',
-              color: '#ffffff',
-              borderRadius: '8px',
-              fontWeight: 600,
-              fontSize: '0.88rem',
-              textDecoration: 'none',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              border: '1px solid transparent',
-              transition: 'background 0.2s',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.background = '#dc2445'}
-            onMouseLeave={(e) => e.currentTarget.style.background = '#c41e3a'}
-          >
-            <span>რეგისტრაცია</span>
-            <ArrowRight size={14} />
-          </a>
-        </nav>
-
-        {/* Mobile Toggle Button (Visible only on Mobile) */}
-        <button
-          className="mobile-toggle"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle Menu"
+            color: '#d4af37'
+          }}
         >
-          {isOpen ? <X size={24} color="#ffffff" /> : <Menu size={24} color="#ffffff" />}
-        </button>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 2l9 6H3l9-6z"/>
+          </svg>
+        </div>
 
-      </div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <span
+            style={{
+              fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
+              fontSize: '0.95rem',
+              fontWeight: 700,
+              letterSpacing: '0.08em',
+              color: '#d4af37',
+              lineHeight: 1.1
+            }}
+          >
+            SOLOMON
+          </span>
+          <span
+            style={{
+              fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              letterSpacing: '0.06em',
+              color: '#ffffff',
+              lineHeight: 1.1
+            }}
+          >
+            ACADEMY
+          </span>
+        </div>
+      </a>
 
-      {/* Mobile Drawer (Dropdown) */}
-      <div className={`mobile-drawer ${isOpen ? 'active' : ''}`}>
+      {/* Desktop Navigation Links */}
+      <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
         {navItems.map((item) => (
           <a
             key={item.href}
             href={item.href}
             onClick={(e) => handleNavClick(e, item.href)}
             style={{
+              color: 'rgba(255, 255, 255, 0.85)',
+              fontSize: '0.92rem',
+              fontWeight: 500,
               textDecoration: 'none',
-              color: '#ffffff',
-              fontSize: '1.05rem',
-              fontWeight: 600,
-              padding: '12px 0',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-              display: 'block'
+              transition: 'all 0.2s',
+              position: 'relative',
+              padding: '6px 0'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = '#d4af37';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'rgba(255, 255, 255, 0.85)';
             }}
           >
             {item.label}
           </a>
         ))}
+      </nav>
 
+      {/* Right Side CTAs matching Photos */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
         {user ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '10px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.9rem', fontWeight: 600 }}>
-                სალამი, {user.name || user.email}
-              </span>
-              {role === 'admin' && (
-                <button
-                  onClick={() => { setIsOpen(false); navigate('/admin-dashboard'); }}
-                  style={{
-                    padding: '6px 12px',
-                    background: 'linear-gradient(135deg, #8b0000, #c41e3a)',
-                    color: '#fff',
-                    borderRadius: '8px',
-                    border: 'none',
-                    fontSize: '0.8rem',
-                    fontWeight: 700
-                  }}
-                >
-                  ადმინ პანელი
-                </button>
-              )}
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <button
-              onClick={() => { setIsOpen(false); logout(); }}
+              onClick={() => {
+                if (role === 'admin') navigate('/admin-dashboard');
+                else if (role === 'teacher') navigate('/teacher-dashboard');
+                else navigate('/parent-account');
+              }}
               style={{
-                padding: '10px',
-                background: 'rgba(239, 68, 68, 0.15)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
-                color: '#f87171',
-                borderRadius: '10px',
-                fontWeight: 600,
+                padding: '6px 14px',
+                background: 'rgba(212, 175, 55, 0.15)',
+                border: '1px solid rgba(212, 175, 55, 0.35)',
+                color: '#d4af37',
+                borderRadius: '8px',
+                fontSize: '0.82rem',
+                fontWeight: 700,
                 cursor: 'pointer'
               }}
             >
-              გამოსვლა
+              {role === 'admin' ? 'ადმინ პანელი' : role === 'teacher' ? 'პედაგოგის კაბინეტი' : 'ჩემი ანგარიში'}
+            </button>
+            <button
+              onClick={logout}
+              title="გამოსვლა"
+              style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+            >
+              <LogOut size={16} />
             </button>
           </div>
-        ) : null}
+        ) : (
+          <button
+            onClick={(e) => handleAuthClick(e, 'login')}
+            style={{
+              background: 'rgba(40, 24, 28, 0.7)',
+              border: '1px solid rgba(212, 175, 55, 0.3)',
+              borderRadius: '8px',
+              padding: '7px 18px',
+              color: '#ffffff',
+              fontSize: '0.88rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#d4af37';
+              e.currentTarget.style.color = '#d4af37';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.3)';
+              e.currentTarget.style.color = '#ffffff';
+            }}
+          >
+            შესვლა
+          </button>
+        )}
 
-        <a
-          href="#admissions"
-          onClick={(e) => handleAuthClick(e, 'register')}
+        <button
+          onClick={handleRegisterClick}
           style={{
-            padding: '14px',
-            background: 'linear-gradient(135deg, #8b0000 0%, #c41e3a 100%)',
-            color: '#fff',
-            borderRadius: '12px',
+            padding: '8px 20px',
+            background: 'linear-gradient(180deg, #d4af37 0%, #b88628 100%)',
+            color: '#1a1104',
+            borderRadius: '8px',
             fontWeight: 700,
-            textAlign: 'center',
-            textDecoration: 'none',
-            boxShadow: '0 4px 16px rgba(139, 0, 0, 0.45)',
-            marginTop: '4px'
+            fontSize: '0.88rem',
+            border: '1px solid rgba(255, 230, 160, 0.5)',
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.4)',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            whiteSpace: 'nowrap'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.boxShadow = '0 6px 20px rgba(212, 175, 55, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.4)';
           }}
         >
-          ონლაინ რეგისტრაცია
-        </a>
+          ონლაინ განაცხადი
+        </button>
+
+        {/* Mobile menu toggle */}
+        <button
+          className="mobile-toggle"
+          onClick={() => setIsOpen(!isOpen)}
+          style={{
+            display: 'none',
+            background: 'none',
+            border: 'none',
+            color: '#ffffff',
+            cursor: 'pointer'
+          }}
+          aria-label="Toggle Navigation"
+        >
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
     </header>
   );

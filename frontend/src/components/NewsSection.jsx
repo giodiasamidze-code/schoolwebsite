@@ -1,781 +1,566 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRight, X, Sparkles, Calendar, CheckCircle2 } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import React, { useState } from 'react';
+import { ArrowLeft, ArrowRight, Share2, Bookmark, ExternalLink } from 'lucide-react';
 
 export default function NewsSection() {
-  const [selectedArticle, setSelectedArticle] = useState(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-  const sectionRef = useRef(null);
-  const trackRef = useRef(null);
-  const stickyRef = useRef(null);
+  const [activeCategory, setActiveCategory] = useState('ყველა');
+  const [detailedNewsId, setDetailedNewsId] = useState(null);
 
-  const projects = [
+  const categories = ['ყველა', 'STEM', 'კვლევა', 'ღონისძიებები'];
+
+  const newsItems = [
     {
-      id: 'project-1',
+      id: 1,
       title: 'აკადემიის ინოვაციური პროექტები',
-      tags: ['[ STEM ]', '[ კვლევები ]', '[ ინოვაციები ]'],
-      image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200',
-      date: '24 მაისი, 2026',
-      author: 'დავით გიორგაძე',
-      description: 'აკადემიის ახალი პროექტები აერთიანებს ინტერდისციპლინურ კვლევებსა და თანამედროვე სასწავლო მეთოდოლოგიას. მოსწავლეები მუშაობენ რეალურ სამეცნიერო და ჰუმანიტარულ ქეისებზე, რაც ავითარებს კრიტიკულ აზროვნებას, გუნდურ მუშაობასა და კვლევით უნარ-ჩვევებს.',
-      bullets: [
-        'საერთაშორისო აკადემიური გაცვლითი პროექტები პარტნიორ უნივერსიტეტებთან',
-        'სტუდენტური დებატების ლიგა და დიპლომატიური სიმულაციები',
-        'საზოგადოებრივი ინიციატივები და ადგილობრივი თემის მხარდაჭერა'
-      ]
+      category: 'STEM',
+      image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80',
+      description: 'სოლომონ აკადემიის მოსწავლეებმა წარმოადგინეს რობოტოტექნიკისა და ხელოვნური ინტელექტის ინოვაციური პროტოტიპები.',
+      details: 'პროექტის ფარგლებში მოსწავლეები ქმნიან ავტონომიურ რობოტულ სისტემებს, შეისწავლიან მიკროკონტროლერების დაპროგრამებას და ავითარებენ საინჟინრო უნარებს.',
+      tags: ['კვლევა', 'ტექნოლოგია', 'ინოვაცია']
     },
     {
-      id: 'project-2',
+      id: 2,
       title: 'ეკოლოგიური კვლევა & STEM',
-      tags: ['[ ეკოლოგია ]', '[ ბიოტექნოლოგია ]', '[ რობოტიკა ]'],
-      image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=1200',
-      date: '18 მაისი, 2026',
-      author: 'ანა კაპანაძე',
-      description: 'ეკოლოგიური კვლევის ლაბორატორია ატარებს კომპლექსურ კვლევებს ბუნებრივი ეკოსისტემების მდგრადობისა და თანამედროვე რობოტოტექნიკის გამოყენებით. მოსწავლეები ქმნიან ავტონომიურ სენსორულ სისტემებს ნიადაგისა და ჰაერის მონიტორინგისთვის.',
-      bullets: [
-        'ახალი მცენარეების კლასიფიკაცია და გენეტიკური დახასიათება',
-        'ნიადაგის ჯანმრთელობისა და ტენიანობის სენსორული მონიტორინგი',
-        'ეკოსისტემის დაცვის ინიციატივები და ურბანული ეკოლოგია',
-        'ბიოლოგიური ნიმუშების სპექტრომეტრული ანალიზი'
-      ]
+      category: 'კვლევა',
+      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&auto=format&fit=crop&q=80',
+      description: 'ბიოლოგიისა და ეკოლოგიის საველე ლაბორატორიის მიღწევები და პრაქტიკული ექსპედიციები.',
+      details: 'სოლომონ აკადემიის ეკო-კლუბის მიერ ჩატარებული გარემოსდაცვითი მონიტორინგი და ბიომრავალფეროვნების ანალიზი.',
+      tags: ['ეკოლოგია', 'ბიოლოგია', 'კვლევა']
     },
     {
-      id: 'project-3',
+      id: 3,
+      title: 'საერთაშორისო ოლიმპიადა',
+      category: 'ღონისძიებები',
+      image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80',
+      description: 'აკადემიის გუნდის მომზადება საერთაშორისო სამეცნიერო ფორუმებისა და ოლიმპიადებისთვის.',
+      details: 'მოსწავლეთა ინტენსიური ვორქშოფები და მენტორობა წამყვანი უცხოელი პროფესორების მონაწილეობით.',
+      tags: ['ოლიმპიადა', 'STEM', 'გლობალური']
+    },
+    {
+      id: 4,
       title: 'საერთაშორისო ოლიმპიადის ტრიუმფი',
-      tags: ['[ მათემატიკა ]', '[ AI & ALGORITHMS ]'],
-      image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1200',
-      date: '10 მაისი, 2026',
-      author: 'ნიკოლოზ წერეთელი & ალექსანდრე ჩხეიძე',
-      description: 'სოლომონ აკადემიის გუნდმა ევროპის ახალგაზრდულ ოლიმპიადაზე მათემატიკასა და ალგორითმულ პროგრამირებაში 3 ოქროსა და 2 ვერცხლის მედალი მოიპოვა. ეს გამარჯვება აკადემიის მაღალი სტანდარტების დასტურია.',
-      bullets: [
-        'მათემატიკური ანალიზისა და ალგორითმების ტურში უმაღლესი ქულები',
-        'მსოფლიოს 42 ქვეყნის წარმომადგენელთა შორის პირველი გუნდური ადგილი',
-        'სრული სტიპენდიები წამყვანი უნივერსიტეტების მოსამზადებელ კურსებზე'
-      ]
+      category: 'ღონისძიებები',
+      image: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=600&auto=format&fit=crop&q=80',
+      description: 'ოქროსა და ვერცხლის მედლები მათემატიკისა და ფიზიკის ევროპულ ოლიმპიადაზე.',
+      details: 'აკადემიის წარმატებული დელეგაციის შედეგები და საზეიმო მიღება აკადემიის ცენტრალურ დარბაზში.',
+      tags: ['გამარჯვება', 'მედლები', 'სიამაყე']
     },
     {
-      id: 'project-4',
+      id: 5,
       title: 'ასტროფიზიკის ობსერვატორია & AI',
-      tags: ['[ ასტრონომია ]', '[ კოსმოსური კვლევა ]'],
-      image: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&q=80&w=1200',
-      date: '2 მაისი, 2026',
-      author: 'ალექსანდრე ჩხეიძე',
-      description: 'აკადემიის ახალი ციფრული ტელესკოპის მეშვეობით მოსწავლეებმა პლანეტარული ნისლეულებისა და მთვარის კრატერების მაღალი გარჩევადობის ფოტომასალა მოიპოვეს, რომელიც საერთაშორისო ასტრონომიულ ბაზაში განთავსდა.',
-      bullets: [
-        'ღამის ასტრონომიული დაკვირვებები და სპექტროსკოპია',
-        'კოსმოსური მონაცემების ციფრული დამუშავება Python-ის გამოყენებით',
-        'ღია ლექციები ასტროფიზიკისა და კოსმოლოგიის მიმართულებით'
-      ]
+      category: 'კვლევა',
+      image: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=600&auto=format&fit=crop&q=80',
+      description: 'კოსმოსური მონაცემების დამუშავება ნეირონული ქსელებით და ღამის დაკვირვებები.',
+      details: 'ტელესკოპური დაკვირვებების ციფრული დამუშავება და ასტრონომიული აღმოჩენების მოდელირება.',
+      tags: ['ასტროფიზიკა', 'AI', 'კოსმოსი']
     }
   ];
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 900);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+  const filteredNews = newsItems.filter(
+    (item) => activeCategory === 'ყველა' || item.category === activeCategory
+  );
 
-    const handleScroll = () => {
-      if (window.innerWidth < 900) return;
-      if (!sectionRef.current) return;
-      const rect = sectionRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      const totalScrollableDistance = rect.height - windowHeight;
+  const activeNewsDetail = newsItems.find((n) => n.id === detailedNewsId);
 
-      if (totalScrollableDistance <= 0) return;
+  const scrollToSpaces = () => {
+    const el = document.getElementById('spaces-hub');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
 
-      const progress = Math.min(1, Math.max(0, -rect.top / totalScrollableDistance));
-      setScrollProgress(progress);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  return (
-    <section
-      id="news"
-      ref={sectionRef}
-      style={{
-        position: 'relative',
-        background: '#0c0608',
-        height: isMobile ? 'auto' : '350vh',
-        padding: isMobile ? 'clamp(36px, 6vh, 60px) 0' : 0,
-        color: '#f0ece8'
-      }}
-    >
-      {/* Subtle Chalkboard Math Background */}
-      <svg
+  // If in Single News View mode (06 / 18)
+  if (detailedNewsId && activeNewsDetail) {
+    return (
+      <section
+        id="news-detail"
         style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          pointerEvents: 'none',
-          opacity: 0.1
+          position: 'relative',
+          minHeight: '100vh',
+          backgroundImage: `linear-gradient(180deg, rgba(12, 6, 8, 0.45) 0%, rgba(12, 6, 8, 0.65) 100%), url(/assets/palace-interior.jpg)`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: '100px 40px 30px',
+          color: '#ffffff',
+          overflow: 'hidden'
         }}
-        xmlns="http://www.w3.org/2000/svg"
       >
-        <text x="2%" y="15%" fill="#d4af37" fontSize="24" fontFamily="serif" fontStyle="italic">f = ∫₀^∞ f(x)dx</text>
-        <text x="92%" y="18%" fill="#d4af37" fontSize="24" fontFamily="serif" fontStyle="italic">∫ x dx</text>
-        <text x="90%" y="45%" fill="#d4af37" fontSize="24" fontFamily="serif" fontStyle="italic">√a² + b²</text>
-      </svg>
-
-      {/* ========================================================================= */}
-      {/* 1. MOBILE & TABLET LAYOUT: 2-Column Grid matching Fraxbit Mobile Photo    */}
-      {/* ========================================================================= */}
-      {isMobile ? (
-        <div
-          style={{
-            position: 'relative',
-            zIndex: 2,
-            width: '92%',
-            maxWidth: '900px',
-            margin: '0 auto'
-          }}
-        >
-          {/* Mobile Section Title */}
-          <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                color: '#d4af37',
-                fontSize: '0.78rem',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-                marginBottom: '4px'
-              }}
-            >
-              <Sparkles size={13} color="#d4af37" />
-              აქტივობების ქრონიკა
-            </span>
-            <h2
-              style={{
-                fontFamily: "'Noto Serif Georgian', Georgia, serif",
-                fontSize: '2rem',
-                fontWeight: 600,
-                color: '#ffffff',
-                margin: 0
-              }}
-            >
-              სიახლეები
-            </h2>
-          </div>
-
-          {/* 2-Column Responsive Grid (Exact Photo Match) */}
+        <div style={{ maxWidth: '1180px', width: '100%', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+          {/* Main Card (Photo 2 - 06/18) */}
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: 'clamp(10px, 2.5vw, 16px)'
+              background: 'rgba(235, 230, 225, 0.92)',
+              backdropFilter: 'blur(25px)',
+              WebkitBackdropFilter: 'blur(25px)',
+              borderRadius: '24px',
+              padding: '36px',
+              color: '#1a1215',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.65)'
             }}
           >
-            {projects.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => setSelectedArticle(item)}
-                style={{
-                  position: 'relative',
-                  height: 'clamp(200px, 26vh, 280px)',
-                  borderRadius: 'clamp(14px, 3vw, 20px)',
-                  overflow: 'hidden',
-                  background: '#161311',
-                  border: '1px solid rgba(212, 175, 55, 0.25)',
-                  boxShadow: '0 12px 30px rgba(0, 0, 0, 0.7)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'flex-end',
-                  padding: 'clamp(12px, 2.5vw, 18px)',
-                  boxSizing: 'border-box',
-                  transition: 'transform 0.2s ease'
-                }}
-              >
-                {/* Background Image */}
+            {/* Breadcrumb */}
+            <div style={{ fontSize: '0.9rem', color: '#6b5c5e', fontWeight: 600, marginBottom: '20px' }}>
+              სიახლეები / {activeNewsDetail.category}
+            </div>
+
+            {/* Content Layout */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '36px', alignItems: 'center' }}>
+              {/* Left Image */}
+              <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', height: '360px', boxShadow: '0 10px 30px rgba(0,0,0,0.15)' }}>
                 <img
-                  src={item.image}
-                  alt={item.title}
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    zIndex: 0
-                  }}
+                  src={activeNewsDetail.image}
+                  alt={activeNewsDetail.title}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
-
-                {/* Dark Gradient Overlay */}
-                <div
+                <span
                   style={{
                     position: 'absolute',
-                    inset: 0,
-                    background: 'linear-gradient(180deg, rgba(14, 10, 12, 0.1) 0%, rgba(14, 10, 12, 0.6) 40%, rgba(10, 6, 8, 0.95) 100%)',
-                    zIndex: 1
-                  }}
-                />
-
-                {/* Date Tag */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '12px',
+                    bottom: '12px',
                     left: '12px',
-                    zIndex: 2,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    background: 'rgba(18, 12, 14, 0.8)',
-                    backdropFilter: 'blur(6px)',
-                    border: '1px solid rgba(212, 175, 55, 0.3)',
-                    padding: '3px 10px',
-                    borderRadius: '100px',
-                    fontSize: '0.68rem',
-                    color: '#f5e2a3'
+                    background: 'rgba(0,0,0,0.6)',
+                    color: '#fff',
+                    fontSize: '0.72rem',
+                    padding: '3px 8px',
+                    borderRadius: '4px'
                   }}
                 >
-                  <Calendar size={11} color="#d4af37" />
-                  <span>{item.date}</span>
-                </div>
-
-                {/* Content: Title + Bracket Tags */}
-                <div style={{ position: 'relative', zIndex: 2 }}>
-                  <h3
-                    style={{
-                      fontFamily: "'Noto Serif Georgian', Georgia, serif",
-                      fontSize: '1rem',
-                      fontWeight: 700,
-                      color: '#ffffff',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.02em',
-                      margin: '0 0 6px',
-                      lineHeight: 1.25,
-                      textShadow: '0 2px 8px rgba(0,0,0,0.9)'
-                    }}
-                  >
-                    {item.title}
-                  </h3>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      gap: '6px',
-                      fontSize: '0.68rem',
-                      fontWeight: 600,
-                      color: 'rgba(212, 175, 55, 0.9)',
-                      textTransform: 'uppercase'
-                    }}
-                  >
-                    {item.tags.map((tag, tIdx) => (
-                      <span key={tIdx}>{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {/* Bottom Full-Width "VIEW MORE PROJECTS" Card (Photo 2 Match) */}
-            <div
-              onClick={() => setSelectedArticle(projects[0])}
-              style={{
-                gridColumn: '1 / -1',
-                height: '180px',
-                borderRadius: '20px',
-                background: 'linear-gradient(180deg, #1a1412 0%, #120e10 100%)',
-                border: '1.5px solid rgba(212, 175, 55, 0.4)',
-                boxShadow: '0 12px 30px rgba(0, 0, 0, 0.7), inset 0 0 25px rgba(212, 175, 55, 0.05)',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                padding: '18px',
-                boxSizing: 'border-box'
-              }}
-            >
-              <div
-                style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '50%',
-                  border: '2px solid #d4af37',
-                  background: 'rgba(212, 175, 55, 0.15)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: '10px',
-                  boxShadow: '0 0 16px rgba(212, 175, 55, 0.3)',
-                  color: '#f5e2a3'
-                }}
-              >
-                <ArrowRight size={22} color="#f5e2a3" />
+                  საილუსტრაციო გამოსახულება
+                </span>
               </div>
 
-              <span
-                style={{
-                  fontFamily: "'Noto Serif Georgian', Georgia, serif",
-                  fontSize: '0.94rem',
-                  fontWeight: 700,
-                  color: '#ffffff',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em'
-                }}
-              >
-                სრულად ნახვა
-              </span>
-              <span
-                style={{
-                  fontSize: '0.68rem',
-                  color: '#d4af37',
-                  marginTop: '4px',
-                  letterSpacing: '0.06em',
-                  textTransform: 'uppercase'
-                }}
-              >
-                [ VIEW MORE PROJECTS ]
-              </span>
-            </div>
-          </div>
-        </div>
-      ) : (
-        /* ========================================================================= */
-        /* 2. DESKTOP LAYOUT: Sticky Fullscreen Horizontal Scroll Track (Fraxbit)    */
-        /* ========================================================================= */
-        <div
-          ref={stickyRef}
-          style={{
-            position: 'sticky',
-            top: 0,
-            height: '100vh',
-            width: '100%',
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            boxSizing: 'border-box',
-            padding: 'clamp(20px, 3vh, 40px) 0'
-          }}
-        >
-          {/* Section Heading at Top */}
-          <div
-            style={{
-              position: 'relative',
-              zIndex: 3,
-              width: '92%',
-              maxWidth: '1380px',
-              margin: '0 auto clamp(16px, 2.5vh, 28px)',
-              display: 'flex',
-              alignItems: 'flex-end',
-              justifyContent: 'space-between'
-            }}
-          >
-            <div>
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  color: '#d4af37',
-                  fontSize: '0.82rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.12em',
-                  marginBottom: '4px'
-                }}
-              >
-                <Sparkles size={14} color="#d4af37" />
-                აქტივობების ქრონიკა & ინოვაციები
-              </span>
-              <h2
-                style={{
-                  fontFamily: "'Noto Serif Georgian', Georgia, serif",
-                  fontSize: 'clamp(2rem, 3.5vw, 2.8rem)',
-                  fontWeight: 600,
-                  color: '#ffffff',
-                  letterSpacing: '0.01em',
-                  margin: 0
-                }}
-              >
-                სიახლეები
-              </h2>
-            </div>
-
-            {/* Progress Indicator Bar */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px'
-              }}
-            >
-              <span style={{ fontSize: '0.78rem', color: 'rgba(255, 255, 255, 0.5)', fontFamily: 'monospace' }}>
-                {Math.min(projects.length, Math.floor(scrollProgress * (projects.length + 0.99)) + 1)} / {projects.length}
-              </span>
-              <div
-                style={{
-                  width: '120px',
-                  height: '3px',
-                  background: 'rgba(255, 255, 255, 0.12)',
-                  borderRadius: '100px',
-                  overflow: 'hidden'
-                }}
-              >
-                <div
-                  style={{
-                    height: '100%',
-                    width: `${Math.max(5, scrollProgress * 100)}%`,
-                    background: 'linear-gradient(90deg, #b88628, #f5e2a3)',
-                    borderRadius: '100px',
-                    transition: 'width 0.1s ease-out'
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Horizontal Sliding Cards Track (Fraxbit Desktop Style) */}
-          <div
-            style={{
-              position: 'relative',
-              zIndex: 2,
-              width: '100%',
-              overflow: 'visible'
-            }}
-          >
-            <div
-              ref={trackRef}
-              style={{
-                display: 'flex',
-                gap: 'clamp(24px, 3vw, 44px)',
-                paddingLeft: 'max(4vw, calc((100vw - 1380px) / 2 + 40px))',
-                paddingRight: '12vw',
-                transform: `translate3d(-${scrollProgress * (projects.length * 560 + 300 - (typeof window !== 'undefined' ? window.innerWidth : 1200) * 0.55)}px, 0, 0)`,
-                willChange: 'transform',
-                transition: 'transform 0.08s linear'
-              }}
-            >
-              {projects.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => setSelectedArticle(item)}
-                  style={{
-                    flex: '0 0 clamp(380px, 38vw, 560px)',
-                    height: 'clamp(360px, 54vh, 480px)',
-                    borderRadius: '26px',
-                    overflow: 'hidden',
-                    position: 'relative',
-                    background: '#161311',
-                    border: '1px solid rgba(212, 175, 55, 0.25)',
-                    boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8), 0 0 25px rgba(212, 175, 55, 0.05)',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-end',
-                    padding: 'clamp(22px, 3vw, 32px)',
-                    boxSizing: 'border-box',
-                    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-6px) scale(1.015)';
-                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.7)';
-                    e.currentTarget.style.boxShadow = '0 25px 60px rgba(0,0,0,0.9), 0 0 35px rgba(212,175,55,0.2)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.25)';
-                    e.currentTarget.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.8), 0 0 25px rgba(212, 175, 55, 0.05)';
-                  }}
-                >
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      zIndex: 0,
-                      transition: 'transform 0.5s ease'
-                    }}
-                  />
-
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: 'linear-gradient(180deg, rgba(14, 10, 12, 0.2) 0%, rgba(14, 10, 12, 0.6) 45%, rgba(10, 6, 8, 0.95) 100%)',
-                      zIndex: 1
-                    }}
-                  />
-
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '20px',
-                      left: '20px',
-                      zIndex: 2,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      background: 'rgba(18, 12, 14, 0.75)',
-                      backdropFilter: 'blur(8px)',
-                      border: '1px solid rgba(212, 175, 55, 0.3)',
-                      padding: '4px 12px',
-                      borderRadius: '100px',
-                      fontSize: '0.72rem',
-                      color: '#f5e2a3'
-                    }}
-                  >
-                    <Calendar size={12} color="#d4af37" />
-                    <span>{item.date}</span>
-                  </div>
-
-                  <div style={{ position: 'relative', zIndex: 2 }}>
-                    <h3
+              {/* Right Details */}
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <span
                       style={{
-                        fontFamily: "'Noto Serif Georgian', Georgia, serif",
-                        fontSize: 'clamp(1.2rem, 1.8vw, 1.55rem)',
+                        background: 'rgba(212, 175, 55, 0.25)',
+                        color: '#8b6914',
                         fontWeight: 700,
-                        color: '#ffffff',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.03em',
-                        margin: '0 0 8px',
-                        lineHeight: 1.25,
-                        textShadow: '0 2px 10px rgba(0,0,0,0.9)'
+                        fontSize: '0.82rem',
+                        padding: '4px 12px',
+                        borderRadius: '6px'
                       }}
                     >
-                      {item.title}
-                    </h3>
+                      {activeNewsDetail.category}
+                    </span>
 
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: '8px',
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        color: 'rgba(212, 175, 55, 0.9)',
-                        letterSpacing: '0.08em',
-                        textTransform: 'uppercase'
-                      }}
-                    >
-                      {item.tags.map((tag, tIdx) => (
-                        <span key={tIdx}>{tag}</span>
+                    <div style={{ display: 'flex', gap: '10px', color: '#6b5c5e' }}>
+                      <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit' }}>
+                        <Share2 size={18} />
+                      </button>
+                      <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit' }}>
+                        <Bookmark size={18} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <h2
+                    style={{
+                      fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
+                      fontSize: 'clamp(1.8rem, 2.5vw, 2.3rem)',
+                      fontWeight: 700,
+                      color: '#1a1215',
+                      lineHeight: 1.2,
+                      marginBottom: '16px'
+                    }}
+                  >
+                    {activeNewsDetail.title}
+                  </h2>
+
+                  <div style={{ marginBottom: '20px' }}>
+                    <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#332225', marginBottom: '6px' }}>
+                      პროექტის შესახებ
+                    </h4>
+                    <p style={{ fontSize: '0.92rem', color: '#554245', lineHeight: 1.5 }}>
+                      {activeNewsDetail.details}
+                    </p>
+                  </div>
+
+                  <div>
+                    <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#332225', marginBottom: '8px' }}>
+                      მიმართულებები
+                    </h4>
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                      {activeNewsDetail.tags.map((tag, i) => (
+                        <span
+                          key={i}
+                          style={{
+                            background: '#e4dcd6',
+                            color: '#443236',
+                            fontSize: '0.8rem',
+                            fontWeight: 600,
+                            padding: '4px 12px',
+                            borderRadius: '20px'
+                          }}
+                        >
+                          {tag}
+                        </span>
                       ))}
                     </div>
                   </div>
                 </div>
-              ))}
 
-              {/* Dedicated "VIEW MORE PROJECTS" Card */}
-              <div
-                onClick={() => setSelectedArticle(projects[0])}
-                style={{
-                  flex: '0 0 clamp(220px, 18vw, 280px)',
-                  height: 'clamp(360px, 54vh, 480px)',
-                  borderRadius: '26px',
-                  background: 'linear-gradient(180deg, #1a1412 0%, #120e10 100%)',
-                  border: '1.5px solid rgba(212, 175, 55, 0.4)',
-                  boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(212, 175, 55, 0.05)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  textAlign: 'center',
-                  padding: '24px',
-                  boxSizing: 'border-box',
-                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-6px) scale(1.02)';
-                  e.currentTarget.style.borderColor = '#d4af37';
-                  e.currentTarget.style.boxShadow = '0 25px 60px rgba(0,0,0,0.9), 0 0 35px rgba(212,175,55,0.25)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)';
-                  e.currentTarget.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(212, 175, 55, 0.05)';
-                }}
-              >
-                <div
-                  style={{
-                    width: '58px',
-                    height: '58px',
-                    borderRadius: '50%',
-                    border: '2px solid #d4af37',
-                    background: 'rgba(212, 175, 55, 0.15)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '16px',
-                    boxShadow: '0 0 20px rgba(212, 175, 55, 0.35)',
-                    color: '#f5e2a3'
-                  }}
-                >
-                  <ArrowRight size={26} color="#f5e2a3" />
+                {/* Back to All News Button */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '24px' }}>
+                  <button
+                    onClick={() => setDetailedNewsId(null)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#1a1215',
+                      fontSize: '0.95rem',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      cursor: 'pointer',
+                      transition: 'color 0.2s'
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = '#8b6914')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = '#1a1215')}
+                  >
+                    <span>ყველა სიახლე</span>
+                    <ArrowRight size={16} />
+                  </button>
                 </div>
-
-                <span
-                  style={{
-                    fontFamily: "'Noto Serif Georgian', Georgia, serif",
-                    fontSize: '1rem',
-                    fontWeight: 700,
-                    color: '#ffffff',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.08em',
-                    lineHeight: 1.3
-                  }}
-                >
-                  სრულად ნახვა
-                </span>
-                <span
-                  style={{
-                    fontSize: '0.72rem',
-                    color: '#d4af37',
-                    marginTop: '6px',
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase'
-                  }}
-                >
-                  [ VIEW MORE ]
-                </span>
               </div>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Article Detail Reading Modal */}
-      {selectedArticle && (
-        <div
-          className="modal-overlay"
-          onClick={() => setSelectedArticle(null)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 1000,
-            background: 'rgba(0, 0, 0, 0.85)',
-            backdropFilter: 'blur(10px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px'
-          }}
-        >
+          {/* Bottom Bar matching Photo 2 */}
           <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()}
             style={{
-              background: '#161311',
-              border: '1.5px solid rgba(212, 175, 55, 0.75)',
-              borderRadius: '24px',
-              maxWidth: '720px',
-              width: '100%',
-              maxHeight: '90vh',
-              overflowY: 'auto',
-              padding: 'clamp(24px, 4vw, 36px)',
-              boxShadow: '0 24px 70px rgba(0,0,0,0.85)',
-              position: 'relative',
-              color: '#ffffff'
+              marginTop: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '14px 24px',
+              background: 'rgba(235, 230, 225, 0.85)',
+              backdropFilter: 'blur(16px)',
+              borderRadius: '16px',
+              color: '#1a1215',
+              fontSize: '0.9rem',
+              fontWeight: 600
             }}
           >
-            <button
-              onClick={() => setSelectedArticle(null)}
-              style={{
-                position: 'absolute',
-                top: '18px',
-                right: '18px',
-                background: 'rgba(255, 255, 255, 0.08)',
-                border: 'none',
-                borderRadius: '50%',
-                width: '36px',
-                height: '36px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              <X size={18} />
-            </button>
+            <div>მსგავსი სიახლეები</div>
+            <div style={{ display: 'flex', gap: '24px', fontSize: '0.85rem', color: '#554245' }}>
+              <span
+                onClick={() => setDetailedNewsId(2)}
+                style={{ cursor: 'pointer', textDecoration: 'underline' }}
+              >
+                ეკოლოგიური კვლევა & STEM
+              </span>
+              <span
+                onClick={() => setDetailedNewsId(5)}
+                style={{ cursor: 'pointer', textDecoration: 'underline' }}
+              >
+                ასტროფიზიკის ობსერვატორია & AI
+              </span>
+            </div>
+          </div>
+        </div>
 
-            <div style={{ borderRadius: '16px', overflow: 'hidden', height: '240px', marginBottom: '20px', border: '1px solid rgba(212, 175, 55, 0.3)' }}>
+        {/* Counter bottom left */}
+        <div style={{ maxWidth: '1180px', width: '100%', margin: '14px auto 0' }}>
+          <div
+            style={{
+              background: 'rgba(0, 0, 0, 0.5)',
+              border: '1px solid rgba(212, 175, 55, 0.3)',
+              borderRadius: '20px',
+              padding: '4px 14px',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              color: '#d4af37',
+              width: 'fit-content'
+            }}
+          >
+            06 / 18
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Mode 1: Chronicle Listing View (Photo 7 - 01 / 02)
+  return (
+    <section
+      id="news"
+      style={{
+        position: 'relative',
+        minHeight: '100vh',
+        backgroundImage: `linear-gradient(180deg, rgba(12, 6, 8, 0.45) 0%, rgba(12, 6, 8, 0.6) 100%), url(/assets/palace-interior.jpg)`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        padding: '110px 40px 30px',
+        color: '#ffffff',
+        overflow: 'hidden'
+      }}
+    >
+      <div style={{ maxWidth: '1240px', width: '100%', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        {/* Title & Filters */}
+        <div style={{ marginBottom: '24px' }}>
+          <h2
+            style={{
+              fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
+              fontSize: 'clamp(2.2rem, 3.8vw, 3.2rem)',
+              fontWeight: 700,
+              color: '#ffffff',
+              marginBottom: '6px'
+            }}
+          >
+            სკოლის სიახლეები
+          </h2>
+          <p style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: '1.05rem', marginBottom: '18px' }}>
+            აქტივობების ქრონიკა
+          </p>
+
+          {/* Filter Pills */}
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                style={{
+                  background: activeCategory === cat ? 'rgba(212, 175, 55, 0.25)' : 'rgba(30, 20, 24, 0.65)',
+                  border: `1px solid ${activeCategory === cat ? '#d4af37' : 'rgba(212, 175, 55, 0.2)'}`,
+                  color: activeCategory === cat ? '#d4af37' : 'rgba(255, 255, 255, 0.8)',
+                  borderRadius: '10px',
+                  padding: '8px 22px',
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Chronicle Grid Layout: Left Featured + Right 2x2 */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1.15fr 1fr',
+            gap: '24px',
+            alignItems: 'stretch'
+          }}
+        >
+          {/* Left Big Featured Card (Photo 7) */}
+          <div
+            onClick={() => setDetailedNewsId(1)}
+            style={{
+              background: 'rgba(20, 12, 15, 0.65)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid rgba(212, 175, 55, 0.3)',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: '0 15px 40px rgba(0, 0, 0, 0.5)',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#d4af37';
+              e.currentTarget.style.transform = 'translateY(-3px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.3)';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            <div style={{ height: '320px', overflow: 'hidden', position: 'relative' }}>
               <img
-                src={selectedArticle.image}
-                alt={selectedArticle.title}
+                src={newsItems[0].image}
+                alt={newsItems[0].title}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-              <span
+            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1 }}>
+              <h3
                 style={{
-                  background: '#b88628',
+                  fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
+                  fontSize: '1.5rem',
+                  fontWeight: 600,
                   color: '#ffffff',
-                  fontSize: '0.74rem',
-                  fontWeight: 700,
-                  padding: '3px 12px',
-                  borderRadius: '100px'
+                  marginBottom: '16px'
                 }}
               >
-                {selectedArticle.tags[0]}
-              </span>
-              <span style={{ fontSize: '0.78rem', color: '#c4a66a', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                <Calendar size={13} color="#d4af37" />
-                {selectedArticle.date}
-              </span>
-            </div>
+                {newsItems[0].title}
+              </h3>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span
+                  style={{
+                    background: 'rgba(212, 175, 55, 0.2)',
+                    color: '#d4af37',
+                    padding: '4px 12px',
+                    borderRadius: '6px',
+                    fontSize: '0.8rem',
+                    fontWeight: 700
+                  }}
+                >
+                  {newsItems[0].category}
+                </span>
 
-            <h2
-              style={{
-                fontFamily: "'Noto Serif Georgian', serif",
-                fontSize: 'clamp(1.4rem, 2.2vw, 1.8rem)',
-                color: '#f5e2a3',
-                marginBottom: '14px',
-                lineHeight: 1.3
-              }}
-            >
-              {selectedArticle.title}
-            </h2>
-
-            <p style={{ fontSize: '0.94rem', lineHeight: 1.8, color: 'rgba(255,255,255,0.85)', marginBottom: '18px' }}>
-              {selectedArticle.description}
-            </p>
-
-            {selectedArticle.bullets && selectedArticle.bullets.length > 0 && (
-              <div style={{ background: 'rgba(20, 16, 14, 0.8)', border: '1px solid rgba(212, 175, 55, 0.25)', borderRadius: '14px', padding: '18px 22px' }}>
-                <h4 style={{ color: '#d4af37', fontSize: '0.94rem', margin: '0 0 12px' }}>
-                  ძირითადი მიმართულებები და შედეგები:
-                </h4>
-                <ul style={{ paddingLeft: '0', listStyleType: 'none', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.88rem', color: '#ded7cd', lineHeight: 1.5 }}>
-                  {selectedArticle.bullets.map((b, i) => (
-                    <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                      <CheckCircle2 size={15} color="#d4af37" style={{ flexShrink: 0, marginTop: '3px' }} />
-                      <span>{b}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'rgba(255, 255, 255, 0.85)', fontSize: '0.88rem' }}>
+                  <span>სრულად ნახვა</span>
+                  <ArrowRight size={14} />
+                </div>
               </div>
-            )}
+            </div>
+          </div>
+
+          {/* Right 2x2 Grid of News Cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '18px' }}>
+            {newsItems.slice(1, 5).map((item) => (
+              <div
+                key={item.id}
+                onClick={() => setDetailedNewsId(item.id)}
+                style={{
+                  background: 'rgba(20, 12, 15, 0.65)',
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(212, 175, 55, 0.25)',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'all 0.25s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#d4af37';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.25)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <div style={{ height: '140px', overflow: 'hidden' }}>
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </div>
+                <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1 }}>
+                  <h4
+                    style={{
+                      fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
+                      fontSize: '0.98rem',
+                      fontWeight: 600,
+                      color: '#ffffff',
+                      marginBottom: '10px',
+                      lineHeight: 1.3
+                    }}
+                  >
+                    {item.title}
+                  </h4>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span
+                      style={{
+                        background: 'rgba(212, 175, 55, 0.15)',
+                        color: '#d4af37',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        fontSize: '0.72rem',
+                        fontWeight: 600
+                      }}
+                    >
+                      {item.category}
+                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'rgba(255, 255, 255, 0.75)', fontSize: '0.78rem' }}>
+                      <span>სრულად ნახვა</span>
+                      <ArrowRight size={12} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Bottom Bar matching Photo 7 (01 / 02) */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 2,
+          maxWidth: '1240px',
+          width: '100%',
+          margin: '30px auto 0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '12px 20px',
+          background: 'rgba(20, 12, 14, 0.65)',
+          backdropFilter: 'blur(16px)',
+          border: '1px solid rgba(212, 175, 55, 0.2)',
+          borderRadius: '14px'
+        }}
+      >
+        <button
+          onClick={scrollToSpaces}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: 'rgba(255, 255, 255, 0.85)',
+            fontSize: '0.9rem',
+            fontWeight: 500,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            cursor: 'pointer',
+            padding: '6px 12px',
+            borderRadius: '8px',
+            transition: 'color 0.2s'
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = '#d4af37')}
+          onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.85)')}
+        >
+          <ArrowLeft size={16} />
+          <span>ეზოში დაბრუნება</span>
+        </button>
+
+        {/* Pagination 01 / 02 */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button style={{ background: 'none', border: 'none', color: '#d4af37', cursor: 'pointer' }}>
+            <ArrowLeft size={16} />
+          </button>
+          <div
+            style={{
+              background: 'rgba(0, 0, 0, 0.45)',
+              border: '1px solid rgba(212, 175, 55, 0.3)',
+              borderRadius: '20px',
+              padding: '4px 14px',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              color: '#d4af37',
+              letterSpacing: '0.08em'
+            }}
+          >
+            01 / 02
+          </div>
+          <button style={{ background: 'none', border: 'none', color: '#d4af37', cursor: 'pointer' }}>
+            <ArrowRight size={16} />
+          </button>
+        </div>
+
+        <div style={{ color: 'rgba(255, 255, 255, 0.65)', fontSize: '0.85rem' }}>
+          ვიზუალური კონცეფცია
+        </div>
+      </div>
     </section>
   );
 }
