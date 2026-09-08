@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
-import { Menu, X, ArrowRight, User, LogOut, Shield } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
-export default function Header() {
+export default function Header({ activeSection = 'hero' }) {
   const [isOpen, setIsOpen] = useState(false);
   const { path, navigate, user, role, logout } = useAuth();
 
   const navItems = [
-    { label: 'მთავარი', href: '#hero' },
-    { label: 'პედაგოგები', href: '#teachers' },
-    { label: 'სიახლეები', href: '#news' },
-    { label: 'საფასური', href: '#admissions' },
-    { label: 'გალერეა', href: '/gallery' },
-    { label: 'კონტაქტი', href: '#footer-contact' }
+    { id: 'hero', label: 'მთავარი', href: '#hero' },
+    { id: 'teachers', label: 'პედაგოგები', href: '#teachers' },
+    { id: 'news', label: 'სიახლეები', href: '#news' },
+    { id: 'admissions', label: 'საფასური', href: '#admissions' },
+    { id: 'gallery', label: 'გალერეა', href: '/gallery' },
+    { id: 'contact', label: 'კონტაქტი', href: '#footer-contact' }
   ];
 
-  const handleNavClick = (e, href) => {
+  const handleNavClick = (e, item) => {
     e.preventDefault();
     setIsOpen(false);
 
-    if (href.startsWith('/')) {
-      navigate(href);
+    if (item.href.startsWith('/')) {
+      navigate(item.href);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -28,20 +28,20 @@ export default function Header() {
     if (path !== '/') {
       navigate('/');
       setTimeout(() => {
-        const element = document.querySelector(href);
+        const element = document.querySelector(item.href);
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
         }
       }, 150);
     } else {
-      const element = document.querySelector(href);
+      const element = document.querySelector(item.href);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
     }
   };
 
-  const handleAuthClick = (e, mode = 'login') => {
+  const handleAuthClick = (e) => {
     e.preventDefault();
     setIsOpen(false);
     navigate('/admin');
@@ -68,29 +68,29 @@ export default function Header() {
     <header
       style={{
         position: 'fixed',
-        top: '18px',
+        top: '16px',
         left: '50%',
         transform: 'translateX(-50%)',
-        width: 'calc(100% - 60px)',
-        maxWidth: '1360px',
-        height: '62px',
-        background: 'rgba(25, 15, 18, 0.75)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        border: '1px solid rgba(212, 175, 55, 0.3)',
+        width: 'calc(100% - 48px)',
+        maxWidth: '1380px',
+        height: '64px',
+        background: 'rgba(35, 22, 26, 0.72)',
+        backdropFilter: 'blur(25px)',
+        WebkitBackdropFilter: 'blur(25px)',
+        border: '1px solid rgba(212, 175, 55, 0.28)',
         borderRadius: '16px',
         zIndex: 999,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 24px',
-        boxShadow: '0 10px 35px rgba(0, 0, 0, 0.5)'
+        padding: '0 28px',
+        boxShadow: '0 12px 35px rgba(0, 0, 0, 0.55)'
       }}
     >
-      {/* Brand / Logo matching Photos */}
+      {/* Brand / Logo (Photo 13) */}
       <a
         href="#"
-        onClick={(e) => handleNavClick(e, '#hero')}
+        onClick={(e) => handleNavClick(e, { href: '#hero' })}
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -99,14 +99,14 @@ export default function Header() {
           color: '#ffffff'
         }}
       >
-        {/* Classical Temple Gold Emblem */}
+        {/* Classical Temple Gold Emblem Roundel */}
         <div
           style={{
             width: '38px',
             height: '38px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(25, 15, 18, 0.6) 100%)',
-            border: '1px solid #d4af37',
+            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(30, 18, 22, 0.8) 100%)',
+            border: '1.2px solid #d4af37',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -122,7 +122,7 @@ export default function Header() {
           <span
             style={{
               fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
-              fontSize: '0.95rem',
+              fontSize: '0.98rem',
               fontWeight: 700,
               letterSpacing: '0.08em',
               color: '#d4af37',
@@ -134,7 +134,7 @@ export default function Header() {
           <span
             style={{
               fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
-              fontSize: '0.85rem',
+              fontSize: '0.88rem',
               fontWeight: 600,
               letterSpacing: '0.06em',
               color: '#ffffff',
@@ -146,35 +146,55 @@ export default function Header() {
         </div>
       </a>
 
-      {/* Desktop Navigation Links */}
-      <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
-        {navItems.map((item) => (
-          <a
-            key={item.href}
-            href={item.href}
-            onClick={(e) => handleNavClick(e, item.href)}
-            style={{
-              color: 'rgba(255, 255, 255, 0.85)',
-              fontSize: '0.92rem',
-              fontWeight: 500,
-              textDecoration: 'none',
-              transition: 'all 0.2s',
-              position: 'relative',
-              padding: '6px 0'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#d4af37';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'rgba(255, 255, 255, 0.85)';
-            }}
-          >
-            {item.label}
-          </a>
-        ))}
+      {/* Desktop Navigation Links (Photo 13) */}
+      <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+        {navItems.map((item) => {
+          const isItemActive =
+            (item.id === 'hero' && (activeSection === 'hero' || path === '/')) ||
+            (item.id === 'gallery' && path === '/gallery');
+
+          return (
+            <a
+              key={item.id}
+              href={item.href}
+              onClick={(e) => handleNavClick(e, item)}
+              style={{
+                color: isItemActive ? '#ffffff' : 'rgba(255, 255, 255, 0.85)',
+                fontSize: '0.95rem',
+                fontWeight: isItemActive ? 600 : 500,
+                textDecoration: 'none',
+                transition: 'all 0.2s',
+                position: 'relative',
+                padding: '6px 0'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#d4af37';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = isItemActive ? '#ffffff' : 'rgba(255, 255, 255, 0.85)';
+              }}
+            >
+              <span>{item.label}</span>
+              {/* Active Gold Underline Bar */}
+              {isItemActive && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '-2px',
+                    left: 0,
+                    right: 0,
+                    height: '2px',
+                    background: '#d4af37',
+                    borderRadius: '2px'
+                  }}
+                />
+              )}
+            </a>
+          );
+        })}
       </nav>
 
-      {/* Right Side CTAs matching Photos */}
+      {/* Right Side Buttons (Photo 13) */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
         {user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -185,12 +205,12 @@ export default function Header() {
                 else navigate('/parent-account');
               }}
               style={{
-                padding: '6px 14px',
+                padding: '7px 16px',
                 background: 'rgba(212, 175, 55, 0.15)',
                 border: '1px solid rgba(212, 175, 55, 0.35)',
                 color: '#d4af37',
                 borderRadius: '8px',
-                fontSize: '0.82rem',
+                fontSize: '0.85rem',
                 fontWeight: 700,
                 cursor: 'pointer'
               }}
@@ -207,14 +227,14 @@ export default function Header() {
           </div>
         ) : (
           <button
-            onClick={(e) => handleAuthClick(e, 'login')}
+            onClick={handleAuthClick}
             style={{
-              background: 'rgba(40, 24, 28, 0.7)',
-              border: '1px solid rgba(212, 175, 55, 0.3)',
+              background: 'rgba(45, 28, 32, 0.75)',
+              border: '1px solid rgba(212, 175, 55, 0.35)',
               borderRadius: '8px',
-              padding: '7px 18px',
+              padding: '8px 20px',
               color: '#ffffff',
-              fontSize: '0.88rem',
+              fontSize: '0.9rem',
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.2s'
@@ -224,7 +244,7 @@ export default function Header() {
               e.currentTarget.style.color = '#d4af37';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.3)';
+              e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.35)';
               e.currentTarget.style.color = '#ffffff';
             }}
           >
@@ -235,13 +255,13 @@ export default function Header() {
         <button
           onClick={handleRegisterClick}
           style={{
-            padding: '8px 20px',
+            padding: '9px 22px',
             background: 'linear-gradient(180deg, #d4af37 0%, #b88628 100%)',
             color: '#1a1104',
             borderRadius: '8px',
             fontWeight: 700,
-            fontSize: '0.88rem',
-            border: '1px solid rgba(255, 230, 160, 0.5)',
+            fontSize: '0.9rem',
+            border: '1px solid rgba(255, 230, 160, 0.6)',
             boxShadow: '0 4px 15px rgba(0, 0, 0, 0.4)',
             cursor: 'pointer',
             transition: 'all 0.2s ease',
@@ -249,7 +269,7 @@ export default function Header() {
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-1px)';
-            e.currentTarget.style.boxShadow = '0 6px 20px rgba(212, 175, 55, 0.4)';
+            e.currentTarget.style.boxShadow = '0 6px 20px rgba(212, 175, 55, 0.45)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
