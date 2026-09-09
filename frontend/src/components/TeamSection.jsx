@@ -103,10 +103,7 @@ export default function TeamSection() {
       style={{
         position: 'relative',
         minHeight: '100vh',
-        backgroundImage: `linear-gradient(180deg, rgba(12, 6, 8, 0.45) 0%, rgba(12, 6, 8, 0.6) 100%), url(/assets/palace-interior.jpg)`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        background: 'transparent',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -162,51 +159,6 @@ export default function TeamSection() {
             >
               გაიცანით აკადემიის გუნდი
             </p>
-            <button
-              onClick={scrollToSpaces}
-              style={{
-                background: 'rgba(30, 20, 22, 0.6)',
-                border: '1px solid rgba(212, 175, 55, 0.3)',
-                borderRadius: '10px',
-                color: 'rgba(255, 255, 255, 0.9)',
-                padding: '10px 18px',
-                fontSize: '0.9rem',
-                fontWeight: 500,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#d4af37';
-                e.currentTarget.style.color = '#d4af37';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.3)';
-                e.currentTarget.style.color = 'rgba(255, 255, 255, 0.9)';
-              }}
-            >
-              <ArrowLeft size={16} />
-              <span>აკადემიის სივრცეები</span>
-            </button>
-          </div>
-
-          {/* Bottom Left Page Indicator: 03 / 18 */}
-          <div
-            style={{
-              background: 'rgba(0, 0, 0, 0.5)',
-              border: '1px solid rgba(212, 175, 55, 0.3)',
-              borderRadius: '20px',
-              padding: '4px 14px',
-              fontSize: '0.85rem',
-              fontWeight: 600,
-              color: '#d4af37',
-              width: 'fit-content',
-              marginTop: '40px'
-            }}
-          >
-            03 / 18
           </div>
         </div>
 

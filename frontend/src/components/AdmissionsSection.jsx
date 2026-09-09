@@ -55,10 +55,27 @@ export default function AdmissionsSection() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    try {
+      const newApp = {
+        id: Date.now(),
+        parentName: applicantForm.parentName,
+        phone: applicantForm.phone,
+        studentName: applicantForm.studentName,
+        package: applicantForm.package || activeTierObj.name,
+        date: new Date().toISOString().split('T')[0],
+        status: 'განხილვაში'
+      };
+      const existing = JSON.parse(localStorage.getItem('academy_applications') || '[]');
+      localStorage.setItem('academy_applications', JSON.stringify([newApp, ...existing]));
+      window.dispatchEvent(new CustomEvent('new-application-submitted', { detail: newApp }));
+    } catch (err) {
+      console.error(err);
+    }
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
       setIsApplicationOpen(false);
+      setApplicantForm({ parentName: '', phone: '', studentName: '', package: activeTierObj.name });
     }, 2000);
   };
 
@@ -73,10 +90,7 @@ export default function AdmissionsSection() {
       style={{
         position: 'relative',
         minHeight: '100vh',
-        backgroundImage: `linear-gradient(180deg, rgba(12, 6, 8, 0.45) 0%, rgba(12, 6, 8, 0.6) 100%), url(/assets/palace-interior.jpg)`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        background: 'transparent',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -347,66 +361,6 @@ export default function AdmissionsSection() {
         </div>
       </div>
 
-      {/* Bottom Bar matching Photo 3 (07 / 18) */}
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 2,
-          maxWidth: '1240px',
-          width: '100%',
-          margin: '30px auto 0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '12px 20px',
-          background: 'rgba(20, 12, 14, 0.65)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(212, 175, 55, 0.2)',
-          borderRadius: '14px'
-        }}
-      >
-        <button
-          onClick={scrollToSpaces}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: 'rgba(255, 255, 255, 0.85)',
-            fontSize: '0.9rem',
-            fontWeight: 500,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            cursor: 'pointer',
-            padding: '6px 12px',
-            borderRadius: '8px',
-            transition: 'color 0.2s'
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = '#d4af37')}
-          onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.85)')}
-        >
-          <ArrowLeft size={16} />
-          <span>ეზოში დაბრუნება</span>
-        </button>
-
-        <div
-          style={{
-            background: 'rgba(0, 0, 0, 0.45)',
-            border: '1px solid rgba(212, 175, 55, 0.3)',
-            borderRadius: '20px',
-            padding: '4px 14px',
-            fontSize: '0.85rem',
-            fontWeight: 600,
-            color: '#d4af37',
-            letterSpacing: '0.08em'
-          }}
-        >
-          07 / 18
-        </div>
-
-        <div style={{ color: 'rgba(255, 255, 255, 0.65)', fontSize: '0.85rem' }}>
-          მიღება 2026-2027
-        </div>
-      </div>
 
       {/* Online Application Modal Form */}
       {isApplicationOpen && (

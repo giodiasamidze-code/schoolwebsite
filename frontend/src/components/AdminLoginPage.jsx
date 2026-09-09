@@ -86,22 +86,8 @@ export default function AdminLoginPage() {
             </p>
           </div>
 
-          {/* Bottom Left: 14 / 18 მთავარი -> */}
+          {/* Bottom Left: მთავარი -> */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div
-              style={{
-                background: 'rgba(0, 0, 0, 0.55)',
-                border: '1px solid rgba(212, 175, 55, 0.3)',
-                borderRadius: '20px',
-                padding: '5px 16px',
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                color: '#d4af37',
-                letterSpacing: '0.08em'
-              }}
-            >
-              14 / 18
-            </div>
 
             <button
               onClick={() => navigate('/')}

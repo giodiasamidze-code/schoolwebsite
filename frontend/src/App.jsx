@@ -86,7 +86,19 @@ export default function App() {
   }
 
   return (
-    <div className="app-wrapper" style={{ position: 'relative', minHeight: '100vh', background: '#090507' }}>
+    <div className="app-wrapper" style={{ position: 'relative', minHeight: '100vh', background: 'transparent' }}>
+      {/* Fixed palace-interior background — shown clearly behind all sections */}
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 0,
+          backgroundImage: `linear-gradient(rgba(10,5,6,0.08), rgba(10,5,6,0.08)), url(/assets/palace-interior.jpg)`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
       <DynamicBackground />
       <SmoothScroll />
       <CustomCursor />

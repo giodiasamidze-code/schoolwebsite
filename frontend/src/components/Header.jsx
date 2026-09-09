@@ -68,23 +68,21 @@ export default function Header({ activeSection = 'hero' }) {
     <header
       style={{
         position: 'fixed',
-        top: '16px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: 'calc(100% - 48px)',
-        maxWidth: '1380px',
-        height: '64px',
-        background: 'rgba(35, 22, 26, 0.72)',
-        backdropFilter: 'blur(25px)',
-        WebkitBackdropFilter: 'blur(25px)',
-        border: '1px solid rgba(212, 175, 55, 0.28)',
-        borderRadius: '16px',
+        top: 0,
+        left: 0,
+        right: 0,
+        width: '100%',
+        height: '70px',
+        background: 'linear-gradient(180deg, rgba(15, 8, 10, 0.75) 0%, rgba(15, 8, 10, 0.0) 100%)',
+        backdropFilter: 'none',
+        border: 'none',
+        borderRadius: 0,
         zIndex: 999,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 28px',
-        boxShadow: '0 12px 35px rgba(0, 0, 0, 0.55)'
+        padding: '0 40px',
+        boxShadow: 'none'
       }}
     >
       {/* Brand / Logo (Photo 13) */}

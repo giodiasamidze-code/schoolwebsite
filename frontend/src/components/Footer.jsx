@@ -36,10 +36,10 @@ export default function Footer() {
       style={{
         position: 'relative',
         zIndex: 10,
-        background: 'linear-gradient(180deg, rgba(24, 9, 11, 0.95) 0%, rgba(14, 4, 6, 0.99) 100%)',
+        background: 'rgba(12, 5, 7, 0.78)',
         borderTop: '1px solid rgba(212, 175, 55, 0.25)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
+        backdropFilter: 'blur(28px)',
+        WebkitBackdropFilter: 'blur(28px)',
         padding: '70px 0 30px',
         color: '#f5eee8'
       }}

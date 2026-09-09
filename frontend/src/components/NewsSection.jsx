@@ -12,7 +12,8 @@ export default function NewsSection() {
       id: 1,
       title: 'აკადემიის ინოვაციური პროექტები',
       category: 'STEM',
-      image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80',
+      icon: 'cpu',
+      image: null,
       description: 'სოლომონ აკადემიის მოსწავლეებმა წარმოადგინეს რობოტოტექნიკისა და ხელოვნური ინტელექტის ინოვაციური პროტოტიპები.',
       details: 'პროექტის ფარგლებში მოსწავლეები ქმნიან ავტონომიურ რობოტულ სისტემებს, შეისწავლიან მიკროკონტროლერების დაპროგრამებას და ავითარებენ საინჟინრო უნარებს.',
       tags: ['კვლევა', 'ტექნოლოგია', 'ინოვაცია']
@@ -21,7 +22,8 @@ export default function NewsSection() {
       id: 2,
       title: 'ეკოლოგიური კვლევა & STEM',
       category: 'კვლევა',
-      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&auto=format&fit=crop&q=80',
+      icon: 'leaf',
+      image: null,
       description: 'ბიოლოგიისა და ეკოლოგიის საველე ლაბორატორიის მიღწევები და პრაქტიკული ექსპედიციები.',
       details: 'სოლომონ აკადემიის ეკო-კლუბის მიერ ჩატარებული გარემოსდაცვითი მონიტორინგი და ბიომრავალფეროვნების ანალიზი.',
       tags: ['ეკოლოგია', 'ბიოლოგია', 'კვლევა']
@@ -30,7 +32,8 @@ export default function NewsSection() {
       id: 3,
       title: 'საერთაშორისო ოლიმპიადა',
       category: 'ღონისძიებები',
-      image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80',
+      icon: 'trophy',
+      image: null,
       description: 'აკადემიის გუნდის მომზადება საერთაშორისო სამეცნიერო ფორუმებისა და ოლიმპიადებისთვის.',
       details: 'მოსწავლეთა ინტენსიური ვორქშოფები და მენტორობა წამყვანი უცხოელი პროფესორების მონაწილეობით.',
       tags: ['ოლიმპიადა', 'STEM', 'გლობალური']
@@ -39,7 +42,8 @@ export default function NewsSection() {
       id: 4,
       title: 'საერთაშორისო ოლიმპიადის ტრიუმფი',
       category: 'ღონისძიებები',
-      image: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=600&auto=format&fit=crop&q=80',
+      icon: 'medal',
+      image: null,
       description: 'ოქროსა და ვერცხლის მედლები მათემატიკისა და ფიზიკის ევროპულ ოლიმპიადაზე.',
       details: 'აკადემიის წარმატებული დელეგაციის შედეგები და საზეიმო მიღება აკადემიის ცენტრალურ დარბაზში.',
       tags: ['გამარჯვება', 'მედლები', 'სიამაყე']
@@ -48,7 +52,8 @@ export default function NewsSection() {
       id: 5,
       title: 'ასტროფიზიკის ობსერვატორია & AI',
       category: 'კვლევა',
-      image: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=600&auto=format&fit=crop&q=80',
+      icon: 'telescope',
+      image: null,
       description: 'კოსმოსური მონაცემების დამუშავება ნეირონული ქსელებით და ღამის დაკვირვებები.',
       details: 'ტელესკოპური დაკვირვებების ციფრული დამუშავება და ასტრონომიული აღმოჩენების მოდელირება.',
       tags: ['ასტროფიზიკა', 'AI', 'კოსმოსი']
@@ -74,10 +79,7 @@ export default function NewsSection() {
         style={{
           position: 'relative',
           minHeight: '100vh',
-          backgroundImage: `linear-gradient(180deg, rgba(12, 6, 8, 0.45) 0%, rgba(12, 6, 8, 0.65) 100%), url(/assets/palace-interior.jpg)`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+          background: 'transparent',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
@@ -263,23 +265,6 @@ export default function NewsSection() {
           </div>
         </div>
 
-        {/* Counter bottom left */}
-        <div style={{ maxWidth: '1180px', width: '100%', margin: '14px auto 0' }}>
-          <div
-            style={{
-              background: 'rgba(0, 0, 0, 0.5)',
-              border: '1px solid rgba(212, 175, 55, 0.3)',
-              borderRadius: '20px',
-              padding: '4px 14px',
-              fontSize: '0.85rem',
-              fontWeight: 600,
-              color: '#d4af37',
-              width: 'fit-content'
-            }}
-          >
-            06 / 18
-          </div>
-        </div>
       </section>
     );
   }
@@ -291,10 +276,7 @@ export default function NewsSection() {
       style={{
         position: 'relative',
         minHeight: '100vh',
-        backgroundImage: `linear-gradient(180deg, rgba(12, 6, 8, 0.45) 0%, rgba(12, 6, 8, 0.6) 100%), url(/assets/palace-interior.jpg)`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        background: 'transparent',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -492,75 +474,6 @@ export default function NewsSection() {
         </div>
       </div>
 
-      {/* Bottom Bar matching Photo 7 (01 / 02) */}
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 2,
-          maxWidth: '1240px',
-          width: '100%',
-          margin: '30px auto 0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '12px 20px',
-          background: 'rgba(20, 12, 14, 0.65)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(212, 175, 55, 0.2)',
-          borderRadius: '14px'
-        }}
-      >
-        <button
-          onClick={scrollToSpaces}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: 'rgba(255, 255, 255, 0.85)',
-            fontSize: '0.9rem',
-            fontWeight: 500,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            cursor: 'pointer',
-            padding: '6px 12px',
-            borderRadius: '8px',
-            transition: 'color 0.2s'
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = '#d4af37')}
-          onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.85)')}
-        >
-          <ArrowLeft size={16} />
-          <span>ეზოში დაბრუნება</span>
-        </button>
-
-        {/* Pagination 01 / 02 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <button style={{ background: 'none', border: 'none', color: '#d4af37', cursor: 'pointer' }}>
-            <ArrowLeft size={16} />
-          </button>
-          <div
-            style={{
-              background: 'rgba(0, 0, 0, 0.45)',
-              border: '1px solid rgba(212, 175, 55, 0.3)',
-              borderRadius: '20px',
-              padding: '4px 14px',
-              fontSize: '0.85rem',
-              fontWeight: 600,
-              color: '#d4af37',
-              letterSpacing: '0.08em'
-            }}
-          >
-            01 / 02
-          </div>
-          <button style={{ background: 'none', border: 'none', color: '#d4af37', cursor: 'pointer' }}>
-            <ArrowRight size={16} />
-          </button>
-        </div>
-
-        <div style={{ color: 'rgba(255, 255, 255, 0.65)', fontSize: '0.85rem' }}>
-          ვიზუალური კონცეფცია
-        </div>
-      </div>
     </section>
   );
 }

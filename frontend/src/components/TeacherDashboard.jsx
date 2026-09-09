@@ -207,7 +207,7 @@ export default function TeacherDashboard() {
               }}
             >
               <ArrowLeft size={14} />
-              <span>ეზოში დაბრუნება</span>
+              <span>მთავარზე დაბრუნება</span>
             </button>
           </div>
         </div>
@@ -513,21 +513,6 @@ export default function TeacherDashboard() {
           </button>
         </div>
 
-        {/* Counter 17 / 18 */}
-        <div
-          style={{
-            background: 'rgba(0, 0, 0, 0.55)',
-            border: '1px solid rgba(212, 175, 55, 0.3)',
-            borderRadius: '20px',
-            padding: '5px 16px',
-            fontSize: '0.85rem',
-            fontWeight: 600,
-            color: '#d4af37',
-            letterSpacing: '0.08em'
-          }}
-        >
-          17 / 18
-        </div>
       </div>
     </div>
   );

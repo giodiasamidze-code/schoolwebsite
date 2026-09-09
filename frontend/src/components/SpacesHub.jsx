@@ -70,10 +70,7 @@ export default function SpacesHub({ onNavigate }) {
       style={{
         position: 'relative',
         minHeight: '100vh',
-        backgroundImage: `linear-gradient(180deg, rgba(12, 6, 8, 0.45) 0%, rgba(12, 6, 8, 0.6) 100%), url(/assets/palace-interior.jpg)`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        background: 'transparent',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -284,96 +281,6 @@ export default function SpacesHub({ onNavigate }) {
         </div>
       </div>
 
-      {/* Bottom Bar matching design (02 / 18) */}
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 2,
-          maxWidth: '1240px',
-          width: '100%',
-          margin: '30px auto 0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '12px 20px',
-          background: 'rgba(20, 12, 14, 0.65)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(212, 175, 55, 0.2)',
-          borderRadius: '14px'
-        }}
-      >
-        <button
-          onClick={handleReturnToHero}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: 'rgba(255, 255, 255, 0.85)',
-            fontSize: '0.9rem',
-            fontWeight: 500,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            cursor: 'pointer',
-            padding: '6px 12px',
-            borderRadius: '8px',
-            transition: 'color 0.2s'
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.color = '#d4af37'}
-          onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.85)'}
-        >
-          <ArrowLeft size={16} />
-          <span>ეზოში დაბრუნება</span>
-        </button>
-
-        <div
-          style={{
-            background: 'rgba(0, 0, 0, 0.45)',
-            border: '1px solid rgba(212, 175, 55, 0.3)',
-            borderRadius: '20px',
-            padding: '4px 14px',
-            fontSize: '0.85rem',
-            fontWeight: 600,
-            color: '#d4af37',
-            letterSpacing: '0.08em'
-          }}
-        >
-          02 / 18
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button
-            onClick={() => navigate('/teacher-dashboard')}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'rgba(255, 255, 255, 0.7)',
-              fontSize: '0.82rem',
-              cursor: 'pointer',
-              transition: 'color 0.2s'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.color = '#d4af37'}
-            onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)'}
-          >
-            პედაგოგის პორტალი
-          </button>
-          <span style={{ color: 'rgba(255, 255, 255, 0.3)', fontSize: '0.8rem' }}>·</span>
-          <button
-            onClick={() => navigate('/admin-dashboard')}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'rgba(255, 255, 255, 0.7)',
-              fontSize: '0.82rem',
-              cursor: 'pointer',
-              transition: 'color 0.2s'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.color = '#d4af37'}
-            onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)'}
-          >
-            ადმინისტრაცია
-          </button>
-        </div>
-      </div>
     </section>
   );
 }

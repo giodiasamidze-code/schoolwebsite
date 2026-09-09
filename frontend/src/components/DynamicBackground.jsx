@@ -13,7 +13,7 @@ export default function DynamicBackground() {
         pointerEvents: 'none',
         zIndex: 0,
         overflow: 'hidden',
-        background: '#0c0608'
+        background: 'transparent'
       }}
       aria-hidden="true"
     >

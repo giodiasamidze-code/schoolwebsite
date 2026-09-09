@@ -11,37 +11,43 @@ export default function GalleryPage() {
       id: 1,
       title: 'აკადემიის მთავარი ფასადი',
       subtitle: 'ექსტერიერის არქიტექტურული ხედი',
-      image: '/assets/palace-exterior.jpg'
+      image: '/assets/palace-exterior.jpg',
+      icon: null
     },
     {
       id: 2,
       title: 'ცენტრალური დარბაზი',
       subtitle: 'ინტერიერის ვიზუალური კონცეფცია',
-      image: '/assets/palace-interior.jpg'
+      image: '/assets/palace-interior.jpg',
+      icon: null
     },
     {
       id: 3,
       title: 'სამეცნიერო STEM ლაბორატორია',
       subtitle: 'ინოვაციური ექსპერიმენტული სივრცე',
-      image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=1600&auto=format&fit=crop&q=80'
+      image: null,
+      icon: 'flask'
     },
     {
       id: 4,
       title: 'აკადემიური ბიბლიოთეკა & სამკითხველო',
       subtitle: 'ინტელექტუალური მუშაობის გარემო',
-      image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1600&auto=format&fit=crop&q=80'
+      image: null,
+      icon: 'book'
     },
     {
       id: 5,
       title: 'ასტროფიზიკის ობსერვატორია',
       subtitle: 'კოსმოსური დაკვირვებების ცენტრი',
-      image: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1600&auto=format&fit=crop&q=80'
+      image: null,
+      icon: 'telescope'
     },
     {
       id: 6,
       title: 'საზეიმო დარბაზი & ამფითეატრი',
       subtitle: 'ღონისძიებებისა და დებატების დარბაზი',
-      image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=1600&auto=format&fit=crop&q=80'
+      image: null,
+      icon: 'mic'
     }
   ];
 
@@ -66,19 +72,54 @@ export default function GalleryPage() {
         color: '#ffffff'
       }}
     >
-      {/* Active Fullscreen Image */}
-      <img
-        src={currentItem.image}
-        alt={currentItem.title}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          transition: 'all 0.5s ease-in-out'
-        }}
-      />
+      {/* Active Fullscreen Image or Icon Placeholder */}
+      {currentItem.image ? (
+        <img
+          src={currentItem.image}
+          alt={currentItem.title}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            transition: 'all 0.5s ease-in-out'
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(135deg, rgba(20, 10, 14, 0.9) 0%, rgba(35, 20, 25, 0.85) 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            gap: '24px'
+          }}
+        >
+          <div style={{
+            width: '120px',
+            height: '120px',
+            borderRadius: '50%',
+            background: 'rgba(212, 175, 55, 0.12)',
+            border: '2px solid rgba(212, 175, 55, 0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#d4af37" strokeWidth="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+          </div>
+          <p style={{ color: 'rgba(212, 175, 55, 0.8)', fontSize: '0.9rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            ფოტო მალე დაემატება
+          </p>
+        </div>
+      )}
 
       {/* Luxury Vignette Overlay */}
       <div
@@ -91,7 +132,7 @@ export default function GalleryPage() {
         }}
       />
 
-      {/* Top Bar with 09 / 18 Counter and Close X */}
+      {/* Top Bar with Close X */}
       <div
         style={{
           position: 'absolute',
@@ -101,24 +142,9 @@ export default function GalleryPage() {
           zIndex: 10,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between'
+          justifyContent: 'flex-end'
         }}
       >
-        <div
-          style={{
-            background: 'rgba(0, 0, 0, 0.55)',
-            backdropFilter: 'blur(12px)',
-            border: '1px solid rgba(212, 175, 55, 0.3)',
-            borderRadius: '20px',
-            padding: '5px 16px',
-            fontSize: '0.85rem',
-            fontWeight: 600,
-            color: '#d4af37',
-            letterSpacing: '0.08em'
-          }}
-        >
-          09 / 18
-        </div>
 
         <button
           onClick={() => navigate('/')}
@@ -276,7 +302,15 @@ export default function GalleryPage() {
                 transition: 'all 0.2s ease'
               }}
             >
-              <img src={item.image} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              {item.image ? (
+                <img src={item.image} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <div style={{ width: '100%', height: '100%', background: 'rgba(212,175,55,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af37" strokeWidth="1.5">
+                    <rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" />
+                  </svg>
+                </div>
+              )}
             </div>
           ))}
         </div>
