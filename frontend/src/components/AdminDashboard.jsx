@@ -33,16 +33,16 @@ const API = import.meta.env.VITE_API_URL || '';
 // REUSABLE INTERACTIVE SVG CHARTS & DIAGRAMS
 // ─────────────────────────────────────────────────────────────────────────────
 
-// 1. Donut Chart for Payment Statuses
+// 1. Donut Chart for Payment Statuses (Brand Gold & Bronze Palette)
 function DonutChart({ paid, pending, overdue, scholarship }) {
   const total = paid + pending + overdue + scholarship;
   if (total === 0) return null;
   const R = 46, cx = 56, cy = 56, stroke = 16;
   const segments = [
-    { value: paid, color: '#4ade80', label: 'დაფარული' },
-    { value: pending, color: '#d4af37', label: 'მოლოდინში' },
-    { value: overdue, color: '#f87171', label: 'ვადაგადაცილებული' },
-    { value: scholarship, color: '#60a5fa', label: 'სტიპენდია' }
+    { value: paid, color: '#d4af37', label: 'დაფარული' },
+    { value: pending, color: '#f3d368', label: 'მოლოდინში' },
+    { value: overdue, color: '#c25e5e', label: 'ვადაგადაცილებული' },
+    { value: scholarship, color: '#8a5a2b', label: 'სტიპენდია' }
   ];
   let cumulative = 0;
   const slices = segments.map((seg) => {
@@ -68,184 +68,25 @@ function DonutChart({ paid, pending, overdue, scholarship }) {
   });
   return (
     <svg width="112" height="112" viewBox="0 0 112 112">
-      <circle cx={cx} cy={cy} r={R} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={stroke} />
+      <circle cx={cx} cy={cy} r={R} fill="none" stroke="rgba(212,175,55,0.12)" strokeWidth={stroke} />
       {slices}
       <text x={cx} y={cy - 5} textAnchor="middle" fill="#fff" fontSize="13" fontWeight="700">{total}</text>
-      <text x={cx} y={cy + 10} textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="8.5">სულ</text>
+      <text x={cx} y={cy + 10} textAnchor="middle" fill="rgba(255,255,255,0.55)" fontSize="8.5">სულ</text>
     </svg>
   );
 }
 
-// 2. Circular Gauge Chart for Overall Capacity
-function CapacityGauge({ current = 482, max = 520 }) {
-  const pct = Math.min(100, Math.round((current / max) * 100));
-  const R = 70;
-  const cx = 95;
-  const cy = 95;
-  const stroke = 14;
-  // 240 degree gauge (-210 to +30 deg)
-  const circumference = 2 * Math.PI * R * (240 / 360);
-  const strokeDashoffset = circumference - (pct / 100) * circumference;
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ position: 'relative', width: '190px', height: '140px', overflow: 'hidden' }}>
-        <svg width="190" height="190" viewBox="0 0 190 190" style={{ transform: 'rotate(-210deg)', transformOrigin: '95px 95px' }}>
-          {/* Background track */}
-          <circle
-            cx={cx}
-            cy={cy}
-            r={R}
-            fill="none"
-            stroke="rgba(255,255,255,0.08)"
-            strokeWidth={stroke}
-            strokeDasharray={`${circumference} 999`}
-            strokeLinecap="round"
-          />
-          {/* Filled progress */}
-          <circle
-            cx={cx}
-            cy={cy}
-            r={R}
-            fill="none"
-            stroke="url(#gaugeGrad)"
-            strokeWidth={stroke}
-            strokeDasharray={`${circumference} 999`}
-            strokeDashoffset={strokeDashoffset}
-            strokeLinecap="round"
-            style={{ transition: 'stroke-dashoffset 1s ease' }}
-          />
-          <defs>
-            <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#d4af37" />
-              <stop offset="100%" stopColor="#4ade80" />
-            </linearGradient>
-          </defs>
-        </svg>
-        {/* Center content */}
-        <div style={{ position: 'absolute', top: '48px', left: 0, right: 0, textAlign: 'center' }}>
-          <div style={{ fontSize: '1.9rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', lineHeight: 1 }}>
-            {pct}%
-          </div>
-          <div style={{ fontSize: '0.74rem', color: '#d4af37', fontWeight: 600, marginTop: '4px' }}>
-            {current} / {max} მოსწავლე
-          </div>
-        </div>
-      </div>
-      <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', marginTop: '-8px' }}>
-        თავისუფალი ადგილი: <strong style={{ color: '#4ade80' }}>{max - current}</strong>
-      </div>
-    </div>
-  );
-}
-
-// 3. Monthly Revenue Interactive Bar Chart
-function MonthlyBarChart() {
-  const [hoveredIdx, setHoveredIdx] = useState(null);
-  const data = [
-    { month: 'თებ', fact: 42000, plan: 40000 },
-    { month: 'მარ', fact: 48500, plan: 45000 },
-    { month: 'აპრ', fact: 51000, plan: 48000 },
-    { month: 'მაი', fact: 53500, plan: 50000 },
-    { month: 'ივნ', fact: 56000, plan: 52000 },
-    { month: 'ივლ', fact: 38000, plan: 35000 },
-    { month: 'აგვ', fact: 44000, plan: 42000 },
-    { month: 'სექ', fact: 59000, plan: 55000 }
-  ];
-  const maxVal = 65000;
-  const chartHeight = 150;
-
-  return (
-    <div style={{ width: '100%' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <div style={{ display: 'flex', gap: '16px', fontSize: '0.78rem' }}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'linear-gradient(180deg, #d4af37 0%, #aa820a 100%)' }} />
-            <span style={{ color: 'rgba(255,255,255,0.8)' }}>ფაქტობრივი</span>
-          </span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'rgba(255,255,255,0.18)' }} />
-            <span style={{ color: 'rgba(255,255,255,0.5)' }}>გეგმა</span>
-          </span>
-        </div>
-        <div style={{ fontSize: '0.78rem', color: '#4ade80', fontWeight: 600 }}>
-          საშუალო ზრდა: +14.2%
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: `${chartHeight}px`, gap: '12px', paddingBottom: '4px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-        {data.map((item, idx) => {
-          const factH = Math.round((item.fact / maxVal) * chartHeight);
-          const planH = Math.round((item.plan / maxVal) * chartHeight);
-          const isHovered = hoveredIdx === idx;
-
-          return (
-            <div
-              key={item.month}
-              style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end', position: 'relative', cursor: 'pointer' }}
-              onMouseEnter={() => setHoveredIdx(idx)}
-              onMouseLeave={() => setHoveredIdx(null)}
-            >
-              {/* Tooltip on hover */}
-              {isHovered && (
-                <div style={{ position: 'absolute', bottom: `${Math.max(factH, planH) + 12}px`, background: 'rgba(10,5,7,0.95)', border: '1px solid #d4af37', borderRadius: '6px', padding: '6px 10px', fontSize: '0.72rem', whiteSpace: 'nowrap', zIndex: 10, boxShadow: '0 4px 14px rgba(0,0,0,0.6)', pointerEvents: 'none' }}>
-                  <div style={{ fontWeight: 700, color: '#d4af37' }}>{item.month}: ₾ {item.fact.toLocaleString()}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.68rem' }}>გეგმა: ₾ {item.plan.toLocaleString()}</div>
-                </div>
-              )}
-
-              {/* Bars side by side */}
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '3px', width: '100%', justifyContent: 'center' }}>
-                {/* Plan bar */}
-                <div
-                  style={{
-                    width: '38%',
-                    maxWidth: '14px',
-                    height: `${planH}px`,
-                    background: 'rgba(255,255,255,0.15)',
-                    borderRadius: '4px 4px 0 0',
-                    transition: 'all 0.2s ease'
-                  }}
-                />
-                {/* Fact bar */}
-                <div
-                  style={{
-                    width: '46%',
-                    maxWidth: '18px',
-                    height: `${factH}px`,
-                    background: isHovered
-                      ? 'linear-gradient(180deg, #fce084 0%, #d4af37 100%)'
-                      : 'linear-gradient(180deg, #d4af37 0%, #aa820a 100%)',
-                    borderRadius: '4px 4px 0 0',
-                    boxShadow: isHovered ? '0 0 12px rgba(212,175,55,0.6)' : 'none',
-                    transition: 'all 0.2s ease'
-                  }}
-                />
-              </div>
-
-              {/* Month label */}
-              <div style={{ fontSize: '0.72rem', color: isHovered ? '#d4af37' : 'rgba(255,255,255,0.6)', marginTop: '8px', fontWeight: isHovered ? 700 : 500 }}>
-                {item.month}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// 4. Admissions Conversion Funnel Chart
+// 2. Admissions Conversion Funnel Chart (Monochromatic Gold Gradients)
 function AdmissionsFunnelChart() {
   const steps = [
-    { label: 'შემოსული განაცხადები', count: 142, pct: 100, color: '#60a5fa' },
-    { label: 'საგამოცდო ტესტირებაზე გასული', count: 118, pct: 83.1, color: '#a855f7' },
+    { label: 'შემოსული განაცხადები', count: 142, pct: 100, color: '#f6d56d' },
+    { label: 'საგამოცდო ტესტირებაზე გასული', count: 118, pct: 83.1, color: '#e5c158' },
     { label: 'გასაუბრებაზე მიწვეული', count: 74, pct: 52.1, color: '#d4af37' },
-    { label: 'ჩარიცხვის შეთავაზება', count: 48, pct: 33.8, color: '#4ade80' }
+    { label: 'ჩარიცხვის შეთავაზება', count: 48, pct: 33.8, color: '#aa820a' }
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
       {steps.map((step, idx) => (
         <div key={step.label} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
@@ -262,7 +103,7 @@ function AdmissionsFunnelChart() {
               style={{
                 height: '100%',
                 width: `${step.pct}%`,
-                background: `linear-gradient(90deg, ${step.color}aa 0%, ${step.color} 100%)`,
+                background: `linear-gradient(90deg, ${step.color}88 0%, ${step.color} 100%)`,
                 borderRadius: '6px',
                 transition: 'width 0.8s ease'
               }}
@@ -270,95 +111,137 @@ function AdmissionsFunnelChart() {
           </div>
         </div>
       ))}
-      <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.08)', fontSize: '0.76rem', color: 'rgba(255,255,255,0.6)' }}>
-        <span>საბოლოო კონვერსია: <strong style={{ color: '#4ade80' }}>33.8%</strong></span>
-        <span>საშ. საკონკურსო კოეფიციენტი: <strong style={{ color: '#d4af37' }}>2.95 აპლიკანტი / ადგილი</strong></span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '12px', borderTop: '1px solid rgba(212,175,55,0.15)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.7)' }}>
+        <span>საბოლოო კონვერსია: <strong style={{ color: '#d4af37' }}>33.8%</strong></span>
+        <span>საშ. საკონკურსო კოეფიციენტი: <strong style={{ color: '#f3d368' }}>2.95 აპლიკანტი / ადგილი</strong></span>
       </div>
     </div>
   );
 }
 
-// 5. Academic Performance Score Distribution
-function AcademicScoresChart() {
-  const subjects = [
-    { name: 'მათემატიკა', avg: 91.2, barColor: '#60a5fa', top: '99%' },
-    { name: 'ინგლისური ენა', avg: 93.8, barColor: '#4ade80', top: '98%' },
-    { name: 'ლოგიკა & STEM', avg: 88.5, barColor: '#d4af37', top: '96%' }
+// 3. Monthly Revenue Interactive Bar Chart (Single Master Executive Diagram)
+function MonthlyBarChart() {
+  const [hoveredIdx, setHoveredIdx] = useState(null);
+  const data = [
+    { month: 'თებ', fact: 42000, plan: 40000 },
+    { month: 'მარ', fact: 48500, plan: 45000 },
+    { month: 'აპრ', fact: 51000, plan: 48000 },
+    { month: 'მაი', fact: 53500, plan: 50000 },
+    { month: 'ივნ', fact: 56000, plan: 52000 },
+    { month: 'ივლ', fact: 38000, plan: 35000 },
+    { month: 'აგვ', fact: 44000, plan: 42000 },
+    { month: 'სექ', fact: 59000, plan: 55000 }
+  ];
+  const maxVal = 65000;
+  const chartHeight = 210;
+
+  return (
+    <div style={{ width: '100%' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', gap: '20px', fontSize: '0.82rem' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: 'linear-gradient(180deg, #f6d56d 0%, #d4af37 100%)' }} />
+            <span style={{ color: 'rgba(255,255,255,0.85)', fontWeight: 600 }}>ფაქტობრივი გადახდები</span>
+          </span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ width: '12px', height: '12px', borderRadius: '3px', background: 'rgba(212,175,55,0.2)', border: '1px solid rgba(212,175,55,0.35)' }} />
+            <span style={{ color: 'rgba(255,255,255,0.6)' }}>საპროგნოზო გეგმა</span>
+          </span>
+        </div>
+        <div style={{ fontSize: '0.82rem', color: '#d4af37', fontWeight: 600, background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.3)', padding: '4px 12px', borderRadius: '16px' }}>
+          საშუალო ზრდა: +14.2%
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: `${chartHeight}px`, gap: '14px', paddingBottom: '8px', borderBottom: '1px solid rgba(212,175,55,0.2)' }}>
+        {data.map((item, idx) => {
+          const factH = Math.round((item.fact / maxVal) * chartHeight);
+          const planH = Math.round((item.plan / maxVal) * chartHeight);
+          const isHovered = hoveredIdx === idx;
+
+          return (
+            <div
+              key={item.month}
+              style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end', position: 'relative', cursor: 'pointer' }}
+              onMouseEnter={() => setHoveredIdx(idx)}
+              onMouseLeave={() => setHoveredIdx(null)}
+            >
+              {/* Tooltip on hover */}
+              {isHovered && (
+                <div style={{ position: 'absolute', bottom: `${Math.max(factH, planH) + 14}px`, background: '#1c1016', border: '1px solid #d4af37', borderRadius: '8px', padding: '8px 12px', fontSize: '0.76rem', whiteSpace: 'nowrap', zIndex: 10, boxShadow: '0 8px 24px rgba(0,0,0,0.85)', pointerEvents: 'none' }}>
+                  <div style={{ fontWeight: 700, color: '#f3d368' }}>{item.month}: ₾ {item.fact.toLocaleString()}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.7rem', marginTop: '2px' }}>გეგმა: ₾ {item.plan.toLocaleString()}</div>
+                </div>
+              )}
+
+              {/* Bars side by side */}
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '5px', width: '100%', justifyContent: 'center' }}>
+                {/* Plan bar */}
+                <div
+                  style={{
+                    width: '36%',
+                    maxWidth: '16px',
+                    height: `${planH}px`,
+                    background: 'rgba(212,175,55,0.2)',
+                    border: '1px solid rgba(212,175,55,0.3)',
+                    borderRadius: '4px 4px 0 0',
+                    transition: 'all 0.2s ease'
+                  }}
+                />
+                {/* Fact bar */}
+                <div
+                  style={{
+                    width: '44%',
+                    maxWidth: '22px',
+                    height: `${factH}px`,
+                    background: isHovered
+                      ? 'linear-gradient(180deg, #ffe89e 0%, #d4af37 100%)'
+                      : 'linear-gradient(180deg, #f6d56d 0%, #aa820a 100%)',
+                    borderRadius: '4px 4px 0 0',
+                    boxShadow: isHovered ? '0 0 16px rgba(212,175,55,0.65)' : 'none',
+                    transition: 'all 0.2s ease'
+                  }}
+                />
+              </div>
+
+              {/* Month label */}
+              <div style={{ fontSize: '0.78rem', color: isHovered ? '#d4af37' : 'rgba(255,255,255,0.65)', marginTop: '10px', fontWeight: isHovered ? 700 : 500 }}>
+                {item.month}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// 4. Department Hours Distribution (Warm Gold Spectrum)
+function DepartmentDistributionChart() {
+  const depts = [
+    { name: 'STEM & რობოტიკა', hours: 38, pct: 32, color: '#f6d56d' },
+    { name: 'უცხო ენები & Debate', hours: 30, pct: 25, color: '#e5c158' },
+    { name: 'ქართული ფილოლოგია', hours: 26, pct: 22, color: '#d4af37' },
+    { name: 'უმაღლესი მათემატიკა', hours: 25, pct: 21, color: '#aa820a' }
   ];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
-      {subjects.map((sub) => (
-        <div key={sub.name} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem' }}>
-            <span style={{ fontWeight: 600, color: '#fff' }}>{sub.name}</span>
-            <div style={{ display: 'flex', gap: '14px', fontSize: '0.76rem' }}>
-              <span style={{ color: 'rgba(255,255,255,0.6)' }}>მაქსიმალური: <strong style={{ color: '#fff' }}>{sub.top}</strong></span>
-              <span style={{ color: sub.barColor, fontWeight: 700 }}>საშ. {sub.avg} / 100</span>
-            </div>
-          </div>
-          <div style={{ height: '8px', background: 'rgba(255,255,255,0.06)', borderRadius: '4px', overflow: 'hidden' }}>
-            <div
-              style={{
-                height: '100%',
-                width: `${sub.avg}%`,
-                background: sub.barColor,
-                borderRadius: '4px',
-                boxShadow: `0 0 8px ${sub.barColor}55`
-              }}
-            />
-          </div>
-        </div>
-      ))}
-
-      {/* Score brackets distribution */}
-      <div style={{ marginTop: '6px', background: 'rgba(0,0,0,0.3)', borderRadius: '10px', padding: '12px 14px', border: '1px solid rgba(255,255,255,0.08)' }}>
-        <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>
-          ქულების განაწილება (სულ 118 ტესტირებული):
-        </div>
-        <div style={{ display: 'flex', height: '14px', borderRadius: '4px', overflow: 'hidden', gap: '2px' }}>
-          <div style={{ flex: 58, background: '#4ade80', title: '90-100 ქულა' }} />
-          <div style={{ flex: 29, background: '#d4af37', title: '80-89 ქულა' }} />
-          <div style={{ flex: 11, background: '#60a5fa', title: '70-79 ქულა' }} />
-          <div style={{ flex: 2, background: '#f87171', title: '<70 ქულა' }} />
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'rgba(255,255,255,0.6)', marginTop: '8px' }}>
-          <span style={{ color: '#4ade80' }}>● 90–100 (58%)</span>
-          <span style={{ color: '#d4af37' }}>● 80–89 (29%)</span>
-          <span style={{ color: '#60a5fa' }}>● 70–79 (11%)</span>
-          <span style={{ color: '#f87171' }}>● &lt;70 (2%)</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// 6. Department Hours Distribution
-function DepartmentDistributionChart() {
-  const depts = [
-    { name: 'STEM & რობოტიკა', hours: 38, pct: 32, color: '#60a5fa' },
-    { name: 'უცხო ენები & Debate', hours: 30, pct: 25, color: '#4ade80' },
-    { name: 'ქართული ფილოლოგია', hours: 26, pct: 22, color: '#d4af37' },
-    { name: 'უმაღლესი მათემატიკა', hours: 25, pct: 21, color: '#a855f7' }
-  ];
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', width: '100%' }}>
-      {/* Multi-color segmented progress line */}
+      {/* Segmented gold progress bar */}
       <div style={{ display: 'flex', height: '12px', borderRadius: '6px', overflow: 'hidden', gap: '2px', background: 'rgba(255,255,255,0.06)' }}>
         {depts.map((d) => (
           <div key={d.name} style={{ width: `${d.pct}%`, background: d.color }} />
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
         {depts.map((d) => (
-          <div key={d.name} style={{ background: 'rgba(0,0,0,0.3)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div key={d.name} style={{ background: 'rgba(0,0,0,0.35)', padding: '12px 14px', borderRadius: '10px', border: '1px solid rgba(212,175,55,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: d.color }} />
-              <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.85)' }}>{d.name}</span>
+              <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: d.color }} />
+              <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.85)' }}>{d.name}</span>
             </div>
-            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: d.color }}>{d.hours} სთ</span>
+            <span style={{ fontSize: '0.84rem', fontWeight: 700, color: d.color }}>{d.hours} სთ</span>
           </div>
         ))}
       </div>
@@ -596,7 +479,17 @@ export default function AdminDashboard() {
     sub: { fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)' },
     pill: (active) => ({ background: active ? 'rgba(212,175,55,0.25)' : 'rgba(0,0,0,0.35)', border: `1px solid ${active ? '#d4af37' : 'rgba(255,255,255,0.12)'}`, color: active ? '#d4af37' : 'rgba(255,255,255,0.75)', borderRadius: '20px', padding: '6px 14px', fontSize: '0.78rem', fontWeight: active ? 700 : 500, cursor: 'pointer', transition: 'all 0.15s' }),
     statusBadge: (st) => {
-      const map = { 'ჩარიცხული': ['rgba(34,197,94,0.2)', '#4ade80'], 'დაფარული': ['rgba(34,197,94,0.2)', '#4ade80'], 'უარყოფილი': ['rgba(239,68,68,0.2)', '#f87171'], 'ვადაგადაცილებული': ['rgba(239,68,68,0.2)', '#f87171'], 'სტიპენდია': ['rgba(96,165,250,0.2)', '#60a5fa'] };
+      const map = {
+        'ჩარიცხული': ['rgba(212,175,55,0.2)', '#d4af37'],
+        'დაფარული': ['rgba(212,175,55,0.2)', '#d4af37'],
+        'უარყოფილი': ['rgba(194,94,94,0.18)', '#c25e5e'],
+        'ვადაგადაცილებული': ['rgba(194,94,94,0.18)', '#c25e5e'],
+        'სტიპენდია': ['rgba(184,134,40,0.2)', '#e5c158'],
+        'გასაუბრება დანიშნული': ['rgba(243,211,104,0.18)', '#f3d368'],
+        'გასაუბრება გავლილი': ['rgba(212,175,55,0.25)', '#d4af37'],
+        'ახალი განაცხადი': ['rgba(243,211,104,0.15)', '#f3d368'],
+        'მოლოდინში': ['rgba(229,169,59,0.18)', '#e5a93b']
+      };
       const [bg, color] = map[st] || ['rgba(212,175,55,0.2)', '#d4af37'];
       return { fontSize: '0.74rem', fontWeight: 600, padding: '4px 10px', borderRadius: '20px', background: bg, color };
     }
@@ -612,33 +505,92 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div style={{ position: 'relative', minHeight: '100vh', backgroundImage: `linear-gradient(180deg, rgba(12,6,8,0.82) 0%, rgba(12,6,8,0.95) 100%), url(/assets/palace-interior.jpg)`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', color: '#fff', display: 'flex', flexDirection: 'column', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div style={{ position: 'relative', minHeight: '100vh', backgroundImage: `linear-gradient(180deg, rgba(12,6,8,0.85) 0%, rgba(12,6,8,0.96) 100%), url(/assets/palace-interior.jpg)`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', color: '#fff', display: 'flex', flexDirection: 'column', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
 
       {/* ── HEADER ── */}
-      <header style={{ height: '70px', background: 'rgba(20,12,15,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(212,175,55,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', position: 'sticky', top: 0, zIndex: 50 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+      <header style={{ height: '70px', background: 'rgba(20,12,15,0.95)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(212,175,55,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', position: 'sticky', top: 0, zIndex: 50 }}>
+        {/* Left: Academy Brand */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
           <div onClick={() => navigate('/')} style={{ fontFamily: 'var(--font-serif, serif)', fontSize: '1.05rem', fontWeight: 700, letterSpacing: '0.08em', color: '#d4af37', cursor: 'pointer' }}>SOLOMON ACADEMY</div>
-          <div style={{ width: '1px', height: '22px', background: 'rgba(255,255,255,0.15)' }} />
+          <div style={{ width: '1px', height: '22px', background: 'rgba(212,175,55,0.25)' }} />
           <span style={{ fontSize: '0.98rem', fontWeight: 600 }}>აკადემიის მართვის სისტემა</span>
-          <span style={{ background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.35)', color: '#d4af37', fontSize: '0.74rem', fontWeight: 600, padding: '2px 10px', borderRadius: '6px' }}>სასწ. წელი {settings.academicYear}</span>
+          <span style={{ background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.3)', color: '#d4af37', fontSize: '0.74rem', fontWeight: 600, padding: '3px 10px', borderRadius: '6px' }}>სასწ. წელი {settings.academicYear}</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <div style={{ display: 'flex', gap: '20px', fontSize: '0.78rem' }}>
-            <span style={{ color: 'rgba(255,255,255,0.6)' }}>მოსწავლეები: <strong style={{ color: '#fff' }}>{settings.currentEnrolled}</strong></span>
-            <span style={{ color: 'rgba(255,255,255,0.6)' }}>შემოსავალი: <strong style={{ color: '#4ade80' }}>₾ {totalPaidGel.toLocaleString()}</strong></span>
-            {totalDueGel > 0 && <span style={{ color: 'rgba(255,255,255,0.6)' }}>დავალიანება: <strong style={{ color: '#f87171' }}>₾ {totalDueGel.toLocaleString()}</strong></span>}
+
+        {/* Right: Prominent Top Stats Ticker + Site Button */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          {/* Executive Stats Bar (Immediately Visible on Admin Entrance) */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '18px',
+            background: 'rgba(28, 16, 22, 0.85)',
+            border: '1px solid rgba(212, 175, 55, 0.25)',
+            borderRadius: '10px',
+            padding: '7px 18px',
+            fontSize: '0.82rem',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.3)'
+          }}>
+            <span style={{ color: 'rgba(255,255,255,0.7)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              მოსწავლეები: <strong style={{ color: '#ffffff', fontWeight: 700 }}>{settings.currentEnrolled}</strong>
+            </span>
+            <span style={{ width: '1px', height: '14px', background: 'rgba(212,175,55,0.25)' }} />
+            <span style={{ color: 'rgba(255,255,255,0.7)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              შემოსავალი: <strong style={{ color: '#d4af37', fontWeight: 700 }}>₾ {totalPaidGel.toLocaleString()}</strong>
+            </span>
+            {totalDueGel > 0 && (
+              <>
+                <span style={{ width: '1px', height: '14px', background: 'rgba(212,175,55,0.25)' }} />
+                <span style={{ color: 'rgba(255,255,255,0.7)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  დავალიანება: <strong style={{ color: '#e5a93b', fontWeight: 700 }}>₾ {totalDueGel.toLocaleString()}</strong>
+                </span>
+              </>
+            )}
           </div>
-          <button onClick={() => navigate('/')} style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', padding: '6px 14px', color: 'rgba(255,255,255,0.9)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-            <ExternalLink size={14} /><span>საიტი</span>
+
+          {/* Site Navigation Button (Photo 2 - Only 'საიტი' Kept) */}
+          <button
+            onClick={() => navigate('/')}
+            style={{
+              background: 'rgba(212,175,55,0.12)',
+              border: '1px solid rgba(212,175,55,0.32)',
+              borderRadius: '8px',
+              padding: '7px 16px',
+              color: '#d4af37',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '7px',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(212,175,55,0.22)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(212,175,55,0.12)'; }}
+          >
+            <ExternalLink size={14} />
+            <span>საიტი</span>
           </button>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(0,0,0,0.35)', padding: '4px 14px 4px 6px', borderRadius: '24px', border: '1px solid rgba(212,175,55,0.25)' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(212,175,55,0.25)', color: '#d4af37', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.85rem' }}>D</div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '0.82rem', fontWeight: 600 }}>დირექტორი</span>
-              <span style={{ fontSize: '0.68rem', color: '#d4af37' }}>სრული წვდომა</span>
-            </div>
-          </div>
-          <button onClick={logout} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', cursor: 'pointer' }} onMouseEnter={(e) => e.currentTarget.style.color = '#ef4444'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}>გასვლა</button>
+
+          {/* Minimal Exit */}
+          <button
+            onClick={logout}
+            title="სისტემიდან გასვლა"
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: '8px',
+              padding: '7px 12px',
+              color: 'rgba(255,255,255,0.6)',
+              fontSize: '0.82rem',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = '#e5a93b'; e.currentTarget.style.borderColor = 'rgba(212,175,55,0.4)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; }}
+          >
+            გასვლა
+          </button>
         </div>
       </header>
 
@@ -661,7 +613,7 @@ export default function AdminDashboard() {
 
           <div style={{ marginTop: '20px', padding: '14px', background: 'rgba(0,0,0,0.4)', borderRadius: '10px', border: '1px solid rgba(212,175,55,0.15)', fontSize: '0.76rem', color: 'rgba(255,255,255,0.7)' }}>
             <div style={{ color: '#d4af37', fontWeight: 600, marginBottom: '6px' }}>აკრედიტაცია & ხარისხი</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><ShieldCheck size={14} color="#4ade80" /><span>უმაღლესი ეროვნული ავტორიზაცია</span></div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><ShieldCheck size={14} color="#d4af37" /><span>უმაღლესი ეროვნული ავტორიზაცია</span></div>
           </div>
         </div>
 
@@ -669,22 +621,22 @@ export default function AdminDashboard() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '22px', minWidth: 0 }}>
 
           {/* ══════════════════════════════════════════════════════════════════════════
-              0. EXECUTIVE ANALYTICS & DIAGRAMS (ახალი მთავარი ანალიტიკა)
+              0. EXECUTIVE ANALYTICS (თითო გვერდზე ერთი დიაგრამა - მშვიდი და ელეგანტური)
               ══════════════════════════════════════════════════════════════════════════ */}
           {activeTab === 'analytics' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
 
-              {/* TOP KPI CARDS */}
+              {/* TOP KPI CARDS (Brand Gold Palette) */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
                 {[
-                  { label: 'სულ გადახდილი', val: `₾ ${totalPaidGel.toLocaleString()}`, sub: '91.4% აკრეფილი (+14.2% ზრდა)', color: '#4ade80', Icon: TrendingUp },
-                  { label: 'მოსწავლეთა შევსება', val: `${settings.currentEnrolled} / ${settings.intakeQuotaTotal}`, sub: '92.7% კვოტის შევსება (38 დარჩენილი)', color: '#d4af37', Icon: Users },
-                  { label: 'მიღების კონვერსია', val: '33.8%', sub: '142 განაცხადიდან 48 ჩარიცხული', color: '#60a5fa', Icon: Activity },
-                  { label: 'საგამოცდო საშუალო', val: '92.4 / 100', sub: 'მათემ. 91.2 · ინგლ. 93.8 · ლოგ. 88.5', color: '#a855f7', Icon: Award }
+                  { label: 'სულ გადახდილი', val: `₾ ${totalPaidGel.toLocaleString()}`, sub: '91.4% აკრეფილი (+14.2% ზრდა)', color: '#d4af37', Icon: TrendingUp },
+                  { label: 'მოსწავლეთა შევსება', val: `${settings.currentEnrolled} / ${settings.intakeQuotaTotal}`, sub: '92.7% კვოტის შევსება (38 დარჩენილი)', color: '#f3d368', Icon: Users },
+                  { label: 'მიღების კონვერსია', val: '33.8%', sub: '142 განაცხადიდან 48 ჩარიცხული', color: '#e5c158', Icon: Activity },
+                  { label: 'საგამოცდო საშუალო', val: '92.4 / 100', sub: 'მათემ. 91.2 · ინგლ. 93.8 · ლოგ. 88.5', color: '#c59b27', Icon: Award }
                 ].map((k) => (
                   <div key={k.label} style={{ ...S.card, padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.6)' }}>{k.label}</span>
+                      <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.65)' }}>{k.label}</span>
                       <k.Icon size={18} color={k.color} />
                     </div>
                     <div style={{ fontSize: '1.45rem', fontWeight: 800, color: k.color, letterSpacing: '-0.02em' }}>{k.val}</div>
@@ -693,124 +645,69 @@ export default function AdminDashboard() {
                 ))}
               </div>
 
-              {/* ROW 1: CAPACITY GAUGE & ADMISSIONS FUNNEL */}
-              <div style={{ display: 'grid', gridTemplateColumns: '360px 1fr', gap: '22px' }}>
-                
-                {/* School Capacity Gauge */}
-                <div style={S.card}>
-                  <div style={{ marginBottom: '16px' }}>
-                    <h3 style={S.title}><PieChart size={18} color="#d4af37" />სკოლის შევსებადობა</h3>
-                    <p style={S.sub}>საერთო კვოტა და კლასების საფეხურები</p>
-                  </div>
-                  <CapacityGauge current={settings.currentEnrolled} max={settings.intakeQuotaTotal} />
-
-                  <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {[
-                      { name: 'დაწყებითი საფეხური (I–IV)', cur: 180, max: 190, color: '#4ade80' },
-                      { name: 'საბაზო საფეხური (V–IX)', cur: 195, max: 210, color: '#d4af37' },
-                      { name: 'საშუალო საფეხური (X–XII)', cur: 107, max: 120, color: '#60a5fa' }
-                    ].map((step) => {
-                      const p = Math.round((step.cur / step.max) * 100);
-                      return (
-                        <div key={step.name} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem' }}>
-                            <span style={{ color: 'rgba(255,255,255,0.75)' }}>{step.name}</span>
-                            <span style={{ fontWeight: 700, color: step.color }}>{step.cur}/{step.max} ({p}%)</span>
-                          </div>
-                          <div style={{ height: '6px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', overflow: 'hidden' }}>
-                            <div style={{ height: '100%', width: `${p}%`, background: step.color, borderRadius: '3px' }} />
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Admissions Funnel Chart */}
-                <div style={S.card}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                    <div>
-                      <h3 style={S.title}><TrendingUp size={18} color="#4ade80" />მიღების ძაბრი & კონვერსია</h3>
-                      <p style={S.sub}>განაცხადიდან ჩარიცხვამდე — აპლიკანტთა მოძრაობის დინამიკა</p>
-                    </div>
-                    <span style={{ background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.3)', color: '#d4af37', padding: '4px 10px', borderRadius: '20px', fontSize: '0.74rem', fontWeight: 600 }}>
-                      2026–2027 ნაკადი
-                    </span>
-                  </div>
-                  <AdmissionsFunnelChart />
-                </div>
-
-              </div>
-
-              {/* ROW 2: MONTHLY REVENUE & CASHFLOW */}
+              {/* THE ONE SINGLE MASTER DIAGRAM FOR ANALYTICS */}
               <div style={S.card}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
                   <div>
                     <h3 style={S.title}><DollarSign size={18} color="#d4af37" />შემოსავლების თვიური დინამიკა (ფაქტი vs გეგმა)</h3>
                     <p style={S.sub}>სწავლის საფასურის ფაქტობრივი გადახდები და ბიუჯეტის შესრულება თვეების მიხედვით</p>
                   </div>
-                  <div style={{ display: 'flex', gap: '20px', fontSize: '0.82rem' }}>
-                    <div>საშუალო თვეში: <strong style={{ color: '#4ade80' }}>₾ 49,000</strong></div>
-                    <div>წლიური პროგნოზი: <strong style={{ color: '#d4af37' }}>₾ 580,000</strong></div>
+                  <div style={{ display: 'flex', gap: '16px', fontSize: '0.82rem' }}>
+                    <div style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: '8px', padding: '6px 14px' }}>
+                      <span style={{ color: 'rgba(255,255,255,0.65)' }}>საშუალო თვეში: </span>
+                      <strong style={{ color: '#f3d368' }}>₾ 49,000</strong>
+                    </div>
+                    <div style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: '8px', padding: '6px 14px' }}>
+                      <span style={{ color: 'rgba(255,255,255,0.65)' }}>წლიური პროგნოზი: </span>
+                      <strong style={{ color: '#d4af37' }}>₾ 580,000</strong>
+                    </div>
                   </div>
                 </div>
                 <MonthlyBarChart />
-              </div>
-
-              {/* ROW 3: ACADEMIC PERFORMANCE & FACULTY WORKLOAD */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '22px' }}>
-                
-                {/* Academic Scores Chart */}
-                <div style={S.card}>
-                  <div style={{ marginBottom: '18px' }}>
-                    <h3 style={S.title}><Award size={18} color="#60a5fa" />აკადემიური ტესტირების რეიტინგი</h3>
-                    <p style={S.sub}>შესარჩევი გამოცდების საშუალო ქულები საგნების მიხედვით</p>
-                  </div>
-                  <AcademicScoresChart />
-                </div>
-
-                {/* Faculty Workload Chart */}
-                <div style={S.card}>
-                  <div style={{ marginBottom: '18px' }}>
-                    <h3 style={S.title}><Users size={18} color="#a855f7" />კათედრების საათობრივი განაწილება</h3>
-                    <p style={S.sub}>პედაგოგიური დატვირთვა საგნობრივი მიმართულებების მიხედვით</p>
-                  </div>
-                  <DepartmentDistributionChart />
-                  <div style={{ marginTop: '20px', paddingTop: '14px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: 'rgba(255,255,255,0.7)' }}>
-                    <span>სულ საათები: <strong style={{ color: '#fff' }}>119 სთ/კვირაში</strong></span>
-                    <span>საშუალო რეიტინგი: <strong style={{ color: '#4ade80' }}>★ 4.95 / 5.0</strong></span>
-                  </div>
-                </div>
-
               </div>
 
             </div>
           )}
 
           {/* ══════════════════════════════════════════════════════════════════════════
-              1. CANDIDATES & ADMISSIONS
+              1. CANDIDATES & ADMISSIONS (ერთი დიაგრამა + დოსიეების რეესტრი)
               ══════════════════════════════════════════════════════════════════════════ */}
           {activeTab === 'admissions' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
               
-              {/* Admissions Mini Visuals */}
+              {/* Admissions Summary Status Pills */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
                 {[
                   { label: 'ახალი განაცხადები', count: candidates.filter(c => c.status === 'ახალი განაცხადი').length, color: '#d4af37' },
-                  { label: 'გასაუბრება დანიშნული', count: candidates.filter(c => c.status === 'გასაუბრება დანიშნული').length, color: '#60a5fa' },
-                  { label: 'ჩარიცხული', count: candidates.filter(c => c.status === 'ჩარიცხული').length, color: '#4ade80' },
-                  { label: 'უარყოფილი', count: candidates.filter(c => c.status === 'უარყოფილი').length, color: '#f87171' }
+                  { label: 'გასაუბრება დანიშნული', count: candidates.filter(c => c.status === 'გასაუბრება დანიშნული').length, color: '#f3d368' },
+                  { label: 'ჩარიცხული', count: candidates.filter(c => c.status === 'ჩარიცხული').length, color: '#e5c158' },
+                  { label: 'უარყოფილი', count: candidates.filter(c => c.status === 'უარყოფილი').length, color: '#c25e5e' }
                 ].map((s) => (
-                  <div key={s.label} style={{ background: 'rgba(25,16,20,0.75)', border: '1px solid rgba(212,175,55,0.18)', borderRadius: '12px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div key={s.label} style={{ background: 'rgba(25,16,20,0.78)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '12px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                      <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>{s.label}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.65)' }}>{s.label}</div>
                       <div style={{ fontSize: '1.4rem', fontWeight: 800, color: s.color, marginTop: '4px' }}>{s.count}</div>
                     </div>
-                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: s.color, boxShadow: `0 0 8px ${s.color}` }} />
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: s.color, boxShadow: `0 0 8px ${s.color}66` }} />
                   </div>
                 ))}
               </div>
 
+              {/* THE ONE SINGLE DIAGRAM FOR ADMISSIONS */}
+              <div style={S.card}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                  <div>
+                    <h3 style={S.title}><TrendingUp size={18} color="#d4af37" />მიღების ძაბრი & კონვერსია</h3>
+                    <p style={S.sub}>განაცხადიდან ჩარიცხვამდე — აპლიკანტთა მოძრაობის დინამიკა (2026–2027 ნაკადი)</p>
+                  </div>
+                  <span style={{ background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.3)', color: '#d4af37', padding: '4px 12px', borderRadius: '20px', fontSize: '0.74rem', fontWeight: 600 }}>
+                    2026–2027 ნაკადი
+                  </span>
+                </div>
+                <AdmissionsFunnelChart />
+              </div>
+
+              {/* Candidate Dossier Table */}
               <div style={S.card}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '14px' }}>
                   <div>
@@ -846,17 +743,17 @@ export default function AdminDashboard() {
                           <td style={{ padding: '14px', color: '#d4af37' }}>{c.gradeApplied}</td>
                           <td style={{ padding: '14px' }}>
                             <div style={{ display: 'flex', gap: '6px', fontSize: '0.78rem' }}>
-                              <span style={{ background: 'rgba(96,165,250,0.15)', color: '#60a5fa', padding: '2px 6px', borderRadius: '4px' }}>მათ: {c.mathScore}</span>
-                              <span style={{ background: 'rgba(74,222,128,0.15)', color: '#4ade80', padding: '2px 6px', borderRadius: '4px' }}>ინგლ: {c.englishScore}</span>
-                              <span style={{ background: 'rgba(212,175,55,0.15)', color: '#d4af37', padding: '2px 6px', borderRadius: '4px' }}>ლოგ: {c.logicScore}</span>
+                              <span style={{ background: 'rgba(212,175,55,0.15)', color: '#d4af37', padding: '2px 6px', borderRadius: '4px' }}>მათ: {c.mathScore}</span>
+                              <span style={{ background: 'rgba(243,211,104,0.15)', color: '#f3d368', padding: '2px 6px', borderRadius: '4px' }}>ინგლ: {c.englishScore}</span>
+                              <span style={{ background: 'rgba(170,130,10,0.15)', color: '#aa820a', padding: '2px 6px', borderRadius: '4px' }}>ლოგ: {c.logicScore}</span>
                             </div>
                           </td>
                           <td style={{ padding: '14px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.85)' }}>{c.scholarshipRequest}</td>
                           <td style={{ padding: '14px' }}><span style={S.statusBadge(c.status)}>{c.status}</span></td>
                           <td style={{ padding: '14px', textAlign: 'right' }} onClick={(e) => e.stopPropagation()}>
                             <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
-                              {c.status !== 'ჩარიცხული' && <button onClick={() => handleUpdateCandidateStatus(c.id, 'ჩარიცხული')} style={{ background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.4)', color: '#4ade80', borderRadius: '6px', padding: '5px 10px', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}><Check size={13} /><span>ჩარიცხვა</span></button>}
-                              {c.status !== 'უარყოფილი' && <button onClick={() => handleUpdateCandidateStatus(c.id, 'უარყოფილი')} style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171', borderRadius: '6px', padding: '5px 8px', cursor: 'pointer' }}><X size={14} /></button>}
+                              {c.status !== 'ჩარიცხული' && <button onClick={() => handleUpdateCandidateStatus(c.id, 'ჩარიცხული')} style={{ background: 'rgba(212,175,55,0.18)', border: '1px solid rgba(212,175,55,0.35)', color: '#d4af37', borderRadius: '6px', padding: '5px 10px', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}><Check size={13} /><span>ჩარიცხვა</span></button>}
+                              {c.status !== 'უარყოფილი' && <button onClick={() => handleUpdateCandidateStatus(c.id, 'უარყოფილი')} style={{ background: 'rgba(194,94,94,0.15)', border: '1px solid rgba(194,94,94,0.3)', color: '#c25e5e', borderRadius: '6px', padding: '5px 8px', cursor: 'pointer' }}><X size={14} /></button>}
                             </div>
                           </td>
                         </tr>
@@ -877,9 +774,9 @@ export default function AdminDashboard() {
                       <div style={{ background: 'rgba(0,0,0,0.4)', padding: '14px', borderRadius: '10px' }}>
                         <div style={{ color: '#d4af37', fontWeight: 600, marginBottom: '8px' }}>საგამოცდო შედეგები</div>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '10px' }}>
-                          <div>მათემატიკა: <strong>{selectedCandidate.mathScore}/100</strong></div>
-                          <div>ინგლისური: <strong>{selectedCandidate.englishScore}/100</strong></div>
-                          <div>ლოგიკა: <strong>{selectedCandidate.logicScore}/100</strong></div>
+                          <div>მათემატიკა: <strong style={{ color: '#d4af37' }}>{selectedCandidate.mathScore}/100</strong></div>
+                          <div>ინგლისური: <strong style={{ color: '#f3d368' }}>{selectedCandidate.englishScore}/100</strong></div>
+                          <div>ლოგიკა: <strong style={{ color: '#aa820a' }}>{selectedCandidate.logicScore}/100</strong></div>
                         </div>
                       </div>
                       <div style={{ background: 'rgba(0,0,0,0.4)', padding: '14px', borderRadius: '10px' }}>
@@ -893,8 +790,8 @@ export default function AdminDashboard() {
                         <span>სტიპენდიის მოთხოვნა:</span><strong style={{ color: '#d4af37' }}>{selectedCandidate.scholarshipRequest}</strong>
                       </div>
                       <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
-                        <button onClick={() => handleUpdateCandidateStatus(selectedCandidate.id, 'ჩარიცხული')} style={{ flex: 1, padding: '12px', borderRadius: '10px', background: '#22c55e', border: 'none', color: '#fff', fontWeight: 700, cursor: 'pointer' }}>ჩარიცხვის ბრძანება</button>
-                        <button onClick={() => handleUpdateCandidateStatus(selectedCandidate.id, 'უარყოფილი')} style={{ flex: 1, padding: '12px', borderRadius: '10px', background: 'rgba(239,68,68,0.2)', border: '1px solid rgba(239,68,68,0.4)', color: '#f87171', fontWeight: 700, cursor: 'pointer' }}>განაცხადის უარყოფა</button>
+                        <button onClick={() => handleUpdateCandidateStatus(selectedCandidate.id, 'ჩარიცხული')} style={{ flex: 1, padding: '12px', borderRadius: '10px', background: 'linear-gradient(135deg, #f6d56d 0%, #d4af37 100%)', border: 'none', color: '#1a1014', fontWeight: 700, cursor: 'pointer' }}>ჩარიცხვის ბრძანება</button>
+                        <button onClick={() => handleUpdateCandidateStatus(selectedCandidate.id, 'უარყოფილი')} style={{ flex: 1, padding: '12px', borderRadius: '10px', background: 'rgba(194,94,94,0.15)', border: '1px solid rgba(194,94,94,0.3)', color: '#c25e5e', fontWeight: 700, cursor: 'pointer' }}>განაცხადის უარყოფა</button>
                       </div>
                     </div>
                   </div>
@@ -904,7 +801,7 @@ export default function AdminDashboard() {
           )}
 
           {/* ══════════════════════════════════════════════════════════════════════════
-              2. TUITION & FINANCE
+              2. TUITION & FINANCE (ერთი დიაგრამა - DonutChart + რეესტრი)
               ══════════════════════════════════════════════════════════════════════════ */}
           {activeTab === 'finance' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
@@ -912,19 +809,20 @@ export default function AdminDashboard() {
               {/* Finance Overview Cards + Donut Chart */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: '16px', alignItems: 'stretch' }}>
                 {[
-                  { label: 'სულ გადახდილი', value: `₾ ${totalPaidGel.toLocaleString()}`, color: '#4ade80', Icon: TrendingUp },
-                  { label: 'სულ დავალიანება', value: `₾ ${totalDueGel.toLocaleString()}`, color: '#f87171', Icon: TrendingDown },
-                  { label: 'ვადაგადაცილებული', value: `${overdueCount} მოსწავლე`, color: '#f87171', Icon: AlertTriangle }
+                  { label: 'სულ გადახდილი', value: `₾ ${totalPaidGel.toLocaleString()}`, color: '#d4af37', Icon: TrendingUp },
+                  { label: 'სულ დავალიანება', value: `₾ ${totalDueGel.toLocaleString()}`, color: '#e5a93b', Icon: TrendingDown },
+                  { label: 'ვადაგადაცილებული', value: `${overdueCount} მოსწავლე`, color: '#c25e5e', Icon: AlertTriangle }
                 ].map((item) => (
                   <div key={item.label} style={{ background: 'rgba(25,16,20,0.76)', backdropFilter: 'blur(20px)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '14px', padding: '20px', display: 'flex', alignItems: 'center', gap: '16px' }}>
                     <item.Icon size={28} color={item.color} />
-                    <div><div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>{item.label}</div><div style={{ fontSize: '1.25rem', fontWeight: 700, color: item.color }}>{item.value}</div></div>
+                    <div><div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.65)', marginBottom: '4px' }}>{item.label}</div><div style={{ fontSize: '1.25rem', fontWeight: 700, color: item.color }}>{item.value}</div></div>
                   </div>
                 ))}
+                {/* THE ONE SINGLE DIAGRAM FOR FINANCE */}
                 <div style={{ background: 'rgba(25,16,20,0.76)', backdropFilter: 'blur(20px)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '14px', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '20px' }}>
                   <DonutChart paid={paidCount} pending={pendingCount} overdue={overdueCount} scholarship={scholarshipCount} />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.78rem' }}>
-                    {[['#4ade80', 'დაფარული', paidCount], ['#d4af37', 'მოლოდინში', pendingCount], ['#f87171', 'ვადაგადაც.', overdueCount], ['#60a5fa', 'სტიპენდია', scholarshipCount]].map(([color, label, count]) => (
+                    {[['#d4af37', 'დაფარული', paidCount], ['#f3d368', 'მოლოდინში', pendingCount], ['#c25e5e', 'ვადაგადაც.', overdueCount], ['#8a5a2b', 'სტიპენდია', scholarshipCount]].map(([color, label, count]) => (
                       <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div style={{ width: '10px', height: '10px', borderRadius: '3px', background: color, flexShrink: 0 }} />
                         <span style={{ color: 'rgba(255,255,255,0.7)' }}>{label}:</span>
@@ -940,11 +838,11 @@ export default function AdminDashboard() {
                 <h4 style={{ fontSize: '0.98rem', fontWeight: 700, color: '#d4af37', marginBottom: '14px' }}>საფასურის ამოღება კლასების მიხედვით</h4>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '18px' }}>
                   {[
-                    { grade: 'დაწყებითი (I–IV კლასი)', rate: 96, collected: '₾ 21,500', due: '₾ 900', color: '#4ade80' },
+                    { grade: 'დაწყებითი (I–IV კლასი)', rate: 96, collected: '₾ 21,500', due: '₾ 900', color: '#f3d368' },
                     { grade: 'საბაზო (V–IX კლასი)', rate: 88, collected: '₾ 18,200', due: '₾ 2,500', color: '#d4af37' },
-                    { grade: 'საშუალო (X–XII კლასი)', rate: 94, collected: '₾ 13,700', due: '₾ 850', color: '#60a5fa' }
+                    { grade: 'საშუალო (X–XII კლასი)', rate: 94, collected: '₾ 13,700', due: '₾ 850', color: '#aa820a' }
                   ].map((g) => (
-                    <div key={g.grade} style={{ background: 'rgba(0,0,0,0.35)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div key={g.grade} style={{ background: 'rgba(0,0,0,0.35)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(212,175,55,0.12)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '8px' }}>
                         <span style={{ fontWeight: 600 }}>{g.grade}</span>
                         <strong style={{ color: g.color }}>{g.rate}%</strong>
@@ -952,16 +850,16 @@ export default function AdminDashboard() {
                       <div style={{ height: '8px', background: 'rgba(255,255,255,0.08)', borderRadius: '4px', overflow: 'hidden', marginBottom: '10px' }}>
                         <div style={{ height: '100%', width: `${g.rate}%`, background: g.color, borderRadius: '4px' }} />
                       </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'rgba(255,255,255,0.6)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'rgba(255,255,255,0.65)' }}>
                         <span>აკრეფილი: <strong style={{ color: '#fff' }}>{g.collected}</strong></span>
-                        <span>დარჩენილი: <strong style={{ color: '#f87171' }}>{g.due}</strong></span>
+                        <span>დარჩენილი: <strong style={{ color: '#e5a93b' }}>{g.due}</strong></span>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Table */}
+              {/* Tuition Registry Table */}
               <div style={S.card}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '14px' }}>
                   <div><h2 style={S.title}><DollarSign size={20} color="#d4af37" />საფასურის & გადახდების რეესტრი</h2><p style={S.sub}>სწავლის საფასური, გადახდის გრაფიკი, დავალიანებები</p></div>
@@ -971,7 +869,7 @@ export default function AdminDashboard() {
                     ))}
                   </div>
                 </div>
-                {reminderAlert && <div style={{ padding: '12px 18px', background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.4)', borderRadius: '10px', color: '#4ade80', marginBottom: '18px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}><CheckCircle2 size={16} /><span>{reminderAlert}</span></div>}
+                {reminderAlert && <div style={{ padding: '12px 18px', background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.35)', borderRadius: '10px', color: '#d4af37', marginBottom: '18px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}><CheckCircle2 size={16} /><span>{reminderAlert}</span></div>}
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.86rem' }}>
                     <thead>
@@ -989,8 +887,8 @@ export default function AdminDashboard() {
                         <tr key={r.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                           <td style={{ padding: '14px' }}><div style={{ fontWeight: 700 }}>{r.studentName}</div><div style={{ fontSize: '0.74rem', color: '#d4af37' }}>{r.grade} · {r.plan}</div></td>
                           <td style={{ padding: '14px', fontWeight: 600 }}>₾ {r.annualFee.toLocaleString()}</td>
-                          <td style={{ padding: '14px', color: '#4ade80', fontWeight: 700 }}>₾ {r.paidAmount.toLocaleString()}</td>
-                          <td style={{ padding: '14px', color: r.dueAmount > 0 ? '#f87171' : 'rgba(255,255,255,0.5)' }}>₾ {r.dueAmount.toLocaleString()}</td>
+                          <td style={{ padding: '14px', color: '#d4af37', fontWeight: 700 }}>₾ {r.paidAmount.toLocaleString()}</td>
+                          <td style={{ padding: '14px', color: r.dueAmount > 0 ? '#e5a93b' : 'rgba(255,255,255,0.45)' }}>₾ {r.dueAmount.toLocaleString()}</td>
                           <td style={{ padding: '14px' }}><span style={S.statusBadge(r.status)}>{r.status}</span></td>
                           <td style={{ padding: '14px', textAlign: 'right' }}>
                             {r.dueAmount > 0 && <button onClick={() => handleSendReminder(r.studentName)} style={{ background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.35)', color: '#d4af37', borderRadius: '6px', padding: '6px 12px', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}><Send size={13} /><span>შეხსენება</span></button>}
@@ -1006,7 +904,7 @@ export default function AdminDashboard() {
           )}
 
           {/* ══════════════════════════════════════════════════════════════════════════
-              3. TEACHERS & WORKLOAD
+              3. TEACHERS & WORKLOAD (ერთი დიაგრამა - DepartmentDistributionChart + კადრები)
               ══════════════════════════════════════════════════════════════════════════ */}
           {activeTab === 'teachers' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
@@ -1014,22 +912,36 @@ export default function AdminDashboard() {
               {/* Department Overview Banner */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
                 <div style={{ ...S.card, padding: '18px 20px' }}>
-                  <div style={{ fontSize: '0.76rem', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>კვირეული აკადემიური საათები</div>
+                  <div style={{ fontSize: '0.76rem', color: 'rgba(255,255,255,0.65)', marginBottom: '4px' }}>კვირეული აკადემიური საათები</div>
                   <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#d4af37' }}>94 საათი/კვ.</div>
                   <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', marginTop: '4px' }}>საშუალოდ 18.8 სთ / პედაგოგზე</div>
                 </div>
                 <div style={{ ...S.card, padding: '18px 20px' }}>
-                  <div style={{ fontSize: '0.76rem', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>პედაგოგთა საშუალო რეიტინგი</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#4ade80' }}>★ 4.95 / 5.0</div>
+                  <div style={{ fontSize: '0.76rem', color: 'rgba(255,255,255,0.65)', marginBottom: '4px' }}>პედაგოგთა საშუალო რეიტინგი</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f3d368' }}>★ 4.95 / 5.0</div>
                   <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', marginTop: '4px' }}>მოსწავლეთა და მშობელთა შეფასებით</div>
                 </div>
                 <div style={{ ...S.card, padding: '18px 20px' }}>
-                  <div style={{ fontSize: '0.76rem', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>აკადემიური ხარისხი</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#60a5fa' }}>80% დოქტორი</div>
+                  <div style={{ fontSize: '0.76rem', color: 'rgba(255,255,255,0.65)', marginBottom: '4px' }}>აკადემიური ხარისხი</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#aa820a' }}>80% დოქტორი</div>
                   <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', marginTop: '4px' }}>MIT, Oxford, თსუ კურსდამთავრებულები</div>
                 </div>
               </div>
 
+              {/* THE ONE SINGLE DIAGRAM FOR TEACHERS */}
+              <div style={S.card}>
+                <div style={{ marginBottom: '18px' }}>
+                  <h3 style={S.title}><Users size={18} color="#d4af37" />კათედრების საათობრივი განაწილება</h3>
+                  <p style={S.sub}>პედაგოგიური დატვირთვა საგნობრივი მიმართულებების მიხედვით</p>
+                </div>
+                <DepartmentDistributionChart />
+                <div style={{ marginTop: '18px', paddingTop: '14px', borderTop: '1px solid rgba(212,175,55,0.15)', display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: 'rgba(255,255,255,0.7)' }}>
+                  <span>სულ საათები: <strong style={{ color: '#fff' }}>119 სთ/კვირაში</strong></span>
+                  <span>საშუალო რეიტინგი: <strong style={{ color: '#f3d368' }}>★ 4.95 / 5.0</strong></span>
+                </div>
+              </div>
+
+              {/* Faculty Members Grid */}
               <div style={S.card}>
                 <div style={{ marginBottom: '22px' }}>
                   <h2 style={S.title}><Users size={20} color="#d4af37" />პედაგოგიური პერსონალი & დატვირთვა</h2>
@@ -1040,7 +952,7 @@ export default function AdminDashboard() {
                     <div key={t.id} style={{ background: 'rgba(0,0,0,0.35)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '14px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div><h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>{t.name}</h4><span style={{ fontSize: '0.78rem', color: '#d4af37' }}>{t.title}</span></div>
-                        <span style={{ background: 'rgba(74,222,128,0.15)', color: '#4ade80', padding: '3px 8px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700 }}>★ {t.rating}</span>
+                        <span style={{ background: 'rgba(212,175,55,0.15)', color: '#d4af37', padding: '3px 8px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700 }}>★ {t.rating}</span>
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem', color: 'rgba(255,255,255,0.75)' }}>
                         <div>კათედრა: <strong style={{ color: '#fff' }}>{t.dept}</strong></div>
@@ -1133,13 +1045,13 @@ export default function AdminDashboard() {
                       ))}
                     </div>
                     <div style={{ fontSize: '0.76rem', color: 'rgba(255,255,255,0.6)', paddingLeft: '8px', borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
-                      აქტიური: <strong style={{ color: '#4ade80' }}>{inviteCodes.filter(c => c.is_active).length}</strong> / {inviteCodes.length}
+                      აქტიური: <strong style={{ color: '#d4af37' }}>{inviteCodes.filter(c => c.is_active).length}</strong> / {inviteCodes.length}
                     </div>
                   </div>
                 </div>
 
-                {inviteSuccess && <div style={{ padding: '12px 16px', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.4)', borderRadius: '10px', color: '#4ade80', marginBottom: '16px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}><CheckCircle2 size={16} />{inviteSuccess}</div>}
-                {inviteError && <div style={{ padding: '12px 16px', background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.4)', borderRadius: '10px', color: '#f87171', marginBottom: '16px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}><AlertTriangle size={16} />{inviteError}</div>}
+                {inviteSuccess && <div style={{ padding: '12px 16px', background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.4)', borderRadius: '10px', color: '#d4af37', marginBottom: '16px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}><CheckCircle2 size={16} />{inviteSuccess}</div>}
+                {inviteError && <div style={{ padding: '12px 16px', background: 'rgba(194,94,94,0.15)', border: '1px solid rgba(194,94,94,0.4)', borderRadius: '10px', color: '#c25e5e', marginBottom: '16px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}><AlertTriangle size={16} />{inviteError}</div>}
 
                 {inviteLoading && inviteCodes.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '40px', color: 'rgba(255,255,255,0.5)' }}>იტვირთება...</div>
@@ -1163,18 +1075,18 @@ export default function AdminDashboard() {
                             <div>
                               <div style={{ fontFamily: 'monospace', fontSize: '1rem', fontWeight: 700, letterSpacing: '0.06em', color: code.is_active ? '#d4af37' : 'rgba(255,255,255,0.4)' }}>{code.code}</div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
-                                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: code.is_active ? '#4ade80' : 'rgba(255,255,255,0.3)' }} />
-                                <span style={{ fontSize: '0.7rem', color: code.is_active ? '#4ade80' : 'rgba(255,255,255,0.4)' }}>{code.is_active ? 'აქტიური' : 'გამოყენებული'}</span>
+                                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: code.is_active ? '#d4af37' : 'rgba(255,255,255,0.3)' }} />
+                                <span style={{ fontSize: '0.7rem', color: code.is_active ? '#d4af37' : 'rgba(255,255,255,0.4)' }}>{code.is_active ? 'აქტიური' : 'გამოყენებული'}</span>
                               </div>
                             </div>
                           </div>
                           <div style={{ display: 'flex', gap: '6px' }}>
                             {code.is_active && (
-                              <button onClick={() => handleCopyCode(code.code, code.id)} title="კოპირება" style={{ background: copiedId === code.id ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.06)', border: `1px solid ${copiedId === code.id ? 'rgba(34,197,94,0.4)' : 'rgba(255,255,255,0.1)'}`, borderRadius: '7px', padding: '6px 8px', color: copiedId === code.id ? '#4ade80' : 'rgba(255,255,255,0.6)', cursor: 'pointer', transition: 'all 0.15s' }}>
+                              <button onClick={() => handleCopyCode(code.code, code.id)} title="კოპირება" style={{ background: copiedId === code.id ? 'rgba(212,175,55,0.25)' : 'rgba(255,255,255,0.06)', border: `1px solid ${copiedId === code.id ? '#d4af37' : 'rgba(255,255,255,0.1)'}`, borderRadius: '7px', padding: '6px 8px', color: copiedId === code.id ? '#d4af37' : 'rgba(255,255,255,0.6)', cursor: 'pointer', transition: 'all 0.15s' }}>
                                 {copiedId === code.id ? <Check size={14} /> : <Copy size={14} />}
                               </button>
                             )}
-                            <button onClick={() => handleDeleteCode(code.id)} title="წაშლა" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: '7px', padding: '6px 8px', color: '#f87171', cursor: 'pointer' }}>
+                            <button onClick={() => handleDeleteCode(code.id)} title="წაშლა" style={{ background: 'rgba(194,94,94,0.1)', border: '1px solid rgba(194,94,94,0.25)', borderRadius: '7px', padding: '6px 8px', color: '#c25e5e', cursor: 'pointer' }}>
                               <Trash2 size={14} />
                             </button>
                           </div>
@@ -1207,8 +1119,8 @@ export default function AdminDashboard() {
                     <div style={{ fontSize: '0.92rem', fontWeight: 600 }}>ონლაინ რეგისტრაციის მიღება</div>
                     <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.6)' }}>ჩართულია თუ არა ონლაინ განაცხადის ფორმა</div>
                   </div>
-                  <button type="button" onClick={() => setSettings({ ...settings, admissionsOpen: !settings.admissionsOpen })} style={{ width: '50px', height: '26px', borderRadius: '14px', background: settings.admissionsOpen ? '#22c55e' : 'rgba(255,255,255,0.2)', border: 'none', position: 'relative', cursor: 'pointer', transition: 'background 0.2s' }}>
-                    <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#fff', position: 'absolute', top: '3px', left: settings.admissionsOpen ? '27px' : '3px', transition: 'left 0.2s' }} />
+                  <button type="button" onClick={() => setSettings({ ...settings, admissionsOpen: !settings.admissionsOpen })} style={{ width: '50px', height: '26px', borderRadius: '14px', background: settings.admissionsOpen ? 'linear-gradient(135deg, #f6d56d 0%, #d4af37 100%)' : 'rgba(255,255,255,0.2)', border: 'none', position: 'relative', cursor: 'pointer', transition: 'background 0.2s' }}>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#1a1014', position: 'absolute', top: '3px', left: settings.admissionsOpen ? '27px' : '3px', transition: 'left 0.2s' }} />
                   </button>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -1225,7 +1137,7 @@ export default function AdminDashboard() {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                   <button type="submit" style={{ background: 'linear-gradient(135deg,#d4af37 0%,#aa820a 100%)', border: 'none', borderRadius: '10px', padding: '12px 28px', color: '#1a1014', fontSize: '0.92rem', fontWeight: 700, cursor: 'pointer' }}>პარამეტრების შენახვა</button>
-                  {settingsSaved && <span style={{ color: '#4ade80', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}><Check size={16} /><span>შენახულია!</span></span>}
+                  {settingsSaved && <span style={{ color: '#d4af37', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}><Check size={16} /><span>შენახულია!</span></span>}
                 </div>
               </form>
             </div>
