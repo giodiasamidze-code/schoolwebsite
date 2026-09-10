@@ -116,55 +116,55 @@ export default function TeamSection() {
         style={{
           position: 'relative',
           zIndex: 2,
-          maxWidth: '1240px',
+          maxWidth: '1100px',
           width: '100%',
-          display: 'grid',
-          gridTemplateColumns: '320px 1fr',
-          gap: '40px',
-          alignItems: 'center'
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '36px'
         }}
       >
-        {/* Left Column matching Photo 9 */}
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%', minHeight: '480px' }}>
-          <div>
-            <div
-              style={{
-                fontSize: '0.95rem',
-                color: 'rgba(255, 255, 255, 0.65)',
-                marginBottom: '8px',
-                fontWeight: 500
-              }}
-            >
-              ჩვენი გუნდი
-            </div>
-            <h2
-              style={{
-                fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
-                fontSize: 'clamp(2.5rem, 4vw, 3.4rem)',
-                fontWeight: 700,
-                color: '#ffffff',
-                lineHeight: 1.15,
-                marginBottom: '14px'
-              }}
-            >
-              პედაგოგები
-            </h2>
-            <p
-              style={{
-                fontSize: '1.05rem',
-                color: 'rgba(255, 255, 255, 0.8)',
-                lineHeight: 1.5,
-                marginBottom: '32px'
-              }}
-            >
-              გაიცანით აკადემიის გუნდი
-            </p>
+        {/* Top Header Block - Centered */}
+        <div style={{ textAlign: 'center', maxWidth: '640px' }}>
+          <div
+            style={{
+              fontSize: '0.95rem',
+              color: 'rgba(255, 255, 255, 0.65)',
+              marginBottom: '8px',
+              fontWeight: 500,
+              letterSpacing: '0.04em'
+            }}
+          >
+            ჩვენი გუნდი
           </div>
+          <h2
+            style={{
+              fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
+              fontSize: 'clamp(2.5rem, 4.5vw, 3.6rem)',
+              fontWeight: 700,
+              color: '#ffffff',
+              lineHeight: 1.15,
+              marginBottom: '12px'
+            }}
+          >
+            პედაგოგები
+          </h2>
+          <p
+            style={{
+              fontSize: '1.1rem',
+              color: 'rgba(255, 255, 255, 0.8)',
+              lineHeight: 1.5,
+              margin: 0
+            }}
+          >
+            გაიცანით აკადემიის გუნდი
+          </p>
         </div>
 
-        {/* Right Main Frosted Card matching Photo 9 */}
+        {/* Centered Main Frosted Card */}
         <div
           style={{
+            width: '100%',
             background: 'rgba(25, 16, 20, 0.6)',
             backdropFilter: 'blur(24px)',
             WebkitBackdropFilter: 'blur(24px)',
