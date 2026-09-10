@@ -1482,43 +1482,6 @@ export default function TeacherDashboard() {
       >
         <div style={{ display: 'flex', gap: '12px' }}>
           <button
-            onClick={() => {
-              try {
-                localStorage.setItem('solomon_teacher_draft', JSON.stringify(profile));
-                alert('მონახაზი წარმატებით შეინახა');
-              } catch (e) {
-                alert('მონახაზი შენახულია');
-              }
-            }}
-            style={{
-              background: 'rgba(30, 20, 24, 0.7)',
-              border: '1px solid rgba(212, 175, 55, 0.25)',
-              borderRadius: '10px',
-              padding: '10px 20px',
-              color: '#ffffff',
-              fontSize: '0.9rem',
-              fontWeight: 600,
-              cursor: 'pointer'
-            }}
-          >
-            მონახაზი
-          </button>
-          <button
-            onClick={() => setActiveNav('profile')}
-            style={{
-              background: 'rgba(30, 20, 24, 0.7)',
-              border: '1px solid rgba(212, 175, 55, 0.25)',
-              borderRadius: '10px',
-              padding: '10px 20px',
-              color: '#ffffff',
-              fontSize: '0.9rem',
-              fontWeight: 600,
-              cursor: 'pointer'
-            }}
-          >
-            გადახედვა
-          </button>
-          <button
             onClick={handleSave}
             style={{
               background: 'linear-gradient(180deg, #d4af37 0%, #b88628 100%)',
