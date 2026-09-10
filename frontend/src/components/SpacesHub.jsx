@@ -73,8 +73,10 @@ export default function SpacesHub({ onNavigate }) {
         background: 'transparent',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
-        padding: '110px 40px 30px',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '32px',
+        padding: '100px 40px 60px',
         color: '#ffffff',
         overflow: 'hidden'
       }}
@@ -84,13 +86,13 @@ export default function SpacesHub({ onNavigate }) {
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'radial-gradient(circle at 50% 30%, rgba(212, 175, 55, 0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle at 50% 40%, rgba(212, 175, 55, 0.08) 0%, transparent 70%)',
           pointerEvents: 'none'
         }}
       />
 
       {/* Top Heading */}
-      <div style={{ textAlign: 'center', position: 'relative', zIndex: 2, marginBottom: '30px' }}>
+      <div style={{ textAlign: 'center', position: 'relative', zIndex: 2 }}>
         <h2
           style={{
             fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
@@ -109,7 +111,8 @@ export default function SpacesHub({ onNavigate }) {
             fontSize: 'clamp(0.95rem, 1.3vw, 1.15rem)',
             color: 'rgba(255, 255, 255, 0.85)',
             fontWeight: 400,
-            letterSpacing: '0.02em'
+            letterSpacing: '0.02em',
+            margin: 0
           }}
         >
           აირჩიეთ თქვენთვის საინტერესო მიმართულება
