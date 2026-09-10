@@ -148,8 +148,8 @@ export default function Header({ activeSection = 'hero' }) {
       <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
         {navItems.map((item) => {
           const isItemActive =
-            (item.id === 'hero' && (activeSection === 'hero' || path === '/')) ||
-            (item.id === 'gallery' && path === '/gallery');
+            (item.id === 'gallery' && path === '/gallery') ||
+            (path === '/' && ((item.id === 'hero' && activeSection === 'hero') || activeSection === item.id));
 
           return (
             <a
