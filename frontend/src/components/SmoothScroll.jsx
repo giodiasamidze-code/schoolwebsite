@@ -26,6 +26,15 @@ export default function SmoothScroll() {
       syncTouch: false,
       // Easing function — expo out for a silky deceleration tail
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      prevent: (node) => {
+        return (
+          node &&
+          node.nodeType === 1 &&
+          (node.hasAttribute('data-lenis-prevent') ||
+            Boolean(node.closest && node.closest('[data-lenis-prevent]')) ||
+            Boolean(node.classList && node.classList.contains('custom-scrollbar')))
+        );
+      }
     });
 
     // Integrate with requestAnimationFrame for perfect 60/120fps rendering

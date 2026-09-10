@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, X, Check, Utensils, Shield, Bus, User, Calendar, Phone, Mail, MapPin, GraduationCap, HeartPulse, Sparkles, BookOpen, Clock } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
@@ -6,6 +6,24 @@ export default function AdmissionsSection() {
   const { navigate } = useAuth();
   const [selectedTier, setSelectedTier] = useState(1);
   const [isApplicationOpen, setIsApplicationOpen] = useState(false);
+
+  // Lock document body scroll and stop Lenis when application modal is open
+  useEffect(() => {
+    if (isApplicationOpen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      if (window.__lenis) {
+        window.__lenis.stop();
+      }
+
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        if (window.__lenis) {
+          window.__lenis.start();
+        }
+      };
+    }
+  }, [isApplicationOpen]);
   const [applicantForm, setApplicantForm] = useState({
     // Student Info
     studentFullName: '',
@@ -431,20 +449,25 @@ export default function AdmissionsSection() {
       {/* Online Application Modal Form */}
       {isApplicationOpen && (
         <div
+          data-lenis-prevent="true"
           style={{
             position: 'fixed',
             inset: 0,
             zIndex: 9999,
-            background: 'rgba(0, 0, 0, 0.8)',
+            background: 'rgba(0, 0, 0, 0.82)',
             backdropFilter: 'blur(14px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '20px'
+            padding: '20px',
+            overscrollBehavior: 'contain'
           }}
           onClick={() => setIsApplicationOpen(false)}
+          onWheel={(e) => e.stopPropagation()}
         >
           <div
+            data-lenis-prevent="true"
+            className="custom-scrollbar"
             style={{
               background: 'rgba(22, 13, 17, 0.97)',
               border: '1.5px solid rgba(212, 175, 55, 0.4)',
@@ -452,13 +475,15 @@ export default function AdmissionsSection() {
               padding: '36px 32px',
               maxWidth: '760px',
               width: '100%',
-              maxHeight: '90vh',
+              maxHeight: '88vh',
               overflowY: 'auto',
+              overscrollBehavior: 'contain',
               boxShadow: '0 30px 80px rgba(0, 0, 0, 0.85)',
               position: 'relative',
               color: '#ffffff'
             }}
             onClick={(e) => e.stopPropagation()}
+            onWheel={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setIsApplicationOpen(false)}

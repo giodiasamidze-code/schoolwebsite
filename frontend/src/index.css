@@ -1667,5 +1667,39 @@ section {
   }
 }
 
+/* ======================================================= */
+/* Luxury Modal Custom Scrollbars & Isolation              */
+/* ======================================================= */
+.custom-scrollbar::-webkit-scrollbar,
+[data-lenis-prevent]::-webkit-scrollbar {
+  width: 7px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track,
+[data-lenis-prevent]::-webkit-scrollbar-track {
+  background: rgba(12, 6, 8, 0.7);
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb,
+[data-lenis-prevent]::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.45);
+  border-radius: 8px;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover,
+[data-lenis-prevent]::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.75);
+}
+
+/* Firefox custom scrollbar */
+.custom-scrollbar,
+[data-lenis-prevent] {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 175, 55, 0.45) rgba(12, 6, 8, 0.7);
+}
+
+
 
 

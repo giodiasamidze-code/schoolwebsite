@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, ArrowLeft, ArrowRight, BookOpen, Compass, Award, Cpu, User, UserCheck, X } from 'lucide-react';
 
 export default function TeamSection() {
@@ -6,6 +6,23 @@ export default function TeamSection() {
   const [activeCategory, setActiveCategory] = useState('ყველა');
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Lock body scroll and stop Lenis when teacher modal is open
+  useEffect(() => {
+    if (selectedTeacher) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      if (window.__lenis) {
+        window.__lenis.stop();
+      }
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        if (window.__lenis) {
+          window.__lenis.start();
+        }
+      };
+    }
+  }, [selectedTeacher]);
 
   const categories = ['ყველა', 'STEM', 'ენები', 'ჰუმანიტარული'];
 
@@ -362,6 +379,7 @@ export default function TeamSection() {
       {/* Teacher Profile Detail Modal */}
       {selectedTeacher && (
         <div
+          data-lenis-prevent="true"
           style={{
             position: 'fixed',
             inset: 0,
@@ -371,11 +389,15 @@ export default function TeamSection() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '20px'
+            padding: '20px',
+            overscrollBehavior: 'contain'
           }}
           onClick={() => setSelectedTeacher(null)}
+          onWheel={(e) => e.stopPropagation()}
         >
           <div
+            data-lenis-prevent="true"
+            className="custom-scrollbar"
             style={{
               background: '#180e12',
               border: '1px solid rgba(212, 175, 55, 0.4)',
@@ -383,10 +405,14 @@ export default function TeamSection() {
               padding: '36px',
               maxWidth: '560px',
               width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              overscrollBehavior: 'contain',
               boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8)',
               position: 'relative'
             }}
             onClick={(e) => e.stopPropagation()}
+            onWheel={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setSelectedTeacher(null)}
