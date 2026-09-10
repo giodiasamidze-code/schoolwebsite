@@ -13,7 +13,7 @@ export default function NewsSection() {
       title: 'აკადემიის ინოვაციური პროექტები',
       category: 'STEM',
       icon: 'cpu',
-      image: null,
+      image: '/images/news_stem_robotics.jpg',
       description: 'სოლომონ აკადემიის მოსწავლეებმა წარმოადგინეს რობოტოტექნიკისა და ხელოვნური ინტელექტის ინოვაციური პროტოტიპები.',
       details: 'პროექტის ფარგლებში მოსწავლეები ქმნიან ავტონომიურ რობოტულ სისტემებს, შეისწავლიან მიკროკონტროლერების დაპროგრამებას და ავითარებენ საინჟინრო უნარებს.',
       tags: ['კვლევა', 'ტექნოლოგია', 'ინოვაცია']
@@ -23,7 +23,7 @@ export default function NewsSection() {
       title: 'ეკოლოგიური კვლევა & STEM',
       category: 'კვლევა',
       icon: 'leaf',
-      image: null,
+      image: '/images/news_eco_science.jpg',
       description: 'ბიოლოგიისა და ეკოლოგიის საველე ლაბორატორიის მიღწევები და პრაქტიკული ექსპედიციები.',
       details: 'სოლომონ აკადემიის ეკო-კლუბის მიერ ჩატარებული გარემოსდაცვითი მონიტორინგი და ბიომრავალფეროვნების ანალიზი.',
       tags: ['ეკოლოგია', 'ბიოლოგია', 'კვლევა']
@@ -33,7 +33,7 @@ export default function NewsSection() {
       title: 'საერთაშორისო ოლიმპიადა',
       category: 'ღონისძიებები',
       icon: 'trophy',
-      image: null,
+      image: '/images/news_olympiad_prep.jpg',
       description: 'აკადემიის გუნდის მომზადება საერთაშორისო სამეცნიერო ფორუმებისა და ოლიმპიადებისთვის.',
       details: 'მოსწავლეთა ინტენსიური ვორქშოფები და მენტორობა წამყვანი უცხოელი პროფესორების მონაწილეობით.',
       tags: ['ოლიმპიადა', 'STEM', 'გლობალური']
@@ -43,7 +43,7 @@ export default function NewsSection() {
       title: 'საერთაშორისო ოლიმპიადის ტრიუმფი',
       category: 'ღონისძიებები',
       icon: 'medal',
-      image: null,
+      image: '/images/news_science_lab.jpg',
       description: 'ოქროსა და ვერცხლის მედლები მათემატიკისა და ფიზიკის ევროპულ ოლიმპიადაზე.',
       details: 'აკადემიის წარმატებული დელეგაციის შედეგები და საზეიმო მიღება აკადემიის ცენტრალურ დარბაზში.',
       tags: ['გამარჯვება', 'მედლები', 'სიამაყე']
@@ -53,7 +53,7 @@ export default function NewsSection() {
       title: 'ასტროფიზიკის ობსერვატორია & AI',
       category: 'კვლევა',
       icon: 'telescope',
-      image: null,
+      image: '/images/news_robotics_arm.jpg',
       description: 'კოსმოსური მონაცემების დამუშავება ნეირონული ქსელებით და ღამის დაკვირვებები.',
       details: 'ტელესკოპური დაკვირვებების ციფრული დამუშავება და ასტრონომიული აღმოჩენების მოდელირება.',
       tags: ['ასტროფიზიკა', 'AI', 'კოსმოსი']
@@ -63,6 +63,10 @@ export default function NewsSection() {
   const filteredNews = newsItems.filter(
     (item) => activeCategory === 'ყველა' || item.category === activeCategory
   );
+
+  const displayNews = filteredNews.length > 0 ? filteredNews : newsItems;
+  const featuredItem = displayNews[0];
+  const gridItems = displayNews.length > 1 ? displayNews.slice(1) : newsItems.slice(1);
 
   const activeNewsDetail = newsItems.find((n) => n.id === detailedNewsId);
 
@@ -336,36 +340,41 @@ export default function NewsSection() {
             alignItems: 'stretch'
           }}
         >
-          {/* Left Big Featured Card (Photo 7) */}
+          {/* Left Big Featured Card */}
           <div
-            onClick={() => setDetailedNewsId(1)}
+            onClick={() => setDetailedNewsId(featuredItem.id)}
             style={{
-              background: 'rgba(20, 12, 15, 0.65)',
+              background: 'rgba(20, 12, 15, 0.7)',
               backdropFilter: 'blur(20px)',
               WebkitBackdropFilter: 'blur(20px)',
-              border: '1px solid rgba(212, 175, 55, 0.3)',
+              border: '1px solid rgba(212, 175, 55, 0.35)',
               borderRadius: '20px',
               overflow: 'hidden',
               cursor: 'pointer',
               display: 'flex',
               flexDirection: 'column',
-              boxShadow: '0 15px 40px rgba(0, 0, 0, 0.5)',
+              boxShadow: '0 15px 40px rgba(0, 0, 0, 0.55)',
               transition: 'all 0.3s ease'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = '#d4af37';
               e.currentTarget.style.transform = 'translateY(-3px)';
+              const img = e.currentTarget.querySelector('img');
+              if (img) img.style.transform = 'scale(1.04)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.3)';
+              e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.35)';
               e.currentTarget.style.transform = 'translateY(0)';
+              const img = e.currentTarget.querySelector('img');
+              if (img) img.style.transform = 'scale(1)';
             }}
           >
             <div style={{ height: '320px', overflow: 'hidden', position: 'relative' }}>
               <img
-                src={newsItems[0].image}
-                alt={newsItems[0].title}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                src={featuredItem.image}
+                alt={featuredItem.title}
+                onError={(e) => { e.currentTarget.src = '/assets/palace-interior.jpg'; }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
               />
             </div>
             <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1 }}>
@@ -375,10 +384,11 @@ export default function NewsSection() {
                   fontSize: '1.5rem',
                   fontWeight: 600,
                   color: '#ffffff',
-                  marginBottom: '16px'
+                  marginBottom: '16px',
+                  lineHeight: 1.3
                 }}
               >
-                {newsItems[0].title}
+                {featuredItem.title}
               </h3>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span
@@ -391,7 +401,7 @@ export default function NewsSection() {
                     fontWeight: 700
                   }}
                 >
-                  {newsItems[0].category}
+                  {featuredItem.category}
                 </span>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'rgba(255, 255, 255, 0.85)', fontSize: '0.88rem' }}>
@@ -404,15 +414,15 @@ export default function NewsSection() {
 
           {/* Right 2x2 Grid of News Cards */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '18px' }}>
-            {newsItems.slice(1, 5).map((item) => (
+            {gridItems.slice(0, 4).map((item) => (
               <div
                 key={item.id}
                 onClick={() => setDetailedNewsId(item.id)}
                 style={{
-                  background: 'rgba(20, 12, 15, 0.65)',
+                  background: 'rgba(20, 12, 15, 0.7)',
                   backdropFilter: 'blur(20px)',
                   WebkitBackdropFilter: 'blur(20px)',
-                  border: '1px solid rgba(212, 175, 55, 0.25)',
+                  border: '1px solid rgba(212, 175, 55, 0.28)',
                   borderRadius: '16px',
                   overflow: 'hidden',
                   cursor: 'pointer',
@@ -423,17 +433,22 @@ export default function NewsSection() {
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = '#d4af37';
                   e.currentTarget.style.transform = 'translateY(-2px)';
+                  const img = e.currentTarget.querySelector('img');
+                  if (img) img.style.transform = 'scale(1.05)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.25)';
+                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.28)';
                   e.currentTarget.style.transform = 'translateY(0)';
+                  const img = e.currentTarget.querySelector('img');
+                  if (img) img.style.transform = 'scale(1)';
                 }}
               >
                 <div style={{ height: '140px', overflow: 'hidden' }}>
                   <img
                     src={item.image}
                     alt={item.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={(e) => { e.currentTarget.src = '/assets/palace-interior.jpg'; }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
                   />
                 </div>
                 <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1 }}>

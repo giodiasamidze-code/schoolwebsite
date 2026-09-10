@@ -25,29 +25,29 @@ export default function GalleryPage() {
       id: 3,
       title: 'სამეცნიერო STEM ლაბორატორია',
       subtitle: 'ინოვაციური ექსპერიმენტული სივრცე',
-      image: null,
-      icon: 'flask'
+      image: '/images/news_stem_robotics.jpg',
+      icon: null
     },
     {
       id: 4,
       title: 'აკადემიური ბიბლიოთეკა & სამკითხველო',
       subtitle: 'ინტელექტუალური მუშაობის გარემო',
-      image: null,
-      icon: 'book'
+      image: '/images/news_olympiad_prep.jpg',
+      icon: null
     },
     {
       id: 5,
       title: 'ასტროფიზიკის ობსერვატორია',
       subtitle: 'კოსმოსური დაკვირვებების ცენტრი',
-      image: null,
-      icon: 'telescope'
+      image: '/images/news_robotics_arm.jpg',
+      icon: null
     },
     {
       id: 6,
-      title: 'საზეიმო დარბაზი & ამფითეატრი',
-      subtitle: 'ღონისძიებებისა და დებატების დარბაზი',
-      image: null,
-      icon: 'mic'
+      title: 'ბიო-ეკოლოგიური ლაბორატორია',
+      subtitle: 'ბუნებისმეტყველებისა და კვლევების სივრცე',
+      image: '/images/news_eco_science.jpg',
+      icon: null
     }
   ];
 
