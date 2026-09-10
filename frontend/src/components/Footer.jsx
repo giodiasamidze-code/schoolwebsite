@@ -339,24 +339,12 @@ export default function Footer() {
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
             <button
               type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                handleNavClick(e, '#admissions');
-              }}
+              onClick={() => navigate('/login')}
               style={{ background: 'none', border: 'none', color: 'rgba(255, 255, 255, 0.65)', fontSize: '0.84rem', cursor: 'pointer', textDecoration: 'underline' }}
               onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
               onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.65)'}
             >
               პედაგოგის პორტალი
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/admin')}
-              style={{ background: 'none', border: 'none', color: 'rgba(255, 255, 255, 0.65)', fontSize: '0.84rem', cursor: 'pointer', textDecoration: 'underline' }}
-              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent-secondary, #d4af37)'}
-              onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.65)'}
-            >
-              ადმინისტრაცია
             </button>
           </div>
         </div>

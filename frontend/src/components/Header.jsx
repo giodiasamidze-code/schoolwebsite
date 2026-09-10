@@ -44,7 +44,7 @@ export default function Header({ activeSection = 'hero' }) {
   const handleAuthClick = (e) => {
     e.preventDefault();
     setIsOpen(false);
-    navigate('/admin');
+    navigate('/login');
   };
 
   const handleRegisterClick = (e) => {

@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import TeacherDashboard from './components/TeacherDashboard';
 import AdminDashboard from './components/AdminDashboard';
 import AdminLoginPage from './components/AdminLoginPage';
+import UserLoginPage from './components/UserLoginPage';
 import ParentAccountPage from './components/ParentAccountPage';
 import CustomCursor from './components/CustomCursor';
 import SmoothScroll from './components/SmoothScroll';
@@ -42,6 +43,15 @@ export default function App() {
       <>
         <CustomCursor />
         <AdminLoginPage />
+      </>
+    );
+  }
+
+  if (path === '/login') {
+    return (
+      <>
+        <CustomCursor />
+        <UserLoginPage />
       </>
     );
   }
