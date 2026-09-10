@@ -294,8 +294,8 @@ export default function UserLoginPage() {
             boxShadow: '0 25px 60px rgba(0, 0, 0, 0.65)'
           }}
         >
-          {/* Top Bar: Title & Mode Switcher */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+          {/* Top Bar: Title */}
+          <div style={{ marginBottom: '18px' }}>
             <h2
               style={{
                 fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
@@ -307,44 +307,6 @@ export default function UserLoginPage() {
             >
               {authMode === 'login' ? 'შესვლა' : 'რეგისტრაცია'}
             </h2>
-
-            {/* Mode Pills: Login / Register */}
-            <div style={{ display: 'flex', background: 'rgba(0,0,0,0.06)', borderRadius: '10px', padding: '3px' }}>
-              <button
-                type="button"
-                onClick={() => handleModeChange('login')}
-                style={{
-                  background: authMode === 'login' ? '#d4af37' : 'transparent',
-                  color: authMode === 'login' ? '#1a1104' : '#554245',
-                  border: 'none',
-                  borderRadius: '7px',
-                  padding: '6px 14px',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.15s'
-                }}
-              >
-                შესვლა
-              </button>
-              <button
-                type="button"
-                onClick={() => handleModeChange('register')}
-                style={{
-                  background: authMode === 'register' ? '#d4af37' : 'transparent',
-                  color: authMode === 'register' ? '#1a1104' : '#554245',
-                  border: 'none',
-                  borderRadius: '7px',
-                  padding: '6px 14px',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.15s'
-                }}
-              >
-                რეგისტრაცია
-              </button>
-            </div>
           </div>
 
           {/* Role Tabs: პედაგოგი vs მშობელი ONLY (No Admin!) */}
