@@ -1,10 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Menu, X, LogOut } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
 export default function Header({ activeSection = 'hero' }) {
   const [isOpen, setIsOpen] = useState(false);
   const { path, navigate, user, role, logout } = useAuth();
+
+  // Lock body scroll and pause Lenis when mobile drawer is open
+  useEffect(() => {
+    if (isOpen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      if (window.__lenis) {
+        window.__lenis.stop();
+      }
+      const handleKeyDown = (e) => {
+        if (e.key === 'Escape') setIsOpen(false);
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        if (window.__lenis) {
+          window.__lenis.start();
+        }
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isOpen]);
 
   const navItems = [
     { id: 'hero', label: 'მთავარი', href: '#hero' },
@@ -306,9 +329,10 @@ export default function Header({ activeSection = 'hero' }) {
         </button>
       </div>
 
-      {/* Luxury Fullscreen Mobile Navigation Drawer */}
-      {isOpen && (
+      {/* Luxury Fullscreen Mobile Navigation Drawer mounted directly on document.body */}
+      {isOpen && typeof document !== 'undefined' && createPortal(
         <div
+          data-lenis-prevent="true"
           className="mobile-nav-drawer"
           style={{
             position: 'fixed',
@@ -321,13 +345,15 @@ export default function Header({ activeSection = 'hero' }) {
             background: 'rgba(15, 8, 12, 0.98)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
-            zIndex: 9999,
+            zIndex: 99999,
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
             padding: '24px 20px',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            overflowY: 'auto'
           }}
+          onWheel={(e) => e.stopPropagation()}
         >
           {/* Drawer Top Header */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(212, 175, 55, 0.2)', paddingBottom: '16px' }}>
@@ -464,7 +490,8 @@ export default function Header({ activeSection = 'hero' }) {
               თბილისი, საქართველო • +995 32 200 00 00
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </header>
   );
