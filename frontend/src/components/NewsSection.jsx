@@ -111,7 +111,7 @@ export default function NewsSection() {
             </div>
 
             {/* Content Layout */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '36px', alignItems: 'center' }}>
+            <div className="news-detail-layout" style={{ display: 'grid', gap: '36px', alignItems: 'center' }}>
               {/* Left Image */}
               <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', height: '360px', boxShadow: '0 10px 30px rgba(0,0,0,0.15)' }}>
                 <img
@@ -277,6 +277,7 @@ export default function NewsSection() {
   return (
     <section
       id="news"
+      className="news-section"
       style={{
         position: 'relative',
         minHeight: '100vh',
@@ -289,7 +290,7 @@ export default function NewsSection() {
         overflow: 'hidden'
       }}
     >
-      <div style={{ maxWidth: '1240px', width: '100%', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+      <div className="news-container" style={{ maxWidth: '1240px', width: '100%', margin: '0 auto', position: 'relative', zIndex: 2 }}>
         {/* Title & Filters */}
         <div style={{ marginBottom: '24px' }}>
           <h2
@@ -308,7 +309,18 @@ export default function NewsSection() {
           </p>
 
           {/* Filter Pills */}
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <div
+            className="horizontal-pill-row"
+            style={{
+              display: 'flex',
+              gap: '10px',
+              overflowX: 'auto',
+              flexWrap: 'nowrap',
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+              paddingBottom: '4px'
+            }}
+          >
             {categories.map((cat) => (
               <button
                 key={cat}
@@ -322,7 +334,9 @@ export default function NewsSection() {
                   fontSize: '0.9rem',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0
                 }}
               >
                 {cat}
@@ -331,11 +345,11 @@ export default function NewsSection() {
           </div>
         </div>
 
-        {/* Chronicle Grid Layout: Left Featured + Right 2x2 */}
+        {/* Chronicle Grid Layout: Left Featured + Right Sub-grid */}
         <div
+          className="news-chronicle-grid"
           style={{
             display: 'grid',
-            gridTemplateColumns: '1.15fr 1fr',
             gap: '24px',
             alignItems: 'stretch'
           }}
@@ -412,8 +426,8 @@ export default function NewsSection() {
             </div>
           </div>
 
-          {/* Right 2x2 Grid of News Cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '18px' }}>
+          {/* Right News Sub-Grid */}
+          <div className="news-sub-grid" style={{ display: 'grid', gap: '18px' }}>
             {gridItems.slice(0, 4).map((item) => (
               <div
                 key={item.id}

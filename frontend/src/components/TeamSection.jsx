@@ -117,6 +117,7 @@ export default function TeamSection() {
   return (
     <section
       id="teachers"
+      className="teachers-section"
       style={{
         position: 'relative',
         minHeight: '100vh',
@@ -130,6 +131,7 @@ export default function TeamSection() {
       }}
     >
       <div
+        className="teachers-container"
         style={{
           position: 'relative',
           zIndex: 2,
@@ -157,7 +159,7 @@ export default function TeamSection() {
           <h2
             style={{
               fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
-              fontSize: 'clamp(2.5rem, 4.5vw, 3.6rem)',
+              fontSize: 'clamp(2.2rem, 4.5vw, 3.6rem)',
               fontWeight: 700,
               color: '#ffffff',
               lineHeight: 1.15,
@@ -168,7 +170,7 @@ export default function TeamSection() {
           </h2>
           <p
             style={{
-              fontSize: '1.1rem',
+              fontSize: '1.05rem',
               color: 'rgba(255, 255, 255, 0.8)',
               lineHeight: 1.5,
               margin: 0
@@ -180,6 +182,7 @@ export default function TeamSection() {
 
         {/* Centered Main Frosted Card */}
         <div
+          className="teachers-frosted-card"
           style={{
             width: '100%',
             background: 'rgba(25, 16, 20, 0.6)',
@@ -225,8 +228,20 @@ export default function TeamSection() {
             />
           </div>
 
-          {/* Filter Tabs */}
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '22px', flexWrap: 'wrap' }}>
+          {/* Filter Tabs - Horizontal Swipe on Mobile */}
+          <div
+            className="horizontal-pill-row"
+            style={{
+              display: 'flex',
+              gap: '10px',
+              marginBottom: '22px',
+              overflowX: 'auto',
+              flexWrap: 'nowrap',
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+              paddingBottom: '4px'
+            }}
+          >
             {categories.map((cat) => (
               <button
                 key={cat}
@@ -236,11 +251,13 @@ export default function TeamSection() {
                   border: `1px solid ${activeCategory === cat ? '#d4af37' : 'rgba(255, 255, 255, 0.12)'}`,
                   color: activeCategory === cat ? '#d4af37' : 'rgba(255, 255, 255, 0.75)',
                   borderRadius: '20px',
-                  padding: '6px 18px',
+                  padding: '7px 20px',
                   fontSize: '0.88rem',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0
                 }}
               >
                 {cat}
@@ -248,11 +265,11 @@ export default function TeamSection() {
             ))}
           </div>
 
-          {/* 3x2 Grid of Teacher Cards */}
+          {/* Responsive Grid of Teacher Cards */}
           <div
+            className="teachers-cards-grid"
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
               gap: '16px',
               marginBottom: '20px'
             }}

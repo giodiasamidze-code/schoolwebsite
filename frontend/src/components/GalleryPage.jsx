@@ -176,11 +176,17 @@ export default function GalleryPage() {
 
           {/* Right: Filter Category Pills */}
           <div
+            className="horizontal-pill-row gallery-category-pills"
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
-              flexWrap: 'wrap'
+              overflowX: 'auto',
+              flexWrap: 'nowrap',
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+              paddingBottom: '4px',
+              maxWidth: '100%'
             }}
           >
             {CATEGORIES.map((cat) => {
@@ -199,7 +205,9 @@ export default function GalleryPage() {
                     fontWeight: isActive ? 700 : 500,
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    boxShadow: isActive ? '0 0 16px rgba(212, 175, 55, 0.25)' : 'none'
+                    boxShadow: isActive ? '0 0 16px rgba(212, 175, 55, 0.25)' : 'none',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0
                   }}
                   onMouseEnter={(e) => {
                     if (!isActive) {
@@ -223,10 +231,11 @@ export default function GalleryPage() {
 
         {/* Center Main Stage Frame */}
         <div
+          className="gallery-main-stage"
           style={{
             position: 'relative',
             width: '100%',
-            height: 'clamp(380px, 58vh, 660px)',
+            height: 'clamp(320px, 56vh, 660px)',
             borderRadius: '24px',
             border: '1.5px solid rgba(212, 175, 55, 0.4)',
             boxShadow: '0 24px 70px rgba(0, 0, 0, 0.85), inset 0 0 60px rgba(0, 0, 0, 0.35)',
@@ -337,6 +346,7 @@ export default function GalleryPage() {
 
           {/* Bottom Left Overlay Badge */}
           <div
+            className="gallery-overlay-badge"
             style={{
               position: 'absolute',
               bottom: '24px',

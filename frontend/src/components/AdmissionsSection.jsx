@@ -171,6 +171,7 @@ export default function AdmissionsSection() {
   return (
     <section
       id="admissions"
+      className="admissions-section"
       style={{
         position: 'relative',
         minHeight: '100vh',
@@ -184,6 +185,7 @@ export default function AdmissionsSection() {
       }}
     >
       <div
+        className="admissions-main-grid"
         style={{
           position: 'relative',
           zIndex: 2,
@@ -191,15 +193,15 @@ export default function AdmissionsSection() {
           width: '100%',
           margin: '0 auto',
           display: 'grid',
-          gridTemplateColumns: '1fr 380px',
           gap: '36px',
           alignItems: 'center'
         }}
       >
         {/* Left / Center Main View (Photo 3) */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
           {/* Main Tier Highlight Card */}
           <div
+            className="admissions-highlight-card"
             style={{
               background: 'rgba(30, 20, 24, 0.65)',
               backdropFilter: 'blur(24px)',
@@ -288,6 +290,7 @@ export default function AdmissionsSection() {
 
           {/* Additional Services Bar (Photo 3) */}
           <div
+            className="admissions-services-bar"
             style={{
               background: 'rgba(20, 12, 15, 0.65)',
               backdropFilter: 'blur(20px)',
@@ -330,6 +333,7 @@ export default function AdmissionsSection() {
 
         {/* Right Side Drawer / Overview Panel (Photo 3 & Photo 4) */}
         <div
+          className="admissions-overview-panel"
           style={{
             background: 'rgba(235, 230, 225, 0.88)',
             backdropFilter: 'blur(25px)',
@@ -648,7 +652,7 @@ export default function AdmissionsSection() {
                   </div>
 
                   {/* Student Name & PIN */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '12px' }}>
+                  <div className="app-form-grid-2" style={{ display: 'grid', gap: '12px' }}>
                     <div>
                       <label style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)', display: 'block', marginBottom: '5px' }}>
                         მოსწავლის სრული სახელი და გვარი *
@@ -700,7 +704,7 @@ export default function AdmissionsSection() {
                   </div>
 
                   {/* DOB, Gender & Grade */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 0.9fr 1.1fr', gap: '12px' }}>
+                  <div className="app-form-grid-3" style={{ display: 'grid', gap: '12px' }}>
                     <div>
                       <label style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)', display: 'block', marginBottom: '5px' }}>
                         დაბადების თარიღი *
@@ -830,7 +834,7 @@ export default function AdmissionsSection() {
                   </div>
 
                   {/* Parent Full Name & PIN */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '12px' }}>
+                  <div className="app-form-grid-2" style={{ display: 'grid', gap: '12px' }}>
                     <div>
                       <label style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)', display: 'block', marginBottom: '5px' }}>
                         მშობლის სრული სახელი და გვარი *
@@ -880,7 +884,7 @@ export default function AdmissionsSection() {
                   </div>
 
                   {/* Phone & Email */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div className="app-form-grid-2" style={{ display: 'grid', gap: '12px' }}>
                     <div>
                       <label style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)', display: 'block', marginBottom: '5px' }}>
                         ტელეფონის ნომერი *

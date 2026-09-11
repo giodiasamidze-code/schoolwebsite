@@ -15,6 +15,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
+      className="hero-section"
       style={{
         position: 'relative',
         zIndex: 2,
@@ -88,9 +89,10 @@ export default function Hero() {
         </p>
 
         {/* Buttons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div className="hero-btn-group" style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap', justifyContent: 'center' }}>
           <button
-            onClick={() => scrollToSection('spaces-hub')}
+            onClick={() => scrollToSection('teachers')}
+            className="hero-primary-btn"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -117,6 +119,7 @@ export default function Hero() {
 
           <button
             onClick={() => { navigate('/gallery'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className="hero-secondary-btn"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -143,7 +146,7 @@ export default function Hero() {
 
         {/* Down arrow */}
         <button
-          onClick={() => scrollToSection('spaces-hub')}
+          onClick={() => scrollToSection('teachers')}
           style={{ background: 'none', border: 'none', color: 'rgba(255, 255, 255, 0.7)', cursor: 'pointer', marginTop: '28px' }}
           aria-label="Scroll down"
         >
@@ -153,6 +156,7 @@ export default function Hero() {
 
       {/* Bottom Dock Bar */}
       <div
+        className="hero-dock-wrapper"
         style={{
           position: 'relative',
           zIndex: 3,
@@ -165,6 +169,7 @@ export default function Hero() {
       >
         {/* Central navigation dock */}
         <div
+          className="hero-dock-bar"
           style={{
             background: 'rgba(20, 12, 15, 0.7)',
             backdropFilter: 'blur(20px)',
@@ -179,23 +184,25 @@ export default function Hero() {
           }}
         >
           {[
-            { label: 'პედაგოგები', icon: Users, target: 'teachers' },
-            { label: 'სიახლეები', icon: Newspaper, target: 'news' },
-            { label: 'საფასური', icon: DollarSign, target: 'admissions' },
-            { label: 'გალერეა', icon: ImageIcon, action: () => navigate('/gallery') },
-            { label: 'ონლაინ განაცხადი', icon: FileText, action: () => { window.dispatchEvent(new CustomEvent('set-auth-mode', { detail: { mode: 'register' } })); scrollToSection('admissions'); } }
+            { label: 'პედაგოგები', shortLabel: 'გუნდი', icon: Users, target: 'teachers' },
+            { label: 'სიახლეები', shortLabel: 'ამბები', icon: Newspaper, target: 'news' },
+            { label: 'საფასური', shortLabel: 'საფასური', icon: DollarSign, target: 'admissions' },
+            { label: 'გალერეა', shortLabel: 'გალერეა', icon: ImageIcon, action: () => navigate('/gallery') },
+            { label: 'ონლაინ განაცხადი', shortLabel: 'განაცხადი', icon: FileText, action: () => { window.dispatchEvent(new CustomEvent('set-auth-mode', { detail: { mode: 'register' } })); scrollToSection('admissions'); } }
           ].map((item, idx) => {
             const Icon = item.icon;
             return (
               <button
                 key={idx}
+                className="hero-dock-btn"
                 onClick={item.action || (() => scrollToSection(item.target))}
-                style={{ background: 'none', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px', padding: '7px 16px', borderRadius: '10px', color: 'rgba(255,255,255,0.85)', fontSize: '0.8rem', fontWeight: 500, cursor: 'pointer', transition: 'all 0.2s ease' }}
+                style={{ background: 'none', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px', padding: '7px 16px', borderRadius: '10px', color: 'rgba(255,255,255,0.85)', fontSize: '0.8rem', fontWeight: 500, cursor: 'pointer', transition: 'all 0.2s ease', whiteSpace: 'nowrap' }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(212, 175, 55, 0.15)'; e.currentTarget.style.color = '#d4af37'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = 'rgba(255,255,255,0.85)'; }}
               >
                 <Icon size={18} />
-                <span>{item.label}</span>
+                <span className="dock-full-label">{item.label}</span>
+                <span className="dock-short-label">{item.shortLabel}</span>
               </button>
             );
           })}
