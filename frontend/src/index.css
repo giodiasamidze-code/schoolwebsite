@@ -1956,6 +1956,262 @@ html, body, #root, .app-wrapper {
   }
 }
 
+/* ==========================================================================
+   ADMIN DASHBOARD RESPONSIVE STYLES
+   ========================================================================== */
+
+/* Desktop defaults */
+.admin-layout-grid {
+  grid-template-columns: 260px 1fr !important;
+}
+.admin-kpi-grid {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+.admin-status-grid {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+.admin-finance-overview-grid {
+  grid-template-columns: 1fr 1fr 1fr auto !important;
+}
+.admin-grade-progress-grid {
+  grid-template-columns: repeat(3, 1fr) !important;
+}
+.admin-dept-overview-grid {
+  grid-template-columns: repeat(3, 1fr) !important;
+}
+.admin-settings-grid {
+  grid-template-columns: 1fr 1fr !important;
+}
+
+/* Tablet view (<= 1100px) */
+@media (max-width: 1100px) {
+  .admin-finance-overview-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Tablets and below (<= 992px) */
+@media (max-width: 992px) {
+  .admin-header {
+    padding: 0 16px !important;
+  }
+  .admin-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 0 14px !important;
+    margin: 14px auto !important;
+  }
+  .admin-sidebar-nav {
+    position: static !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 8px 10px !important;
+  }
+  .admin-sidebar-title,
+  .admin-sidebar-accreditation {
+    display: none !important;
+  }
+  .admin-nav-tabs {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 6px !important;
+    padding-bottom: 2px;
+  }
+  .admin-nav-tab-btn {
+    flex-shrink: 0 !important;
+    padding: 8px 14px !important;
+    font-size: 0.82rem !important;
+    white-space: nowrap !important;
+  }
+  .admin-kpi-grid,
+  .admin-status-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .admin-grade-progress-grid,
+  .admin-dept-overview-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Mobile Phones (Samsung A22, iPhone, <= 640px) */
+@media (max-width: 640px) {
+  .admin-header {
+    height: 60px !important;
+    padding: 0 12px !important;
+  }
+  .admin-ticker-bar {
+    display: none !important;
+  }
+  .admin-brand-block {
+    gap: 8px !important;
+  }
+  .admin-brand-sep,
+  .admin-brand-title {
+    display: none !important;
+  }
+  .admin-year-badge {
+    font-size: 0.68rem !important;
+    padding: 2px 6px !important;
+  }
+  .admin-layout-grid {
+    padding: 0 10px !important;
+  }
+  .admin-kpi-grid,
+  .admin-status-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .admin-finance-overview-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .admin-custom-code-box {
+    width: 100% !important;
+  }
+  .admin-custom-code-input {
+    width: 100% !important;
+  }
+  .admin-settings-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+/* ==========================================================================
+   TEACHER DASHBOARD RESPONSIVE STYLES
+   ========================================================================== */
+
+/* Desktop defaults */
+.teacher-layout-grid {
+  grid-template-columns: 240px 1fr 280px !important;
+}
+.teacher-kpi-grid {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+.teacher-form-grid-2 {
+  grid-template-columns: 1fr 1fr !important;
+}
+.teacher-form-grid-3 {
+  grid-template-columns: 1fr 1fr 1fr !important;
+}
+.teacher-password-grid {
+  grid-template-columns: 1fr 1fr !important;
+}
+
+/* Tablet & Mobile (<= 992px) */
+@media (max-width: 992px) {
+  .teacher-header {
+    padding: 0 16px !important;
+  }
+  .teacher-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 0 14px !important;
+    margin-top: 14px !important;
+  }
+  .teacher-sidebar-nav {
+    width: 100% !important;
+    min-height: auto !important;
+    padding: 8px 10px !important;
+    box-sizing: border-box !important;
+  }
+  .teacher-sidebar-footer {
+    display: none !important;
+  }
+  .teacher-nav-tabs {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 6px !important;
+    padding-bottom: 2px;
+  }
+  .teacher-nav-tab-btn {
+    flex-shrink: 0 !important;
+    padding: 8px 14px !important;
+    font-size: 0.82rem !important;
+    white-space: nowrap !important;
+  }
+  .teacher-content-area {
+    padding: 20px 18px !important;
+  }
+  .teacher-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .teacher-preview-sidebar {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .teacher-bottom-bar {
+    padding: 0 14px !important;
+    margin-top: 14px !important;
+  }
+}
+
+/* Mobile Phones (Samsung A22, iPhone, <= 640px) */
+@media (max-width: 640px) {
+  .teacher-header {
+    height: 60px !important;
+    padding: 0 12px !important;
+  }
+  .teacher-brand-sep,
+  .teacher-portal-title {
+    display: none !important;
+  }
+  .teacher-return-btn {
+    display: none !important;
+  }
+  .teacher-layout-grid {
+    padding: 0 10px !important;
+  }
+  .teacher-content-area {
+    padding: 16px 14px !important;
+    border-radius: 14px !important;
+  }
+  .teacher-kpi-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .teacher-schedule-item {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+  .teacher-schedule-info {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+  .teacher-notice-box {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+  .teacher-profile-header-card {
+    flex-direction: column !important;
+    text-align: center !important;
+    padding: 16px !important;
+  }
+  .teacher-profile-contact-row {
+    justify-content: center !important;
+  }
+  .teacher-form-grid-2,
+  .teacher-form-grid-3,
+  .teacher-password-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .teacher-bottom-bar {
+    padding: 0 10px !important;
+    justify-content: center !important;
+  }
+  .teacher-bottom-bar button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+
 
 
 

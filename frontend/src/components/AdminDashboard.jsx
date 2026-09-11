@@ -508,62 +508,56 @@ export default function AdminDashboard() {
     <div style={{ position: 'relative', minHeight: '100vh', backgroundImage: `linear-gradient(180deg, rgba(12,6,8,0.85) 0%, rgba(12,6,8,0.96) 100%), url(/assets/palace-interior.jpg)`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', color: '#fff', display: 'flex', flexDirection: 'column', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
 
       {/* ── HEADER ── */}
-      <header style={{ height: '70px', background: 'rgba(20,12,15,0.95)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(212,175,55,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', position: 'sticky', top: 0, zIndex: 50 }}>
+      <header className="admin-header" style={{ height: '70px', background: 'rgba(20,12,15,0.95)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(212,175,55,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', position: 'sticky', top: 0, zIndex: 50 }}>
         {/* Left: Academy Brand */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
-          <div onClick={() => navigate('/')} style={{ fontFamily: 'var(--font-serif, serif)', fontSize: '1.05rem', fontWeight: 700, letterSpacing: '0.08em', color: '#d4af37', cursor: 'pointer' }}>SOLOMON ACADEMY</div>
-          <div style={{ width: '1px', height: '22px', background: 'rgba(212,175,55,0.25)' }} />
-          <span style={{ fontSize: '0.98rem', fontWeight: 600 }}>აკადემიის მართვის სისტემა</span>
-          <span style={{ background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.3)', color: '#d4af37', fontSize: '0.74rem', fontWeight: 600, padding: '3px 10px', borderRadius: '6px' }}>სასწ. წელი {settings.academicYear}</span>
+        <div className="admin-brand-block" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div onClick={() => navigate('/')} style={{ fontFamily: 'var(--font-serif, serif)', fontSize: '1.05rem', fontWeight: 700, letterSpacing: '0.08em', color: '#d4af37', cursor: 'pointer', whiteSpace: 'nowrap' }}>SOLOMON ACADEMY</div>
+          <div className="admin-brand-sep" style={{ width: '1px', height: '22px', background: 'rgba(212,175,55,0.25)' }} />
+          <span className="admin-brand-title" style={{ fontSize: '0.98rem', fontWeight: 600, whiteSpace: 'nowrap' }}>მართვის პანელი</span>
+          <span className="admin-year-badge" style={{ background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.3)', color: '#d4af37', fontSize: '0.74rem', fontWeight: 600, padding: '3px 10px', borderRadius: '6px', whiteSpace: 'nowrap' }}>{settings.academicYear}</span>
         </div>
 
         {/* Right: Prominent Top Stats Ticker + Site Button */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          {/* Executive Stats Bar (Immediately Visible on Admin Entrance) */}
-          <div style={{
+        <div className="admin-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          {/* Executive Stats Bar */}
+          <div className="admin-ticker-bar" style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '18px',
+            gap: '14px',
             background: 'rgba(28, 16, 22, 0.85)',
             border: '1px solid rgba(212, 175, 55, 0.25)',
             borderRadius: '10px',
-            padding: '7px 18px',
-            fontSize: '0.82rem',
+            padding: '7px 14px',
+            fontSize: '0.8rem',
             boxShadow: '0 4px 16px rgba(0,0,0,0.3)'
           }}>
-            <span style={{ color: 'rgba(255,255,255,0.7)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ color: 'rgba(255,255,255,0.7)', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap' }}>
               მოსწავლეები: <strong style={{ color: '#ffffff', fontWeight: 700 }}>{settings.currentEnrolled}</strong>
             </span>
             <span style={{ width: '1px', height: '14px', background: 'rgba(212,175,55,0.25)' }} />
-            <span style={{ color: 'rgba(255,255,255,0.7)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ color: 'rgba(255,255,255,0.7)', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap' }}>
               შემოსავალი: <strong style={{ color: '#d4af37', fontWeight: 700 }}>₾ {totalPaidGel.toLocaleString()}</strong>
             </span>
-            {totalDueGel > 0 && (
-              <>
-                <span style={{ width: '1px', height: '14px', background: 'rgba(212,175,55,0.25)' }} />
-                <span style={{ color: 'rgba(255,255,255,0.7)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                  დავალიანება: <strong style={{ color: '#e5a93b', fontWeight: 700 }}>₾ {totalDueGel.toLocaleString()}</strong>
-                </span>
-              </>
-            )}
           </div>
 
-          {/* Site Navigation Button (Photo 2 - Only 'საიტი' Kept) */}
+          {/* Site Navigation Button */}
           <button
             onClick={() => navigate('/')}
+            className="admin-site-btn"
             style={{
               background: 'rgba(212,175,55,0.12)',
               border: '1px solid rgba(212,175,55,0.32)',
               borderRadius: '8px',
-              padding: '7px 16px',
+              padding: '7px 14px',
               color: '#d4af37',
-              fontSize: '0.85rem',
+              fontSize: '0.84rem',
               fontWeight: 600,
               display: 'flex',
               alignItems: 'center',
-              gap: '7px',
+              gap: '6px',
               cursor: 'pointer',
-              transition: 'all 0.15s ease'
+              transition: 'all 0.15s ease',
+              whiteSpace: 'nowrap'
             }}
             onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(212,175,55,0.22)'; }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(212,175,55,0.12)'; }}
@@ -584,7 +578,8 @@ export default function AdminDashboard() {
               color: 'rgba(255,255,255,0.6)',
               fontSize: '0.82rem',
               cursor: 'pointer',
-              transition: 'all 0.15s ease'
+              transition: 'all 0.15s ease',
+              whiteSpace: 'nowrap'
             }}
             onMouseEnter={(e) => { e.currentTarget.style.color = '#e5a93b'; e.currentTarget.style.borderColor = 'rgba(212,175,55,0.4)'; }}
             onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; }}
@@ -595,30 +590,32 @@ export default function AdminDashboard() {
       </header>
 
       {/* ── LAYOUT ── */}
-      <div style={{ maxWidth: '1540px', width: '100%', margin: '24px auto', padding: '0 24px', display: 'grid', gridTemplateColumns: '260px 1fr', gap: '24px', alignItems: 'start', flex: 1 }}>
+      <div className="admin-layout-grid" style={{ maxWidth: '1540px', width: '100%', margin: '20px auto', padding: '0 20px', display: 'grid', gap: '24px', alignItems: 'start', flex: 1, boxSizing: 'border-box' }}>
 
         {/* SIDEBAR */}
-        <div style={{ background: 'rgba(25,16,20,0.78)', backdropFilter: 'blur(24px)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: '16px', padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: '6px', position: 'sticky', top: '94px', boxShadow: '0 15px 35px rgba(0,0,0,0.45)' }}>
-          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#d4af37', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '6px 12px', marginBottom: '4px' }}>მართვის პანელი</div>
-          {navItems.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderRadius: '10px', background: isActive ? 'rgba(212,175,55,0.22)' : 'transparent', border: `1px solid ${isActive ? 'rgba(212,175,55,0.5)' : 'transparent'}`, color: isActive ? '#d4af37' : 'rgba(255,255,255,0.8)', fontSize: '0.88rem', fontWeight: isActive ? 700 : 500, cursor: 'pointer', transition: 'all 0.18s', textAlign: 'left' }} onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }} onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><Icon size={17} /><span>{tab.label}</span></div>
-                {tab.badge > 0 && <span style={{ background: isActive ? '#d4af37' : 'rgba(255,255,255,0.15)', color: isActive ? '#1a1014' : '#fff', fontSize: '0.72rem', fontWeight: 700, padding: '2px 8px', borderRadius: '12px' }}>{tab.badge}</span>}
-              </button>
-            );
-          })}
+        <div className="admin-sidebar-nav" style={{ background: 'rgba(25,16,20,0.78)', backdropFilter: 'blur(24px)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: '16px', padding: '14px 12px', display: 'flex', flexDirection: 'column', gap: '6px', position: 'sticky', top: '86px', boxShadow: '0 15px 35px rgba(0,0,0,0.45)', zIndex: 30 }}>
+          <div className="admin-sidebar-title" style={{ fontSize: '0.72rem', fontWeight: 700, color: '#d4af37', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '6px 12px', marginBottom: '4px' }}>მართვის პანელი</div>
+          <div className="admin-nav-tabs" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            {navItems.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button key={tab.id} onClick={() => setActiveTab(tab.id)} className="admin-nav-tab-btn" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 14px', borderRadius: '10px', background: isActive ? 'rgba(212,175,55,0.22)' : 'transparent', border: `1px solid ${isActive ? 'rgba(212,175,55,0.5)' : 'transparent'}`, color: isActive ? '#d4af37' : 'rgba(255,255,255,0.8)', fontSize: '0.86rem', fontWeight: isActive ? 700 : 500, cursor: 'pointer', transition: 'all 0.18s', textAlign: 'left', whiteSpace: 'nowrap' }} onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }} onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><Icon size={16} /><span>{tab.label}</span></div>
+                  {tab.badge > 0 && <span style={{ background: isActive ? '#d4af37' : 'rgba(255,255,255,0.15)', color: isActive ? '#1a1014' : '#fff', fontSize: '0.72rem', fontWeight: 700, padding: '2px 8px', borderRadius: '12px' }}>{tab.badge}</span>}
+                </button>
+              );
+            })}
+          </div>
 
-          <div style={{ marginTop: '20px', padding: '14px', background: 'rgba(0,0,0,0.4)', borderRadius: '10px', border: '1px solid rgba(212,175,55,0.15)', fontSize: '0.76rem', color: 'rgba(255,255,255,0.7)' }}>
-            <div style={{ color: '#d4af37', fontWeight: 600, marginBottom: '6px' }}>აკრედიტაცია & ხარისხი</div>
+          <div className="admin-sidebar-accreditation" style={{ marginTop: '16px', padding: '12px', background: 'rgba(0,0,0,0.4)', borderRadius: '10px', border: '1px solid rgba(212,175,55,0.15)', fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>
+            <div style={{ color: '#d4af37', fontWeight: 600, marginBottom: '4px' }}>აკრედიტაცია & ხარისხი</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><ShieldCheck size={14} color="#d4af37" /><span>უმაღლესი ეროვნული ავტორიზაცია</span></div>
           </div>
         </div>
 
         {/* CONTENT AREA */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '22px', minWidth: 0 }}>
+        <div className="admin-content-area" style={{ display: 'flex', flexDirection: 'column', gap: '22px', minWidth: 0 }}>
 
           {/* ══════════════════════════════════════════════════════════════════════════
               0. EXECUTIVE ANALYTICS (თითო გვერდზე ერთი დიაგრამა - მშვიდი და ელეგანტური)
@@ -627,7 +624,7 @@ export default function AdminDashboard() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
 
               {/* TOP KPI CARDS (Brand Gold Palette) */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+              <div className="admin-kpi-grid" style={{ display: 'grid', gap: '16px' }}>
                 {[
                   { label: 'სულ გადახდილი', val: `₾ ${totalPaidGel.toLocaleString()}`, sub: '91.4% აკრეფილი (+14.2% ზრდა)', color: '#d4af37', Icon: TrendingUp },
                   { label: 'მოსწავლეთა შევსება', val: `${settings.currentEnrolled} / ${settings.intakeQuotaTotal}`, sub: '92.7% კვოტის შევსება (38 დარჩენილი)', color: '#f3d368', Icon: Users },
@@ -676,7 +673,7 @@ export default function AdminDashboard() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
               
               {/* Admissions Summary Status Pills */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
+              <div className="admin-status-grid" style={{ display: 'grid', gap: '14px' }}>
                 {[
                   { label: 'ახალი განაცხადები', count: candidates.filter(c => c.status === 'ახალი განაცხადი').length, color: '#d4af37' },
                   { label: 'გასაუბრება დანიშნული', count: candidates.filter(c => c.status === 'გასაუბრება დანიშნული').length, color: '#f3d368' },
@@ -807,7 +804,7 @@ export default function AdminDashboard() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
               
               {/* Finance Overview Cards + Donut Chart */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: '16px', alignItems: 'stretch' }}>
+              <div className="admin-finance-overview-grid" style={{ display: 'grid', gap: '16px', alignItems: 'stretch' }}>
                 {[
                   { label: 'სულ გადახდილი', value: `₾ ${totalPaidGel.toLocaleString()}`, color: '#d4af37', Icon: TrendingUp },
                   { label: 'სულ დავალიანება', value: `₾ ${totalDueGel.toLocaleString()}`, color: '#e5a93b', Icon: TrendingDown },
@@ -836,7 +833,7 @@ export default function AdminDashboard() {
               {/* Progress per Grade Level */}
               <div style={S.card}>
                 <h4 style={{ fontSize: '0.98rem', fontWeight: 700, color: '#d4af37', marginBottom: '14px' }}>საფასურის ამოღება კლასების მიხედვით</h4>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '18px' }}>
+                <div className="admin-grade-progress-grid" style={{ display: 'grid', gap: '18px' }}>
                   {[
                     { grade: 'დაწყებითი (I–IV კლასი)', rate: 96, collected: '₾ 21,500', due: '₾ 900', color: '#f3d368' },
                     { grade: 'საბაზო (V–IX კლასი)', rate: 88, collected: '₾ 18,200', due: '₾ 2,500', color: '#d4af37' },
@@ -910,7 +907,7 @@ export default function AdminDashboard() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
               
               {/* Department Overview Banner */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+              <div className="admin-dept-overview-grid" style={{ display: 'grid', gap: '16px' }}>
                 <div style={{ ...S.card, padding: '18px 20px' }}>
                   <div style={{ fontSize: '0.76rem', color: 'rgba(255,255,255,0.65)', marginBottom: '4px' }}>კვირეული აკადემიური საათები</div>
                   <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#d4af37' }}>94 საათი/კვ.</div>
@@ -1021,16 +1018,17 @@ export default function AdminDashboard() {
                 {/* Sub-bar: Custom code creation & Filters */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', padding: '12px 16px', background: 'rgba(0,0,0,0.3)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)', flexWrap: 'wrap', gap: '14px' }}>
                   {/* Left: Custom code form */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div className="admin-custom-code-box" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                     <input
                       type="text"
                       placeholder="საკუთარი კოდი (მაგ: SOL-2026-MATH)"
                       value={customCodeInput}
                       onChange={(e) => setCustomCodeInput(e.target.value.toUpperCase())}
                       onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCustomCode(); } }}
+                      className="admin-custom-code-input"
                       style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: '8px', padding: '7px 12px', color: '#d4af37', fontFamily: 'monospace', fontSize: '0.85rem', width: '250px', outline: 'none' }}
                     />
-                    <button onClick={handleAddCustomCode} style={{ background: 'rgba(212,175,55,0.2)', border: '1px solid rgba(212,175,55,0.4)', borderRadius: '8px', padding: '7px 14px', color: '#d4af37', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer' }}>
+                    <button onClick={handleAddCustomCode} style={{ background: 'rgba(212,175,55,0.2)', border: '1px solid rgba(212,175,55,0.4)', borderRadius: '8px', padding: '7px 14px', color: '#d4af37', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>
                       + დამატება
                     </button>
                   </div>
@@ -1106,7 +1104,7 @@ export default function AdminDashboard() {
               <h2 style={S.title}><Settings size={20} color="#d4af37" />სისტემის პარამეტრები</h2>
               <p style={{ ...S.sub, marginBottom: '24px' }}>კვოტები, ავტორიზაცია, საკონტაქტო რეკვიზიტები, მიღების რეჟიმი</p>
               <form onSubmit={(e) => { e.preventDefault(); setSettingsSaved(true); setTimeout(() => setSettingsSaved(false), 2500); }} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div className="admin-settings-grid" style={{ display: 'grid', gap: '16px' }}>
                   {[['სასწავლო წელი', 'academicYear', 'text'], ['მოსწავლეთა მაქს. კვოტა', 'intakeQuotaTotal', 'number'], ['ამჟამად ჩარიცხული', 'currentEnrolled', 'number']].map(([label, key, type]) => (
                     <div key={key}>
                       <label style={{ display: 'block', fontSize: '0.82rem', color: 'rgba(255,255,255,0.7)', marginBottom: '6px' }}>{label}</label>
@@ -1123,7 +1121,7 @@ export default function AdminDashboard() {
                     <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#1a1014', position: 'absolute', top: '3px', left: settings.admissionsOpen ? '27px' : '3px', transition: 'left 0.2s' }} />
                   </button>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div className="admin-settings-grid" style={{ display: 'grid', gap: '16px' }}>
                   {[['საკონტაქტო ტელეფონი', 'contactPhone', 'text'], ['მიმღები კომისიის ელ-ფოსტა', 'contactEmail', 'email']].map(([label, key, type]) => (
                     <div key={key}>
                       <label style={{ display: 'block', fontSize: '0.82rem', color: 'rgba(255,255,255,0.7)', marginBottom: '6px' }}>{label}</label>

@@ -169,6 +169,7 @@ export default function TeacherDashboard() {
     >
       {/* Top Header */}
       <header
+        className="teacher-header"
         style={{
           height: '70px',
           background: 'rgba(20, 12, 15, 0.85)',
@@ -178,10 +179,12 @@ export default function TeacherDashboard() {
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '0 36px',
-          zIndex: 10
+          position: 'sticky',
+          top: 0,
+          zIndex: 50
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+        <div className="teacher-header-brand" style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => navigate('/')}>
             <span
               style={{
@@ -195,15 +198,16 @@ export default function TeacherDashboard() {
               SOLOMON ACADEMY
             </span>
           </div>
-          <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.15)' }} />
-          <span style={{ fontSize: '1.05rem', fontWeight: 600, color: '#ffffff' }}>
+          <div className="teacher-brand-sep" style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.15)' }} />
+          <span className="teacher-portal-title" style={{ fontSize: '1.05rem', fontWeight: 600, color: '#ffffff' }}>
             პედაგოგის პორტალი
           </span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <div className="teacher-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button
             onClick={() => navigate('/')}
+            className="teacher-return-btn"
             style={{
               background: 'none',
               border: 'none',
@@ -223,7 +227,8 @@ export default function TeacherDashboard() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#d4af37'
+              color: '#d4af37',
+              flexShrink: 0
             }}
           >
             <User size={18} />
@@ -243,21 +248,23 @@ export default function TeacherDashboard() {
         </div>
       </header>
 
-      {/* Main 3-Column Layout */}
+      {/* Main Responsive Layout */}
       <div
+        className="teacher-layout-grid"
         style={{
           maxWidth: '1360px',
           width: '100%',
           margin: '24px auto 0',
           padding: '0 24px',
           display: 'grid',
-          gridTemplateColumns: '240px 1fr 280px',
           gap: '24px',
-          alignItems: 'start'
+          alignItems: 'start',
+          boxSizing: 'border-box'
         }}
       >
         {/* Left Sidebar Menu */}
         <div
+          className="teacher-sidebar-nav"
           style={{
             background: 'rgba(25, 16, 20, 0.75)',
             backdropFilter: 'blur(20px)',
@@ -266,11 +273,10 @@ export default function TeacherDashboard() {
             padding: '16px 12px',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'space-between',
-            minHeight: '460px'
+            justifyContent: 'space-between'
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <div className="teacher-nav-tabs" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {[
               { id: 'overview', label: 'მიმოხილვა', icon: LayoutDashboard },
               { id: 'profile', label: 'ჩემი პროფილი', icon: User },
@@ -287,6 +293,7 @@ export default function TeacherDashboard() {
                     setActiveNav(item.id);
                     setSelectedMessage(null);
                   }}
+                  className="teacher-nav-tab-btn"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -300,7 +307,8 @@ export default function TeacherDashboard() {
                     fontWeight: isActive ? 700 : 500,
                     cursor: 'pointer',
                     textAlign: 'left',
-                    transition: 'all 0.2s'
+                    transition: 'all 0.2s',
+                    whiteSpace: 'nowrap'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -327,7 +335,7 @@ export default function TeacherDashboard() {
             })}
           </div>
 
-          <div>
+          <div className="teacher-sidebar-footer" style={{ marginTop: '16px' }}>
             <div style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.45)', textAlign: 'center', marginBottom: '10px' }}>
               პედაგოგის პორტალი · აკადემია
             </div>
@@ -356,6 +364,7 @@ export default function TeacherDashboard() {
 
         {/* Center Dynamic Content Area */}
         <div
+          className="teacher-content-area"
           style={{
             background: 'rgba(25, 16, 20, 0.75)',
             backdropFilter: 'blur(20px)',
@@ -368,7 +377,7 @@ export default function TeacherDashboard() {
           {/* TAB 1: OVERVIEW (მიმოხილვა) */}
           {activeNav === 'overview' && (
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '22px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '22px', flexWrap: 'wrap', gap: '10px' }}>
                 <div>
                   <h2
                     style={{
@@ -402,9 +411,9 @@ export default function TeacherDashboard() {
 
               {/* KPI Metrics */}
               <div
+                className="teacher-kpi-grid"
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(4, 1fr)',
                   gap: '12px',
                   marginBottom: '26px'
                 }}
@@ -460,6 +469,7 @@ export default function TeacherDashboard() {
                   ].map((lesson, i) => (
                     <div
                       key={i}
+                      className="teacher-schedule-item"
                       style={{
                         background: lesson.active ? 'rgba(212, 175, 55, 0.12)' : 'rgba(0, 0, 0, 0.3)',
                         border: `1px solid ${lesson.active ? 'rgba(212, 175, 55, 0.45)' : 'rgba(212, 175, 55, 0.15)'}`,
@@ -467,11 +477,12 @@ export default function TeacherDashboard() {
                         padding: '12px 16px',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'space-between'
+                        justifyContent: 'space-between',
+                        gap: '12px'
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <span style={{ fontFamily: 'monospace', fontSize: '0.88rem', color: '#d4af37', fontWeight: 600 }}>
+                      <div className="teacher-schedule-info" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <span style={{ fontFamily: 'monospace', fontSize: '0.88rem', color: '#d4af37', fontWeight: 600, whiteSpace: 'nowrap' }}>
                           {lesson.time}
                         </span>
                         <div>
@@ -486,7 +497,8 @@ export default function TeacherDashboard() {
                           padding: '4px 10px',
                           borderRadius: '6px',
                           background: lesson.active ? 'rgba(212, 175, 55, 0.25)' : 'rgba(255, 255, 255, 0.08)',
-                          color: lesson.active ? '#f5e4b5' : 'rgba(255, 255, 255, 0.6)'
+                          color: lesson.active ? '#f5e4b5' : 'rgba(255, 255, 255, 0.6)',
+                          whiteSpace: 'nowrap'
                         }}
                       >
                         {lesson.status}
@@ -498,6 +510,7 @@ export default function TeacherDashboard() {
 
               {/* Quick Academic Notice */}
               <div
+                className="teacher-notice-box"
                 style={{
                   background: 'rgba(0, 0, 0, 0.35)',
                   border: '1px solid rgba(212, 175, 55, 0.25)',
@@ -505,11 +518,12 @@ export default function TeacherDashboard() {
                   padding: '16px',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'space-between'
+                  justifyContent: 'space-between',
+                  gap: '14px'
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <AlertCircle size={20} color="#d4af37" />
+                  <AlertCircle size={20} color="#d4af37" style={{ flexShrink: 0 }} />
                   <div>
                     <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#ffffff' }}>შუალედური შეფასებების პერიოდი</div>
                     <div style={{ fontSize: '0.78rem', color: 'rgba(255, 255, 255, 0.6)' }}>
@@ -527,7 +541,8 @@ export default function TeacherDashboard() {
                     color: '#d4af37',
                     fontSize: '0.8rem',
                     fontWeight: 600,
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap'
                   }}
                 >
                   შეტყობინებების ნახვა
@@ -539,7 +554,7 @@ export default function TeacherDashboard() {
           {/* TAB 2: PROFILE VIEW (ჩემი პროფილი) */}
           {activeNav === 'profile' && (
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '10px' }}>
                 <h2
                   style={{
                     fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
@@ -573,6 +588,7 @@ export default function TeacherDashboard() {
 
               {/* Profile Card Header */}
               <div
+                className="teacher-profile-header-card"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -594,7 +610,8 @@ export default function TeacherDashboard() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#d4af37'
+                    color: '#d4af37',
+                    flexShrink: 0
                   }}
                 >
                   <User size={38} />
@@ -606,7 +623,7 @@ export default function TeacherDashboard() {
                   <div style={{ fontSize: '0.92rem', color: '#d4af37', fontWeight: 600, marginBottom: '6px' }}>
                     {profile.subject}
                   </div>
-                  <div style={{ display: 'flex', gap: '16px', fontSize: '0.78rem', color: 'rgba(255, 255, 255, 0.65)' }}>
+                  <div className="teacher-profile-contact-row" style={{ display: 'flex', gap: '16px', fontSize: '0.78rem', color: 'rgba(255, 255, 255, 0.65)', flexWrap: 'wrap' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <Mail size={13} color="#d4af37" /> {profile.email}
                     </span>
@@ -753,7 +770,7 @@ export default function TeacherDashboard() {
 
               {/* Inputs */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div className="teacher-form-grid-2" style={{ display: 'grid', gap: '12px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.82rem', color: 'rgba(255, 255, 255, 0.65)', marginBottom: '4px' }}>
                       სახელი და გვარი
@@ -797,7 +814,7 @@ export default function TeacherDashboard() {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                <div className="teacher-form-grid-3" style={{ display: 'grid', gap: '12px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.82rem', color: 'rgba(255, 255, 255, 0.65)', marginBottom: '4px' }}>
                       ელ-ფოსტა
@@ -954,7 +971,7 @@ export default function TeacherDashboard() {
           {/* TAB 4: MESSAGES (შეტყობინებები) */}
           {activeNav === 'messages' && (
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
                 <div>
                   <h2
                     style={{
@@ -971,7 +988,7 @@ export default function TeacherDashboard() {
                     აკადემიის ადმინისტრაციისა და მშობლების ოფიციალური უწყებები
                   </p>
                 </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div className="teacher-msg-filter-bar" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   {[
                     { id: 'all', label: 'ყველა' },
                     { id: 'admin', label: 'ადმინისტრაცია' },
@@ -1319,7 +1336,7 @@ export default function TeacherDashboard() {
                     />
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div className="teacher-password-grid" style={{ display: 'grid', gap: '12px' }}>
                     <div>
                       <label style={{ display: 'block', fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.65)', marginBottom: '4px' }}>
                         ახალი პაროლი
@@ -1404,6 +1421,7 @@ export default function TeacherDashboard() {
 
         {/* Right Side: Public Profile Preview */}
         <div
+          className="teacher-preview-sidebar"
           style={{
             background: 'rgba(25, 16, 20, 0.75)',
             backdropFilter: 'blur(20px)',
@@ -1470,6 +1488,7 @@ export default function TeacherDashboard() {
 
       {/* Bottom Actions Bar */}
       <div
+        className="teacher-bottom-bar"
         style={{
           maxWidth: '1360px',
           width: '100%',
@@ -1477,7 +1496,8 @@ export default function TeacherDashboard() {
           padding: '0 24px',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          boxSizing: 'border-box'
         }}
       >
         <div style={{ display: 'flex', gap: '12px' }}>
