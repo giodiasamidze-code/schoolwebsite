@@ -77,11 +77,13 @@ export default function Header({ activeSection = 'hero' }) {
       navigate('/');
       setTimeout(() => {
         window.dispatchEvent(new CustomEvent('set-auth-mode', { detail: { mode: 'register' } }));
+        window.dispatchEvent(new CustomEvent('open-admissions-modal'));
         const el = document.getElementById('admissions');
         if (el) el.scrollIntoView({ behavior: 'smooth' });
       }, 150);
     } else {
       window.dispatchEvent(new CustomEvent('set-auth-mode', { detail: { mode: 'register' } }));
+      window.dispatchEvent(new CustomEvent('open-admissions-modal'));
       const el = document.getElementById('admissions');
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     }

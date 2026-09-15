@@ -266,12 +266,97 @@ export default function AdminDashboard() {
     { id: 105, studentName: 'ლუკა ჯავახიშვილი', gradeApplied: 'VII კლასი', parentName: 'გიორგი ჯავახიშვილი', phone: '+995 558 71 82 93', email: 'g.javakhishvili@mail.com', date: '2026-09-04', mathScore: 65, englishScore: 70, logicScore: 68, interviewNotes: 'ქულები ვერ აკმაყოფილებს 75%-იან ბარიერს.', scholarshipRequest: 'სტანდარტული', status: 'უარყოფილი' },
     { id: 106, studentName: 'სალომე ასათიანი', gradeApplied: 'V კლასი', parentName: 'ეკატერინე დადიანი', phone: '+995 599 88 77 66', email: 'e.dadiani@art.ge', date: '2026-09-03', mathScore: 90, englishScore: 94, logicScore: 89, interviewNotes: 'დანიშნულია გასაუბრება ფსიქოლოგთან 12 სექტემბერს.', scholarshipRequest: 'სტანდარტული', status: 'გასაუბრება დანიშნული' }
   ];
-  const [candidates, setCandidates] = useState(() => { try { const s = localStorage.getItem('academy_detailed_candidates'); return s ? JSON.parse(s) : initialCandidates; } catch { return initialCandidates; } });
+
+  const loadAllCandidates = useCallback(() => {
+    try {
+      const detailedStr = localStorage.getItem('academy_detailed_candidates');
+      let baseList = detailedStr ? JSON.parse(detailedStr) : [...initialCandidates];
+      if (!Array.isArray(baseList) || baseList.length === 0) {
+        baseList = [...initialCandidates];
+      }
+
+      // Merge any records from academy_applications that are not yet in candidate list
+      const appsStr = localStorage.getItem('academy_applications');
+      if (appsStr) {
+        const apps = JSON.parse(appsStr);
+        if (Array.isArray(apps)) {
+          apps.forEach((app) => {
+            const exists = baseList.some(
+              (c) => c.id === app.id ||
+                    (c.studentPin && app.studentPin && c.studentPin === app.studentPin) ||
+                    (c.studentName === (app.studentFullName || app.studentName) && c.phone === app.phone)
+            );
+            if (!exists) {
+              const converted = {
+                id: app.id || Date.now(),
+                studentName: app.studentFullName || app.studentName || 'ონლაინ კანდიდატი',
+                studentFullName: app.studentFullName || app.studentName || 'ონლაინ კანდიდატი',
+                gradeApplied: app.studentGrade || app.grade || 'I კლასი',
+                parentName: app.parentName || 'მშობელი',
+                phone: app.phone || '',
+                email: app.email || '',
+                studentPin: app.studentPin || '',
+                studentDob: app.studentDob || '',
+                studentGender: app.studentGender || '',
+                previousSchool: app.previousSchool || 'არ არის მითითებული',
+                parentPin: app.parentPin || '',
+                address: app.address || '',
+                date: app.date || new Date().toISOString().split('T')[0],
+                mathScore: '—',
+                englishScore: '—',
+                logicScore: '—',
+                interviewNotes: app.interviewNotes || `ონლაინ განაცხადი ვებსაიტიდან (${app.package || 'სტანდარტული'}). ${app.services?.length ? 'სერვისები: ' + (Array.isArray(app.services) ? app.services.join(', ') : app.services) : ''} ${app.medicalNotes ? 'შენიშვნა: ' + app.medicalNotes : ''}`,
+                scholarshipRequest: app.scholarshipRequest || (app.services?.includes('STEM & რობოტიკა') ? 'STEM პროგრამა' : 'სტანდარტული'),
+                status: app.status || 'ახალი განაცხადი',
+                isNewOnline: true
+              };
+              baseList.unshift(converted);
+            }
+          });
+        }
+      }
+      return baseList;
+    } catch {
+      return initialCandidates;
+    }
+  }, []);
+
+  const [candidates, setCandidates] = useState(loadAllCandidates);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [candidateFilter, setCandidateFilter] = useState('ყველა');
   const [candidateSearch, setCandidateSearch] = useState('');
 
-  const saveCandidates = (data) => { setCandidates(data); try { localStorage.setItem('academy_detailed_candidates', JSON.stringify(data)); } catch { } };
+  // Sync real-time when new application is submitted
+  useEffect(() => {
+    const handleSync = () => {
+      setCandidates(loadAllCandidates());
+    };
+    window.addEventListener('new-application-submitted', handleSync);
+    window.addEventListener('storage', handleSync);
+    return () => {
+      window.removeEventListener('new-application-submitted', handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
+  }, [loadAllCandidates]);
+
+  const saveCandidates = (data) => {
+    setCandidates(data);
+    try {
+      localStorage.setItem('academy_detailed_candidates', JSON.stringify(data));
+      const appsStr = localStorage.getItem('academy_applications');
+      if (appsStr) {
+        const apps = JSON.parse(appsStr);
+        if (Array.isArray(apps)) {
+          const updatedApps = apps.map((app) => {
+            const matched = data.find((c) => c.id === app.id);
+            return matched ? { ...app, status: matched.status } : app;
+          });
+          localStorage.setItem('academy_applications', JSON.stringify(updatedApps));
+        }
+      }
+    } catch { }
+  };
+
   const handleUpdateCandidateStatus = (id, status) => {
     const updated = candidates.map((c) => c.id === id ? { ...c, status } : c);
     saveCandidates(updated);
@@ -736,8 +821,20 @@ export default function AdminDashboard() {
                     <tbody>
                       {candidates.filter((c) => candidateFilter === 'ყველა' || c.status === candidateFilter).filter((c) => c.studentName.toLowerCase().includes(candidateSearch.toLowerCase()) || c.parentName.toLowerCase().includes(candidateSearch.toLowerCase())).map((c) => (
                         <tr key={c.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', cursor: 'pointer' }} onClick={() => setSelectedCandidate(c)} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
-                          <td style={{ padding: '14px' }}><div style={{ fontWeight: 700 }}>{c.studentName}</div><div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>მშობელი: {c.parentName} · {c.phone}</div></td>
-                          <td style={{ padding: '14px', color: '#d4af37' }}>{c.gradeApplied}</td>
+                          <td style={{ padding: '14px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                              <span style={{ fontWeight: 700 }}>{c.studentName}</span>
+                              {c.isNewOnline && (
+                                <span style={{ background: 'rgba(52, 211, 153, 0.15)', border: '1px solid rgba(52, 211, 153, 0.35)', color: '#34d399', fontSize: '0.68rem', fontWeight: 600, padding: '2px 6px', borderRadius: '4px' }}>
+                                  ვებსაიტიდან
+                                </span>
+                              )}
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', marginTop: '2px' }}>
+                              მშობელი: {c.parentName} · {c.phone}
+                            </div>
+                          </td>
+                          <td style={{ padding: '14px', color: '#d4af37', fontWeight: 600 }}>{c.gradeApplied}</td>
                           <td style={{ padding: '14px' }}>
                             <div style={{ display: 'flex', gap: '6px', fontSize: '0.78rem' }}>
                               <span style={{ background: 'rgba(212,175,55,0.15)', color: '#d4af37', padding: '2px 6px', borderRadius: '4px' }}>მათ: {c.mathScore}</span>
@@ -762,26 +859,49 @@ export default function AdminDashboard() {
 
               {selectedCandidate && (
                 <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(14px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setSelectedCandidate(null)}>
-                  <div style={{ background: '#1a1014', border: '1px solid rgba(212,175,55,0.4)', borderRadius: '20px', padding: '32px', maxWidth: '560px', width: '100%', boxShadow: '0 25px 60px rgba(0,0,0,0.8)' }} onClick={(e) => e.stopPropagation()}>
+                  <div style={{ background: '#1a1014', border: '1px solid rgba(212,175,55,0.4)', borderRadius: '20px', padding: '32px', maxWidth: '600px', width: '100%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 25px 60px rgba(0,0,0,0.8)' }} onClick={(e) => e.stopPropagation()}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                      <div><h3 style={{ fontSize: '1.4rem', fontWeight: 700 }}>{selectedCandidate.studentName}</h3><span style={{ color: '#d4af37' }}>{selectedCandidate.gradeApplied}</span></div>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                          <h3 style={{ fontSize: '1.4rem', fontWeight: 700, margin: 0 }}>{selectedCandidate.studentName}</h3>
+                          {selectedCandidate.isNewOnline && (
+                            <span style={{ background: 'rgba(52, 211, 153, 0.15)', border: '1px solid rgba(52, 211, 153, 0.35)', color: '#34d399', fontSize: '0.72rem', fontWeight: 600, padding: '2px 8px', borderRadius: '4px' }}>ონლაინ რეგისტრაცია</span>
+                          )}
+                        </div>
+                        <span style={{ color: '#d4af37', fontSize: '0.88rem' }}>{selectedCandidate.gradeApplied} · თარიღი: {selectedCandidate.date}</span>
+                      </div>
                       <button onClick={() => setSelectedCandidate(null)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer' }}><X size={20} /></button>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.88rem' }}>
+                      {/* Additional Student/Parent dossier if available */}
+                      {(selectedCandidate.studentPin || selectedCandidate.studentDob || selectedCandidate.previousSchool || selectedCandidate.parentPin || selectedCandidate.address) && (
+                        <div style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.2)', padding: '14px', borderRadius: '10px' }}>
+                          <div style={{ color: '#d4af37', fontWeight: 600, marginBottom: '8px' }}>დეტალური საანკეტო მონაცემები</div>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', fontSize: '0.82rem', color: 'rgba(255,255,255,0.85)' }}>
+                            {selectedCandidate.studentPin && <div>მოსწავლის პ/ნ: <strong>{selectedCandidate.studentPin}</strong></div>}
+                            {selectedCandidate.studentDob && <div>დაბადების თარიღი: <strong>{selectedCandidate.studentDob}</strong></div>}
+                            {selectedCandidate.studentGender && <div>სქესი: <strong>{selectedCandidate.studentGender}</strong></div>}
+                            {selectedCandidate.previousSchool && <div>წინა სკოლა: <strong>{selectedCandidate.previousSchool}</strong></div>}
+                            {selectedCandidate.parentPin && <div>მშობლის პ/ნ: <strong>{selectedCandidate.parentPin}</strong></div>}
+                            {selectedCandidate.address && <div style={{ gridColumn: 'span 2' }}>მისამართი: <strong>{selectedCandidate.address}</strong></div>}
+                          </div>
+                        </div>
+                      )}
+
                       <div style={{ background: 'rgba(0,0,0,0.4)', padding: '14px', borderRadius: '10px' }}>
                         <div style={{ color: '#d4af37', fontWeight: 600, marginBottom: '8px' }}>საგამოცდო შედეგები</div>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '10px' }}>
-                          <div>მათემატიკა: <strong style={{ color: '#d4af37' }}>{selectedCandidate.mathScore}/100</strong></div>
-                          <div>ინგლისური: <strong style={{ color: '#f3d368' }}>{selectedCandidate.englishScore}/100</strong></div>
-                          <div>ლოგიკა: <strong style={{ color: '#aa820a' }}>{selectedCandidate.logicScore}/100</strong></div>
+                          <div>მათემატიკა: <strong style={{ color: '#d4af37' }}>{selectedCandidate.mathScore}{typeof selectedCandidate.mathScore === 'number' ? '/100' : ''}</strong></div>
+                          <div>ინგლისური: <strong style={{ color: '#f3d368' }}>{selectedCandidate.englishScore}{typeof selectedCandidate.englishScore === 'number' ? '/100' : ''}</strong></div>
+                          <div>ლოგიკა: <strong style={{ color: '#aa820a' }}>{selectedCandidate.logicScore}{typeof selectedCandidate.logicScore === 'number' ? '/100' : ''}</strong></div>
                         </div>
                       </div>
                       <div style={{ background: 'rgba(0,0,0,0.4)', padding: '14px', borderRadius: '10px' }}>
-                        <div style={{ color: '#d4af37', fontWeight: 600, marginBottom: '6px' }}>კომისიის დასკვნა</div>
+                        <div style={{ color: '#d4af37', fontWeight: 600, marginBottom: '6px' }}>კომისიის დასკვნა / შენიშვნა</div>
                         <p style={{ color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, margin: 0 }}>{selectedCandidate.interviewNotes}</p>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                        <span>მშობლის კონტაქტი:</span><strong>{selectedCandidate.parentName} ({selectedCandidate.phone})</strong>
+                        <span>მშობლის კონტაქტი:</span><strong>{selectedCandidate.parentName} ({selectedCandidate.phone}{selectedCandidate.email ? ` · ${selectedCandidate.email}` : ''})</strong>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                         <span>სტიპენდიის მოთხოვნა:</span><strong style={{ color: '#d4af37' }}>{selectedCandidate.scholarshipRequest}</strong>

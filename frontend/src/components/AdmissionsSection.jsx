@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, ArrowRight, X, Check, Utensils, Shield, Bus, User, Calendar, Phone, Mail, MapPin, GraduationCap, HeartPulse, Sparkles, BookOpen, Clock } from 'lucide-react';
+import { ArrowLeft, ArrowRight, X, Check, Utensils, Shield, Bus, User, Calendar, Phone, Mail, MapPin, GraduationCap, HeartPulse, Sparkles, BookOpen, Clock, Info, CheckCircle2 } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
 export default function AdmissionsSection() {
-  const { navigate } = useAuth();
+  const { user, role, navigate } = useAuth();
   const [selectedTier, setSelectedTier] = useState(1);
   const [isApplicationOpen, setIsApplicationOpen] = useState(false);
 
@@ -24,6 +24,31 @@ export default function AdmissionsSection() {
       };
     }
   }, [isApplicationOpen]);
+
+  // Auto pre-fill parent information if parent is authenticated
+  useEffect(() => {
+    if (user) {
+      setApplicantForm((prev) => ({
+        ...prev,
+        parentName: prev.parentName || user.name || user.fullName || '',
+        email: prev.email || user.email || '',
+        phone: prev.phone || user.phone || ''
+      }));
+    }
+  }, [user]);
+
+  // Listen for open-admissions-modal & set-auth-mode events
+  useEffect(() => {
+    const handleOpen = () => {
+      setIsApplicationOpen(true);
+    };
+    window.addEventListener('open-admissions-modal', handleOpen);
+    window.addEventListener('set-auth-mode', handleOpen);
+    return () => {
+      window.removeEventListener('open-admissions-modal', handleOpen);
+      window.removeEventListener('set-auth-mode', handleOpen);
+    };
+  }, []);
   const [applicantForm, setApplicantForm] = useState({
     // Student Info
     studentFullName: '',
@@ -101,11 +126,19 @@ export default function AdmissionsSection() {
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
+      const selectedServices = [
+        applicantForm.serviceTransport && 'სასკოლო ტრანსპორტირება',
+        applicantForm.serviceMeals && '3-ჯერადი ეკო-კვება',
+        applicantForm.serviceExtendedDay && 'გახანგრძლივებული ჯგუფი',
+        applicantForm.serviceStem && 'STEM & რობოტიკა'
+      ].filter(Boolean);
+
+      const newId = Date.now();
       const newApp = {
-        id: Date.now(),
+        id: newId,
         // Student
         studentFullName: applicantForm.studentFullName,
-        studentName: applicantForm.studentFullName, // compatibility
+        studentName: applicantForm.studentFullName,
         studentPin: applicantForm.studentPin,
         studentDob: applicantForm.studentDob,
         studentGender: applicantForm.studentGender,
@@ -121,21 +154,49 @@ export default function AdmissionsSection() {
 
         // Package & Services
         package: applicantForm.package || activeTierObj.name,
-        services: [
-          applicantForm.serviceTransport && 'სასკოლო ტრანსპორტირება',
-          applicantForm.serviceMeals && '3-ჯერადი ეკო-კვება',
-          applicantForm.serviceExtendedDay && 'გახანგრძლივებული ჯგუფი',
-          applicantForm.serviceStem && 'STEM & რობოტიკა'
-        ].filter(Boolean),
+        services: selectedServices,
         medicalNotes: applicantForm.medicalNotes,
         date: new Date().toISOString().split('T')[0],
-        status: 'განხილვაში'
+        status: 'ახალი განაცხადი'
       };
-      const existing = JSON.parse(localStorage.getItem('academy_applications') || '[]');
-      localStorage.setItem('academy_applications', JSON.stringify([newApp, ...existing]));
-      window.dispatchEvent(new CustomEvent('new-application-submitted', { detail: newApp }));
+
+      // 1. Save to academy_applications
+      const existingApps = JSON.parse(localStorage.getItem('academy_applications') || '[]');
+      localStorage.setItem('academy_applications', JSON.stringify([newApp, ...existingApps]));
+
+      // 2. Format as candidate entry and save to academy_detailed_candidates for Admin Dashboard
+      const candidateEntry = {
+        id: newId,
+        studentName: applicantForm.studentFullName,
+        studentFullName: applicantForm.studentFullName,
+        gradeApplied: applicantForm.studentGrade,
+        parentName: applicantForm.parentName,
+        phone: applicantForm.phone,
+        email: applicantForm.email,
+        studentPin: applicantForm.studentPin,
+        studentDob: applicantForm.studentDob,
+        studentGender: applicantForm.studentGender,
+        previousSchool: applicantForm.previousSchool || 'არ არის მითითებული',
+        parentPin: applicantForm.parentPin,
+        address: applicantForm.address,
+        date: new Date().toISOString().split('T')[0],
+        mathScore: '—',
+        englishScore: '—',
+        logicScore: '—',
+        interviewNotes: `ონლაინ განაცხადი ვებსაიტიდან (${applicantForm.package || activeTierObj.name}). სერვისები: ${selectedServices.join(', ') || 'სტანდარტული'}. ${applicantForm.medicalNotes ? 'შენიშვნა: ' + applicantForm.medicalNotes : ''}`,
+        scholarshipRequest: applicantForm.serviceStem ? 'STEM პროგრამა' : 'სტანდარტული',
+        status: 'ახალი განაცხადი',
+        isNewOnline: true
+      };
+
+      const existingCandidates = JSON.parse(localStorage.getItem('academy_detailed_candidates') || '[]');
+      localStorage.setItem('academy_detailed_candidates', JSON.stringify([candidateEntry, ...existingCandidates]));
+
+      // 3. Dispatch events for real-time reactivity in Admin Dashboard
+      window.dispatchEvent(new CustomEvent('new-application-submitted', { detail: candidateEntry }));
+      window.dispatchEvent(new Event('storage'));
     } catch (err) {
-      console.error(err);
+      console.error('Error saving application:', err);
     }
     setSubmitted(true);
     setTimeout(() => {
@@ -148,10 +209,10 @@ export default function AdmissionsSection() {
         studentGender: 'ვაჟი',
         studentGrade: 'I კლასი',
         previousSchool: '',
-        parentName: '',
+        parentName: user?.name || user?.fullName || '',
         parentPin: '',
-        phone: '',
-        email: '',
+        phone: user?.phone || '',
+        email: user?.email || '',
         address: '',
         package: activeTierObj.name,
         serviceTransport: false,
@@ -631,6 +692,61 @@ export default function AdmissionsSection() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+                
+                {/* PARENT REGISTRATION NOTICE / STATUS BANNER */}
+                {!user ? (
+                  <div
+                    style={{
+                      background: 'rgba(212, 175, 55, 0.08)',
+                      border: '1px solid rgba(212, 175, 55, 0.35)',
+                      borderRadius: '14px',
+                      padding: '16px 20px',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '14px',
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+                    }}
+                  >
+                    <Info size={22} color="#d4af37" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <div style={{ fontSize: '0.86rem', lineHeight: 1.6, color: 'rgba(255, 255, 255, 0.88)' }}>
+                      <strong style={{ color: '#d4af37', display: 'block', marginBottom: '4px', fontSize: '0.92rem' }}>
+                        📢 შეტყობინება მშობლებისთვის:
+                      </strong>
+                      განაცხადის შევსება შეგიძლიათ პირდაპირ ამ ფორმით (მშობლის რეგისტრაცია სავალდებულო არ არის).
+                      თუმცა, თუ გსურთ ონლაინ რეჟიმში აკონტროლოთ განაცხადის სტატუსი, მიღების შედეგები და შეტყობინებები,{' '}
+                      <span
+                        onClick={() => { setIsApplicationOpen(false); navigate('/login?role=parent&mode=register'); }}
+                        style={{ color: '#f3d368', textDecoration: 'underline', cursor: 'pointer', fontWeight: 700 }}
+                      >
+                        გაიარეთ მშობლის სწრაფი რეგისტრაცია
+                      </span>{' '}
+                      ან{' '}
+                      <span
+                        onClick={() => { setIsApplicationOpen(false); navigate('/login?role=parent&mode=login'); }}
+                        style={{ color: '#f3d368', textDecoration: 'underline', cursor: 'pointer', fontWeight: 700 }}
+                      >
+                        ავტორიზაცია
+                      </span>.
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      background: 'rgba(34, 197, 94, 0.12)',
+                      border: '1px solid rgba(34, 197, 94, 0.35)',
+                      borderRadius: '14px',
+                      padding: '14px 20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px'
+                    }}
+                  >
+                    <CheckCircle2 size={20} color="#4ade80" style={{ flexShrink: 0 }} />
+                    <span style={{ fontSize: '0.86rem', color: '#e2e8f0', lineHeight: 1.5 }}>
+                      ავტორიზებული მშობელი: <strong style={{ color: '#4ade80' }}>{user.name || user.fullName}</strong> ({user.email}) — თქვენი მონაცემები ავტომატურად შევსებულია და განაცხადი მიებმება თქვენს პირად ანგარიშს.
+                    </span>
+                  </div>
+                )}
                 
                 {/* SECTION 1: STUDENT INFORMATION */}
                 <div

@@ -188,7 +188,7 @@ export default function Hero() {
             { label: 'სიახლეები', shortLabel: 'ამბები', icon: Newspaper, target: 'news' },
             { label: 'საფასური', shortLabel: 'საფასური', icon: DollarSign, target: 'admissions' },
             { label: 'გალერეა', shortLabel: 'გალერეა', icon: ImageIcon, action: () => navigate('/gallery') },
-            { label: 'ონლაინ განაცხადი', shortLabel: 'განაცხადი', icon: FileText, action: () => { window.dispatchEvent(new CustomEvent('set-auth-mode', { detail: { mode: 'register' } })); scrollToSection('admissions'); } }
+            { label: 'ონლაინ განაცხადი', shortLabel: 'განაცხადი', icon: FileText, action: () => { window.dispatchEvent(new CustomEvent('set-auth-mode', { detail: { mode: 'register' } })); window.dispatchEvent(new CustomEvent('open-admissions-modal')); scrollToSection('admissions'); } }
           ].map((item, idx) => {
             const Icon = item.icon;
             return (

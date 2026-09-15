@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Key, User, BookOpen, CheckCircle2, AlertTriangle, Phone, GraduationCap, Users } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
@@ -6,9 +6,33 @@ export default function UserLoginPage() {
   const { login, navigate, register, registerTeacher } = useAuth();
 
   // Role: 'teacher' | 'parent'
-  const [activeRole, setActiveRole] = useState('teacher');
+  const [activeRole, setActiveRole] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const roleParam = params.get('role');
+      if (roleParam === 'parent' || roleParam === 'teacher') return roleParam;
+    } catch { }
+    return 'teacher';
+  });
   // Mode: 'login' | 'register'
-  const [authMode, setAuthMode] = useState('login');
+  const [authMode, setAuthMode] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const modeParam = params.get('mode');
+      if (modeParam === 'register' || modeParam === 'login') return modeParam;
+    } catch { }
+    return 'login';
+  });
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const roleParam = params.get('role');
+      const modeParam = params.get('mode');
+      if (roleParam === 'parent' || roleParam === 'teacher') setActiveRole(roleParam);
+      if (modeParam === 'register' || modeParam === 'login') setAuthMode(modeParam);
+    } catch { }
+  }, []);
 
   // Form Fields
   const [email, setEmail] = useState('');
