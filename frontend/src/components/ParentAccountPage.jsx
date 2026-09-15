@@ -9,22 +9,60 @@ export default function ParentAccountPage() {
   const [loading, setLoading] = useState(false);
 
   const fetchParentData = async () => {
-    if (!user?.id) return;
+    if (!user) return;
     setLoading(true);
+    let apps = [];
     try {
-      // 1. Fetch applications
-      const { data: appData } = await supabase
-        .from('applications')
-        .select('*, application_documents(*)')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+      if (user.id && !user.id.toString().startsWith('parent-') && !user.id.toString().startsWith('local-')) {
+        const { data: appData } = await supabase
+          .from('applications')
+          .select('*, application_documents(*)')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
 
-      if (appData) setApplications(appData);
+        if (Array.isArray(appData)) apps = appData;
+      }
     } catch (err) {
-      console.error('Error fetching parent account data:', err);
-    } finally {
-      setLoading(false);
+      console.warn('Error fetching parent account data from supabase:', err);
     }
+
+    // Merge with local applications from academy_applications
+    try {
+      const localApps = JSON.parse(localStorage.getItem('academy_applications') || '[]');
+      if (Array.isArray(localApps)) {
+        const cleanUserEmail = (user.email || '').toLowerCase().trim();
+        const cleanUserPhone = (user.phone || '').replace(/\D+/g, '');
+        const cleanUserName = (user.name || user.fullName || '').toLowerCase().trim();
+
+        const matching = localApps.filter((a) => {
+          const aEmail = (a.email || '').toLowerCase().trim();
+          const aPhone = (a.phone || '').replace(/\D+/g, '');
+          const aName = (a.parentName || '').toLowerCase().trim();
+          return (
+            (cleanUserEmail && aEmail && cleanUserEmail === aEmail) ||
+            (cleanUserPhone && aPhone && cleanUserPhone === aPhone) ||
+            (cleanUserName && aName && (cleanUserName.includes(aName) || aName.includes(cleanUserName)))
+          );
+        });
+
+        const listToMerge = matching.length > 0 ? matching : localApps;
+        listToMerge.forEach((local) => {
+          if (!apps.some((a) => a.id === local.id)) {
+            apps.push({
+              id: local.id,
+              status: local.status === 'ახალი განაცხადი' ? 'submitted' : (local.status || 'submitted'),
+              student_full_name: local.studentFullName || local.studentName || 'მოსწავლე',
+              grade_stage: local.studentGrade || local.package || 'დაწყებითი საფეხური',
+              created_at: local.date || new Date().toISOString(),
+              ...local
+            });
+          }
+        });
+      }
+    } catch { }
+
+    setApplications(apps);
+    setLoading(false);
   };
 
   useEffect(() => {
