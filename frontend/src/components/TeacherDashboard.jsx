@@ -371,7 +371,9 @@ export default function TeacherDashboard() {
             border: '1px solid rgba(212, 175, 55, 0.25)',
             borderRadius: '20px',
             padding: '28px 32px',
-            minHeight: '520px'
+            minHeight: '520px',
+            minWidth: 0,
+            boxSizing: 'border-box'
           }}
         >
           {/* TAB 1: OVERVIEW (მიმოხილვა) */}
@@ -1427,19 +1429,22 @@ export default function TeacherDashboard() {
             backdropFilter: 'blur(20px)',
             border: '1px solid rgba(212, 175, 55, 0.25)',
             borderRadius: '20px',
-            padding: '24px',
-            textAlign: 'center'
+            padding: '22px 18px',
+            textAlign: 'center',
+            boxSizing: 'border-box'
           }}
         >
           <h3
             style={{
               fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
-              fontSize: '1.05rem',
+              fontSize: '1rem',
+              fontWeight: 700,
               color: '#ffffff',
-              marginBottom: '24px'
+              marginBottom: '18px',
+              whiteSpace: 'nowrap'
             }}
           >
-            საჯარო პროფილის<br />გადახედვა
+            საჯარო პროფილი
           </h3>
 
           <div
@@ -1482,43 +1487,6 @@ export default function TeacherDashboard() {
             }}
           >
             პროფილის ნახვა
-          </button>
-        </div>
-      </div>
-
-      {/* Bottom Actions Bar */}
-      <div
-        className="teacher-bottom-bar"
-        style={{
-          maxWidth: '1360px',
-          width: '100%',
-          margin: '20px auto 0',
-          padding: '0 24px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          boxSizing: 'border-box'
-        }}
-      >
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button
-            onClick={handleSave}
-            style={{
-              background: 'linear-gradient(180deg, #d4af37 0%, #b88628 100%)',
-              border: 'none',
-              borderRadius: '10px',
-              padding: '10px 24px',
-              color: '#1a1104',
-              fontSize: '0.9rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            {savedAlert ? <Check size={16} /> : null}
-            <span>{savedAlert ? 'შენახულია!' : 'ცვლილებების შენახვა'}</span>
           </button>
         </div>
       </div>

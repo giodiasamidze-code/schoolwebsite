@@ -2084,8 +2084,35 @@ html, body, #root, .app-wrapper {
 
 /* Desktop defaults */
 .teacher-layout-grid {
-  grid-template-columns: 240px 1fr 280px !important;
+  grid-template-columns: 240px minmax(0, 1fr) 260px !important;
+  max-width: 1360px !important;
+  width: 100% !important;
+  margin: 24px auto 0 !important;
+  padding: 0 24px !important;
+  box-sizing: border-box !important;
 }
+.teacher-content-area {
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+.teacher-preview-sidebar {
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Laptop & Medium screens (<= 1240px) */
+@media (max-width: 1240px) {
+  .teacher-layout-grid {
+    grid-template-columns: 220px minmax(0, 1fr) !important;
+    gap: 18px !important;
+  }
+  .teacher-preview-sidebar {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    margin-top: 8px !important;
+  }
+}
+
 .teacher-kpi-grid {
   grid-template-columns: repeat(4, 1fr) !important;
 }
