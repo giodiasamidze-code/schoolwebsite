@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { supabase } from '../lib/supabaseClient';
-import { FileText, ArrowLeft, Clock, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
+import { FileText, ArrowLeft, Clock, CheckCircle2, XCircle, RefreshCw, Plus } from 'lucide-react';
 
 export default function ParentAccountPage() {
   const { user, navigate } = useAuth();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const handleNewApplication = () => {
+    navigate('/');
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('open-admissions-modal'));
+      const el = document.getElementById('admissions');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 150);
+  };
 
   const fetchParentData = async () => {
     if (!user) return;
@@ -120,22 +129,100 @@ export default function ParentAccountPage() {
             </p>
           </div>
 
-          <button onClick={fetchParentData} disabled={loading} className="btn btn-secondary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-            {loading ? 'იტვირთება...' : 'განახლება'}
-          </button>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <button
+              onClick={handleNewApplication}
+              style={{
+                background: 'linear-gradient(135deg, #f6d56d 0%, #d4af37 100%)',
+                border: 'none',
+                color: '#1a1014',
+                fontWeight: 700,
+                fontSize: '0.88rem',
+                padding: '10px 18px',
+                borderRadius: '10px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                whiteSpace: 'nowrap',
+                boxShadow: '0 4px 15px rgba(212, 175, 55, 0.25)'
+              }}
+            >
+              <Plus size={16} />
+              <span>+ ახალი განაცხადი</span>
+            </button>
+            <button onClick={fetchParentData} disabled={loading} className="btn btn-secondary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+              {loading ? 'იტვირთება...' : 'განახლება'}
+            </button>
+          </div>
         </div>
 
         {/* Applications Section */}
         <div>
-          <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', marginBottom: '20px', color: 'var(--text-dark)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <FileText className="text-burgundy" size={24} />
-            ჩემი ონლაინ განაცხადები ({applications.length})
-          </h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', margin: 0, color: 'var(--text-dark)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <FileText className="text-burgundy" size={24} />
+              ჩემი ონლაინ განაცხადები ({applications.length})
+            </h3>
+          </div>
 
           {applications.length === 0 ? (
-            <div style={{ background: 'var(--bg-secondary)', padding: '24px', borderRadius: '8px', border: '1px solid var(--border-color)', textAlign: 'center', color: 'var(--text-muted)' }}>
-              თქვენ ჯერ არ გაქვთ გაგზავნილი ონლაინ განაცხადი.
+            <div
+              style={{
+                background: 'rgba(212, 175, 55, 0.05)',
+                border: '1px solid rgba(212, 175, 55, 0.25)',
+                padding: '40px 24px',
+                borderRadius: '16px',
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '14px',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.25)'
+              }}
+            >
+              <div
+                style={{
+                  width: '54px',
+                  height: '54px',
+                  borderRadius: '50%',
+                  background: 'rgba(212, 175, 55, 0.15)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#d4af37'
+                }}
+              >
+                <FileText size={26} />
+              </div>
+              <h4 style={{ color: '#ffffff', fontSize: '1.3rem', fontWeight: 700, margin: 0 }}>
+                მშობლის პროფილი შექმნილია!
+              </h4>
+              <p style={{ color: 'rgba(255, 255, 255, 0.78)', maxWidth: '520px', fontSize: '0.94rem', lineHeight: 1.6, margin: 0 }}>
+                თქვენი მშობლის ანგარიში აქტიურია. ახლა საჭიროა <strong>მოსწავლის (შვილის) მონაცემების შევსება</strong> (სახელი, კლასი, პირადი ნომერი), რათა განაცხადი დაუყოვნებლივ მიუვიდეს სკოლის ადმინისტრატორს.
+              </p>
+              <button
+                onClick={handleNewApplication}
+                style={{
+                  background: 'linear-gradient(135deg, #f6d56d 0%, #d4af37 100%)',
+                  border: 'none',
+                  color: '#1a1014',
+                  fontWeight: 700,
+                  fontSize: '0.96rem',
+                  padding: '12px 28px',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                  marginTop: '8px',
+                  boxShadow: '0 8px 24px rgba(212, 175, 55, 0.35)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <Plus size={18} />
+                <span>მოსწავლის ონლაინ განაცხადის შევსება</span>
+              </button>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
