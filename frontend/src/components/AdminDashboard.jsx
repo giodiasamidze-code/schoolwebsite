@@ -858,8 +858,8 @@ export default function AdminDashboard() {
               </div>
 
               {selectedCandidate && (
-                <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(14px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setSelectedCandidate(null)}>
-                  <div style={{ background: '#1a1014', border: '1px solid rgba(212,175,55,0.4)', borderRadius: '20px', padding: '32px', maxWidth: '600px', width: '100%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 25px 60px rgba(0,0,0,0.8)' }} onClick={(e) => e.stopPropagation()}>
+                <div className="admin-candidate-modal-overlay" style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(14px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setSelectedCandidate(null)}>
+                  <div className="admin-candidate-modal-card" style={{ background: '#1a1014', border: '1px solid rgba(212,175,55,0.4)', borderRadius: '20px', padding: '32px', maxWidth: '600px', width: '100%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 25px 60px rgba(0,0,0,0.8)' }} onClick={(e) => e.stopPropagation()}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
@@ -877,7 +877,7 @@ export default function AdminDashboard() {
                       {(selectedCandidate.studentPin || selectedCandidate.studentDob || selectedCandidate.previousSchool || selectedCandidate.parentPin || selectedCandidate.address) && (
                         <div style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.2)', padding: '14px', borderRadius: '10px' }}>
                           <div style={{ color: '#d4af37', fontWeight: 600, marginBottom: '8px' }}>დეტალური საანკეტო მონაცემები</div>
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', fontSize: '0.82rem', color: 'rgba(255,255,255,0.85)' }}>
+                          <div className="admin-candidate-grid-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', fontSize: '0.82rem', color: 'rgba(255,255,255,0.85)' }}>
                             {selectedCandidate.studentPin && <div>მოსწავლის პ/ნ: <strong>{selectedCandidate.studentPin}</strong></div>}
                             {selectedCandidate.studentDob && <div>დაბადების თარიღი: <strong>{selectedCandidate.studentDob}</strong></div>}
                             {selectedCandidate.studentGender && <div>სქესი: <strong>{selectedCandidate.studentGender}</strong></div>}

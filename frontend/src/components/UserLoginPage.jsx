@@ -214,7 +214,8 @@ export default function UserLoginPage() {
       style={{
         position: 'relative',
         minHeight: '100vh',
-        width: '100vw',
+        width: '100%',
+        maxWidth: '100%',
         overflowX: 'hidden',
         backgroundImage: `linear-gradient(180deg, rgba(12, 6, 8, 0.45) 0%, rgba(12, 6, 8, 0.70) 100%), url(/assets/palace-interior.jpg)`,
         backgroundSize: 'cover',
@@ -223,25 +224,25 @@ export default function UserLoginPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '40px 20px',
+        padding: '36px 16px',
         color: '#ffffff',
-        fontFamily: 'system-ui, -apple-system, sans-serif'
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        boxSizing: 'border-box'
       }}
     >
       <div
+        className="user-login-grid"
         style={{
           position: 'relative',
           zIndex: 2,
           maxWidth: '1180px',
           width: '100%',
           display: 'grid',
-          gridTemplateColumns: '1.1fr 480px',
-          gap: '50px',
           alignItems: 'center'
         }}
       >
         {/* Left Presentation Column */}
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%', minHeight: '440px' }}>
+        <div className="user-login-left-col" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
           <div>
             <div
               style={{
@@ -333,6 +334,7 @@ export default function UserLoginPage() {
 
         {/* Right Glassmorphic Card */}
         <div
+          className="user-login-card"
           style={{
             background: 'rgba(242, 238, 233, 0.94)',
             backdropFilter: 'blur(30px)',

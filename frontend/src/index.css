@@ -1757,6 +1757,10 @@ html, body, #root, .app-wrapper {
 .app-form-grid-3 {
   grid-template-columns: 1fr 0.9fr 1.1fr;
 }
+.user-login-grid {
+  grid-template-columns: 1.1fr 480px;
+  gap: 50px;
+}
 
 /* Tablet screens (max-width: 992px) */
 @media (max-width: 992px) {
@@ -1780,6 +1784,18 @@ html, body, #root, .app-wrapper {
   }
   .teachers-cards-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .user-login-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+  .user-login-left-col {
+    min-height: auto !important;
+  }
+  .user-login-card {
+    padding: 28px 22px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 }
 
@@ -1953,6 +1969,86 @@ html, body, #root, .app-wrapper {
   }
   .admissions-services-bar div {
     font-size: 0.78rem !important;
+  }
+
+  /* User Login & Register Page Mobile */
+  .user-login-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  .user-login-left-col h1 {
+    font-size: 1.85rem !important;
+  }
+  .user-login-left-col p {
+    font-size: 0.94rem !important;
+  }
+  .user-login-card {
+    padding: 22px 14px !important;
+    border-radius: 18px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .user-login-card h2 {
+    font-size: 1.45rem !important;
+  }
+
+  /* Admissions Application Modal on mobile */
+  .admissions-modal-overlay {
+    padding: 8px !important;
+  }
+  .admissions-modal-content {
+    padding: 20px 14px !important;
+    border-radius: 16px !important;
+    max-height: 94vh !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .admissions-modal-content h3 {
+    font-size: 1.35rem !important;
+  }
+
+  /* Admin Candidate Dossier Modal on mobile */
+  .admin-candidate-modal-overlay {
+    padding: 8px !important;
+  }
+  .admin-candidate-modal-card {
+    padding: 18px 14px !important;
+    border-radius: 16px !important;
+    max-height: 94vh !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .admin-candidate-grid-2 {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+
+  /* Parent Account Page on mobile */
+  .parent-account-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+  }
+  .parent-account-header h1 {
+    font-size: 1.55rem !important;
+  }
+  .parent-account-actions {
+    width: 100% !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .parent-account-actions button {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+  }
+  .parent-app-card {
+    padding: 16px 12px !important;
+    border-radius: 14px !important;
+  }
+  .parent-app-card-grid {
+    grid-template-columns: 1fr !important;
+    padding: 12px 10px !important;
+    font-size: 0.84rem !important;
   }
 }
 

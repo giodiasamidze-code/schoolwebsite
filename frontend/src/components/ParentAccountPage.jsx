@@ -115,7 +115,7 @@ export default function ParentAccountPage() {
     <div className="parent-account-wrapper fade-in" style={{ padding: '40px 0 80px', background: 'var(--bg-primary)' }}>
       <div className="container">
         
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', borderBottom: '1px solid var(--border-color)', paddingBottom: '20px' }}>
+        <div className="parent-account-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', borderBottom: '1px solid var(--border-color)', paddingBottom: '20px' }}>
           <div>
             <button className="back-link-btn" onClick={() => navigate('/')} style={{ marginBottom: '8px' }}>
               <ArrowLeft size={16} className="icon-mr" />
@@ -129,7 +129,7 @@ export default function ParentAccountPage() {
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <div className="parent-account-actions" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             <button
               onClick={handleNewApplication}
               style={{
@@ -231,8 +231,8 @@ export default function ParentAccountPage() {
                 const IconComponent = st.icon;
 
                 return (
-                  <div key={app.id} style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '16px', padding: '24px', boxShadow: '0 16px 36px rgba(0,0,0,0.35)', backdropFilter: 'blur(12px)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                  <div key={app.id} className="parent-app-card" style={{ background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '16px', padding: '24px', boxShadow: '0 16px 36px rgba(0,0,0,0.35)', backdropFilter: 'blur(12px)' }}>
+                    <div className="parent-app-card-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
                       <div>
                         <span style={{ fontSize: '0.8rem', fontWeight: 700, padding: '4px 12px', borderRadius: '12px', background: st.bg, color: st.color, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                           <IconComponent size={14} />
@@ -248,7 +248,7 @@ export default function ParentAccountPage() {
                       </span>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', fontSize: '0.88rem', color: '#f3ece3', background: 'rgba(0, 0, 0, 0.35)', padding: '16px', borderRadius: '10px' }}>
+                    <div className="parent-app-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', fontSize: '0.88rem', color: '#f3ece3', background: 'rgba(0, 0, 0, 0.35)', padding: '16px', borderRadius: '10px' }}>
                       <div><strong>მშობლის სახელი:</strong> {app.parent_full_name}</div>
                       <div><strong>პირადი ნომერი:</strong> {app.parent_id_number || 'არ არის'}</div>
                       <div><strong>მისამართი:</strong> {app.parent_address || 'არ არის'}</div>

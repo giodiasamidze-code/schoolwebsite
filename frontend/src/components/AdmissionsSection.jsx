@@ -515,6 +515,7 @@ export default function AdmissionsSection() {
       {isApplicationOpen && (
         <div
           data-lenis-prevent="true"
+          className="admissions-modal-overlay"
           style={{
             position: 'fixed',
             inset: 0,
@@ -532,7 +533,7 @@ export default function AdmissionsSection() {
         >
           <div
             data-lenis-prevent="true"
-            className="custom-scrollbar"
+            className="custom-scrollbar admissions-modal-content"
             style={{
               background: 'rgba(22, 13, 17, 0.97)',
               border: '1.5px solid rgba(212, 175, 55, 0.4)',
