@@ -3,32 +3,7 @@ import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Linkedin, ExternalLink
 import { useAuth } from './AuthContext';
 
 export default function Footer() {
-  const { path, navigate } = useAuth();
-
-  const handleNavClick = (e, href) => {
-    e.preventDefault();
-
-    if (href.startsWith('/')) {
-      navigate(href);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    if (path !== '/') {
-      navigate('/');
-      setTimeout(() => {
-        const element = document.querySelector(href);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 150);
-    } else {
-      const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-  };
+  const { navigate } = useAuth();
 
   return (
     <footer
@@ -36,178 +11,41 @@ export default function Footer() {
       style={{
         position: 'relative',
         zIndex: 10,
-        background: 'linear-gradient(180deg, rgba(14, 7, 10, 0.82) 0%, rgba(8, 4, 6, 0.96) 100%)',
+        background: 'linear-gradient(180deg, rgba(14, 7, 10, 0.88) 0%, rgba(8, 4, 6, 0.98) 100%)',
         borderTop: '1px solid rgba(212, 175, 55, 0.3)',
         backdropFilter: 'blur(30px)',
         WebkitBackdropFilter: 'blur(30px)',
-        padding: '70px 0 30px',
+        padding: '38px 0 22px',
         color: '#f5eee8',
         boxShadow: '0 -10px 40px rgba(0, 0, 0, 0.5)'
       }}
     >
-      <div style={{ width: '92%', maxWidth: '1360px', margin: '0 auto' }}>
+      <div id="footer-contact" style={{ width: '92%', maxWidth: '1240px', margin: '0 auto' }}>
         
-        {/* Top 4-Column Bento Grid */}
+        {/* Compact 2-Column Bento Grid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          gap: '40px',
-          marginBottom: '50px'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))',
+          gap: '32px',
+          marginBottom: '26px'
         }}>
 
-          {/* Col 1: Brand & Accreditation */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px' }}>
-              {/* Classical Temple Gold Emblem Roundel matching Header */}
-              <div
-                style={{
-                  width: '42px',
-                  height: '42px',
-                  borderRadius: '50%',
-                  background: 'radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(30, 18, 22, 0.85) 100%)',
-                  border: '1.4px solid #d4af37',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#d4af37',
-                  boxShadow: '0 4px 16px rgba(212, 175, 55, 0.25)',
-                  flexShrink: 0
-                }}
-              >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 2l9 6H3l9-6z"/>
-                </svg>
-              </div>
-
-              <div>
-                <span style={{ fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)', fontSize: '1.4rem', fontWeight: 700, color: '#ffffff', letterSpacing: '-0.01em' }}>
-                  სოლომონ <span style={{ color: '#d4af37', fontWeight: 500 }}>აკადემია</span>
-                </span>
-              </div>
-            </div>
-
-            <p style={{ fontSize: '0.92rem', color: 'rgba(255, 255, 255, 0.72)', lineHeight: 1.7, marginBottom: '22px' }}>
-              უმაღლესი საერთაშორისო სტანდარტების კერძო სკოლა — სადაც კლასიკური აკადემიური სიღრმე, STEM ინოვაციები და ლიდერული აღზრდა ერთიანდება.
-            </p>
-
-            {/* Accreditation Badges harmonized with gold palace theme */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-              <span style={{
-                padding: '5px 12px',
-                borderRadius: '8px',
-                background: 'rgba(212, 175, 55, 0.12)',
-                border: '1px solid rgba(212, 175, 55, 0.35)',
-                fontSize: '0.76rem',
-                fontWeight: 700,
-                color: '#d4af37',
-                letterSpacing: '0.02em'
-              }}>
-                IB World School
-              </span>
-              <span style={{
-                padding: '5px 12px',
-                borderRadius: '8px',
-                background: 'rgba(212, 175, 55, 0.08)',
-                border: '1px solid rgba(212, 175, 55, 0.25)',
-                fontSize: '0.76rem',
-                fontWeight: 700,
-                color: '#e8cb75',
-                letterSpacing: '0.02em'
-              }}>
-                Cambridge International
-              </span>
-            </div>
-          </div>
-
-          {/* Col 2: Navigation Links */}
+          {/* Col 1: Contact Details & Accreditation Badges */}
           <div>
             <h4 style={{
               fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
-              fontSize: '1.15rem',
+              fontSize: '1.12rem',
               color: '#ffffff',
-              marginBottom: '20px',
-              fontWeight: 700,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-              ნავიგაცია
-            </h4>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px', padding: 0, margin: 0 }}>
-              <li>
-                <a
-                  href="#hero"
-                  onClick={(e) => handleNavClick(e, '#hero')}
-                  style={{ color: 'rgba(255, 255, 255, 0.75)', textDecoration: 'none', fontSize: '0.92rem', transition: 'all 0.2s', display: 'inline-block' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = '#d4af37'; e.currentTarget.style.transform = 'translateX(4px)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)'; e.currentTarget.style.transform = 'translateX(0)'; }}
-                >
-                  მთავარი გვერდი
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#teachers"
-                  onClick={(e) => handleNavClick(e, '#teachers')}
-                  style={{ color: 'rgba(255, 255, 255, 0.75)', textDecoration: 'none', fontSize: '0.92rem', transition: 'all 0.2s', display: 'inline-block' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = '#d4af37'; e.currentTarget.style.transform = 'translateX(4px)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)'; e.currentTarget.style.transform = 'translateX(0)'; }}
-                >
-                  პედაგოგები & გუნდი
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#news"
-                  onClick={(e) => handleNavClick(e, '#news')}
-                  style={{ color: 'rgba(255, 255, 255, 0.75)', textDecoration: 'none', fontSize: '0.92rem', transition: 'all 0.2s', display: 'inline-block' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = '#d4af37'; e.currentTarget.style.transform = 'translateX(4px)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)'; e.currentTarget.style.transform = 'translateX(0)'; }}
-                >
-                  სკოლის სიახლეები
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/gallery"
-                  onClick={(e) => handleNavClick(e, '/gallery')}
-                  style={{ color: 'rgba(255, 255, 255, 0.75)', textDecoration: 'none', fontSize: '0.92rem', transition: 'all 0.2s', display: 'inline-block' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = '#d4af37'; e.currentTarget.style.transform = 'translateX(4px)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)'; e.currentTarget.style.transform = 'translateX(0)'; }}
-                >
-                  სასკოლო გალერეა
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#admissions"
-                  onClick={(e) => handleNavClick(e, '#admissions')}
-                  style={{ color: '#d4af37', textDecoration: 'none', fontSize: '0.92rem', fontWeight: 600, transition: 'all 0.2s', display: 'inline-block' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = '#ffffff'; e.currentTarget.style.transform = 'translateX(4px)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = '#d4af37'; e.currentTarget.style.transform = 'translateX(0)'; }}
-                >
-                  მიღება & ონლაინ რეგისტრაცია
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 3: Contact Details with Harmonious Gold Icons */}
-          <div>
-            <h4 style={{
-              fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
-              fontSize: '1.15rem',
-              color: '#ffffff',
-              marginBottom: '20px',
+              marginBottom: '16px',
               fontWeight: 700
             }}>
               კონტაქტი & სამუშაო საათები
             </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '18px' }}>
               <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
                 <div style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '30px',
+                  height: '30px',
                   borderRadius: '8px',
                   background: 'rgba(212, 175, 55, 0.12)',
                   border: '1px solid rgba(212, 175, 55, 0.3)',
@@ -217,17 +55,17 @@ export default function Footer() {
                   flexShrink: 0,
                   color: '#d4af37'
                 }}>
-                  <MapPin size={16} />
+                  <MapPin size={15} />
                 </div>
-                <span style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.85)', lineHeight: 1.5, marginTop: '4px' }}>
+                <span style={{ fontSize: '0.88rem', color: 'rgba(255, 255, 255, 0.85)', lineHeight: 1.5, marginTop: '3px' }}>
                   ილია ჭავჭავაძის გამზირი 45, თბილისი, საქართველო
                 </span>
               </div>
 
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                 <div style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '30px',
+                  height: '30px',
                   borderRadius: '8px',
                   background: 'rgba(212, 175, 55, 0.12)',
                   border: '1px solid rgba(212, 175, 55, 0.3)',
@@ -237,11 +75,11 @@ export default function Footer() {
                   flexShrink: 0,
                   color: '#d4af37'
                 }}>
-                  <Phone size={16} />
+                  <Phone size={15} />
                 </div>
                 <a
                   href="tel:+995322100000"
-                  style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.85)', textDecoration: 'none', transition: 'color 0.2s' }}
+                  style={{ fontSize: '0.88rem', color: 'rgba(255, 255, 255, 0.85)', textDecoration: 'none', transition: 'color 0.2s' }}
                   onMouseEnter={(e) => e.currentTarget.style.color = '#d4af37'}
                   onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.85)'}
                 >
@@ -251,8 +89,8 @@ export default function Footer() {
 
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                 <div style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '30px',
+                  height: '30px',
                   borderRadius: '8px',
                   background: 'rgba(212, 175, 55, 0.12)',
                   border: '1px solid rgba(212, 175, 55, 0.3)',
@@ -262,11 +100,11 @@ export default function Footer() {
                   flexShrink: 0,
                   color: '#d4af37'
                 }}>
-                  <Mail size={16} />
+                  <Mail size={15} />
                 </div>
                 <a
                   href="mailto:info@solomonacademy.ge"
-                  style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.85)', textDecoration: 'none', transition: 'color 0.2s' }}
+                  style={{ fontSize: '0.88rem', color: 'rgba(255, 255, 255, 0.85)', textDecoration: 'none', transition: 'color 0.2s' }}
                   onMouseEnter={(e) => e.currentTarget.style.color = '#d4af37'}
                   onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.85)'}
                 >
@@ -276,8 +114,8 @@ export default function Footer() {
 
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                 <div style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '30px',
+                  height: '30px',
                   borderRadius: '8px',
                   background: 'rgba(212, 175, 55, 0.12)',
                   border: '1px solid rgba(212, 175, 55, 0.3)',
@@ -287,22 +125,50 @@ export default function Footer() {
                   flexShrink: 0,
                   color: '#d4af37'
                 }}>
-                  <Clock size={16} />
+                  <Clock size={15} />
                 </div>
-                <span style={{ fontSize: '0.88rem', color: 'rgba(255, 255, 255, 0.7)' }}>
+                <span style={{ fontSize: '0.86rem', color: 'rgba(255, 255, 255, 0.7)' }}>
                   ორშაბათი – პარასკევი: 09:00 – 18:00
                 </span>
               </div>
             </div>
+
+            {/* Accreditation Badges */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              <span style={{
+                padding: '4px 10px',
+                borderRadius: '6px',
+                background: 'rgba(212, 175, 55, 0.12)',
+                border: '1px solid rgba(212, 175, 55, 0.32)',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                color: '#d4af37',
+                letterSpacing: '0.02em'
+              }}>
+                IB World School
+              </span>
+              <span style={{
+                padding: '4px 10px',
+                borderRadius: '6px',
+                background: 'rgba(212, 175, 55, 0.08)',
+                border: '1px solid rgba(212, 175, 55, 0.22)',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                color: '#e8cb75',
+                letterSpacing: '0.02em'
+              }}>
+                Cambridge International
+              </span>
+            </div>
           </div>
 
-          {/* Col 4: Campus Map Box (Refactored to Harmonious Luxury Gold Theme) & Socials */}
+          {/* Col 2: Campus Map Box & Socials */}
           <div>
             <h4 style={{
               fontFamily: 'var(--font-serif, "Noto Serif Georgian", Georgia, serif)',
-              fontSize: '1.15rem',
+              fontSize: '1.12rem',
               color: '#ffffff',
-              marginBottom: '20px',
+              marginBottom: '16px',
               fontWeight: 700
             }}>
               კამპუსის ლოკაცია
@@ -313,20 +179,20 @@ export default function Footer() {
               style={{
                 background: 'rgba(32, 20, 25, 0.72)',
                 border: '1.2px solid rgba(212, 175, 55, 0.35)',
-                borderRadius: '16px',
-                padding: '20px',
-                boxShadow: '0 14px 35px rgba(0, 0, 0, 0.55)',
+                borderRadius: '14px',
+                padding: '16px 18px',
+                boxShadow: '0 10px 28px rgba(0, 0, 0, 0.45)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
-                marginBottom: '18px',
+                marginBottom: '14px',
                 transition: 'all 0.25s ease'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
                 <div style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '10px',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '8px',
                   background: 'radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(30, 18, 22, 0.8) 100%)',
                   border: '1px solid #d4af37',
                   display: 'flex',
@@ -335,11 +201,11 @@ export default function Footer() {
                   color: '#d4af37',
                   flexShrink: 0
                 }}>
-                  <MapPin size={18} />
+                  <MapPin size={16} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', letterSpacing: '-0.01em' }}>
-                    სოლომონ აკადემია
+                  <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#ffffff', letterSpacing: '-0.01em' }}>
+                    ცენტრალური კამპუსი
                   </div>
                   <div style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.65)', marginTop: '2px' }}>
                     ვაკე, ჭავჭავაძის გამზ. 45
@@ -355,12 +221,12 @@ export default function Footer() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
-                  fontSize: '0.82rem',
+                  fontSize: '0.8rem',
                   color: '#d4af37',
                   background: 'rgba(212, 175, 55, 0.1)',
                   border: '1px solid rgba(212, 175, 55, 0.3)',
-                  padding: '6px 12px',
-                  borderRadius: '8px',
+                  padding: '5px 12px',
+                  borderRadius: '6px',
                   textDecoration: 'none',
                   fontWeight: 600,
                   transition: 'all 0.2s'
@@ -377,7 +243,7 @@ export default function Footer() {
                 }}
               >
                 <span>Google Maps-ში ნახვა</span>
-                <ExternalLink size={13} />
+                <ExternalLink size={12} />
               </a>
             </div>
 
@@ -387,9 +253,9 @@ export default function Footer() {
                 href="#facebook"
                 aria-label="Facebook"
                 style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '10px',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '8px',
                   background: 'rgba(255, 255, 255, 0.06)',
                   border: '1px solid rgba(212, 175, 55, 0.25)',
                   display: 'flex',
@@ -414,15 +280,15 @@ export default function Footer() {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               >
-                <Facebook size={17} />
+                <Facebook size={16} />
               </a>
               <a
                 href="#instagram"
                 aria-label="Instagram"
                 style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '10px',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '8px',
                   background: 'rgba(255, 255, 255, 0.06)',
                   border: '1px solid rgba(212, 175, 55, 0.25)',
                   display: 'flex',
@@ -447,15 +313,15 @@ export default function Footer() {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               >
-                <Instagram size={17} />
+                <Instagram size={16} />
               </a>
               <a
                 href="#linkedin"
                 aria-label="LinkedIn"
                 style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '10px',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '8px',
                   background: 'rgba(255, 255, 255, 0.06)',
                   border: '1px solid rgba(212, 175, 55, 0.25)',
                   display: 'flex',
@@ -480,7 +346,7 @@ export default function Footer() {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               >
-                <Linkedin size={17} />
+                <Linkedin size={16} />
               </a>
             </div>
 
@@ -490,15 +356,15 @@ export default function Footer() {
 
         {/* Bottom Copyright & Portal Shortcuts */}
         <div style={{
-          paddingTop: '24px',
+          paddingTop: '20px',
           borderTop: '1px solid rgba(212, 175, 55, 0.2)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '16px'
+          gap: '14px'
         }}>
-          <p style={{ fontSize: '0.86rem', color: 'rgba(255, 255, 255, 0.6)', margin: 0 }}>
+          <p style={{ fontSize: '0.84rem', color: 'rgba(255, 255, 255, 0.6)', margin: 0 }}>
             &copy; 2026 სოლომონ აკადემია. ყველა უფლება დაცულია.
           </p>
 
@@ -510,9 +376,9 @@ export default function Footer() {
                 background: 'rgba(212, 175, 55, 0.12)',
                 border: '1px solid rgba(212, 175, 55, 0.35)',
                 borderRadius: '8px',
-                padding: '7px 16px',
+                padding: '6px 14px',
                 color: '#d4af37',
-                fontSize: '0.84rem',
+                fontSize: '0.82rem',
                 fontWeight: 600,
                 cursor: 'pointer',
                 transition: 'all 0.2s',
@@ -532,7 +398,7 @@ export default function Footer() {
               }}
             >
               <span>პედაგოგის პორტალი</span>
-              <ArrowRight size={14} />
+              <ArrowRight size={13} />
             </button>
           </div>
         </div>
