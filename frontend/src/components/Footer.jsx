@@ -237,15 +237,122 @@ export default function Footer() {
 
         </div>
 
-        {/* Bottom Copyright Strip */}
+        {/* Bottom Copyright & Developer Strip */}
         <div style={{
           paddingTop: '10px',
           borderTop: '1px solid rgba(212, 175, 55, 0.15)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '8px',
           textAlign: 'center'
         }}>
           <p style={{ fontSize: '0.78rem', color: 'rgba(255, 255, 255, 0.5)', margin: 0 }}>
             &copy; 2026 სოლომონ აკადემია. ყველა უფლება დაცულია.
           </p>
+
+          {/* Developer Credits: Giorgi Diasamidze (Gmail & GitHub) */}
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '10px',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            background: 'rgba(212, 175, 55, 0.05)',
+            border: '1px solid rgba(212, 175, 55, 0.2)',
+            borderRadius: '20px',
+            padding: '3px 12px'
+          }}>
+            <span style={{
+              fontSize: '0.75rem',
+              color: 'rgba(255, 255, 255, 0.72)',
+              fontWeight: 500,
+              letterSpacing: '0.01em'
+            }}>
+              დეველოპერი: <strong style={{ color: '#d4af37', fontWeight: 700 }}>გიორგი დიასამიძე</strong>
+            </span>
+
+            <span style={{ color: 'rgba(212, 175, 55, 0.35)', fontSize: '0.7rem' }}>•</span>
+
+            {/* Developer Contact & Social Buttons */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {/* Gmail Button / Link */}
+              <a
+                href="mailto:gdiasamidze848@gmail.com"
+                title="gdiasamidze848@gmail.com"
+                aria-label="Gmail"
+                style={{
+                  height: '24px',
+                  padding: '0 8px',
+                  borderRadius: '6px',
+                  background: 'rgba(255, 255, 255, 0.06)',
+                  border: '1px solid rgba(212, 175, 55, 0.25)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  color: 'rgba(255, 255, 255, 0.85)',
+                  textDecoration: 'none',
+                  fontSize: '0.74rem',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(212, 175, 55, 0.25)';
+                  e.currentTarget.style.color = '#d4af37';
+                  e.currentTarget.style.borderColor = '#d4af37';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
+                  e.currentTarget.style.color = 'rgba(255, 255, 255, 0.85)';
+                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.25)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <Mail size={12} />
+                <span>gdiasamidze848@gmail.com</span>
+              </a>
+
+              {/* GitHub Button / Link */}
+              <a
+                href="https://github.com/giodiasamidze-code"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="GitHub: giodiasamidze-code"
+                aria-label="GitHub"
+                style={{
+                  height: '24px',
+                  padding: '0 8px',
+                  borderRadius: '6px',
+                  background: 'rgba(255, 255, 255, 0.06)',
+                  border: '1px solid rgba(212, 175, 55, 0.25)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  color: 'rgba(255, 255, 255, 0.85)',
+                  textDecoration: 'none',
+                  fontSize: '0.74rem',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(212, 175, 55, 0.25)';
+                  e.currentTarget.style.color = '#d4af37';
+                  e.currentTarget.style.borderColor = '#d4af37';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
+                  e.currentTarget.style.color = 'rgba(255, 255, 255, 0.85)';
+                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.25)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                </svg>
+                <span>GitHub</span>
+              </a>
+            </div>
+          </div>
         </div>
 
       </div>
