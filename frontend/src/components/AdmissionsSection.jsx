@@ -694,60 +694,7 @@ export default function AdmissionsSection() {
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
                 
-                {/* PARENT REGISTRATION NOTICE / STATUS BANNER */}
-                {!user ? (
-                  <div
-                    style={{
-                      background: 'rgba(212, 175, 55, 0.08)',
-                      border: '1px solid rgba(212, 175, 55, 0.35)',
-                      borderRadius: '14px',
-                      padding: '16px 20px',
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '14px',
-                      boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
-                    }}
-                  >
-                    <Info size={22} color="#d4af37" style={{ flexShrink: 0, marginTop: '2px' }} />
-                    <div style={{ fontSize: '0.86rem', lineHeight: 1.6, color: 'rgba(255, 255, 255, 0.88)' }}>
-                      <strong style={{ color: '#d4af37', display: 'block', marginBottom: '4px', fontSize: '0.92rem' }}>
-                        📢 შეტყობინება მშობლებისთვის:
-                      </strong>
-                      განაცხადის შევსება შეგიძლიათ პირდაპირ ამ ფორმით (მშობლის რეგისტრაცია სავალდებულო არ არის).
-                      თუმცა, თუ გსურთ ონლაინ რეჟიმში აკონტროლოთ განაცხადის სტატუსი, მიღების შედეგები და შეტყობინებები,{' '}
-                      <span
-                        onClick={() => { setIsApplicationOpen(false); navigate('/login?role=parent&mode=register'); }}
-                        style={{ color: '#f3d368', textDecoration: 'underline', cursor: 'pointer', fontWeight: 700 }}
-                      >
-                        გაიარეთ მშობლის სწრაფი რეგისტრაცია
-                      </span>{' '}
-                      ან{' '}
-                      <span
-                        onClick={() => { setIsApplicationOpen(false); navigate('/login?role=parent&mode=login'); }}
-                        style={{ color: '#f3d368', textDecoration: 'underline', cursor: 'pointer', fontWeight: 700 }}
-                      >
-                        ავტორიზაცია
-                      </span>.
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      background: 'rgba(34, 197, 94, 0.12)',
-                      border: '1px solid rgba(34, 197, 94, 0.35)',
-                      borderRadius: '14px',
-                      padding: '14px 20px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px'
-                    }}
-                  >
-                    <CheckCircle2 size={20} color="#4ade80" style={{ flexShrink: 0 }} />
-                    <span style={{ fontSize: '0.86rem', color: '#e2e8f0', lineHeight: 1.5 }}>
-                      ავტორიზებული მშობელი: <strong style={{ color: '#4ade80' }}>{user.name || user.fullName}</strong> ({user.email}) — თქვენი მონაცემები ავტომატურად შევსებულია და განაცხადი მიებმება თქვენს პირად ანგარიშს.
-                    </span>
-                  </div>
-                )}
+
                 
                 {/* SECTION 1: STUDENT INFORMATION */}
                 <div

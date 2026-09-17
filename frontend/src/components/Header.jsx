@@ -223,20 +223,20 @@ export default function Header({ activeSection = 'hero' }) {
 
       {/* Right Side Buttons */}
       <div className="header-right-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        {user ? (
-          <div className="header-user-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {user && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <button
               onClick={() => {
                 if (role === 'admin') navigate('/admin-dashboard');
                 else if (role === 'teacher') navigate('/teacher-dashboard');
-                else navigate('/parent-account');
+                else navigate('/');
               }}
               style={{
-                padding: '7px 14px',
                 background: 'rgba(212, 175, 55, 0.15)',
-                border: '1px solid rgba(212, 175, 55, 0.35)',
-                color: '#d4af37',
+                border: '1px solid rgba(212, 175, 55, 0.4)',
                 borderRadius: '8px',
+                padding: '6px 14px',
+                color: '#d4af37',
                 fontSize: '0.85rem',
                 fontWeight: 700,
                 cursor: 'pointer'
@@ -252,33 +252,6 @@ export default function Header({ activeSection = 'hero' }) {
               <LogOut size={16} />
             </button>
           </div>
-        ) : (
-          <button
-            onClick={handleAuthClick}
-            className="header-login-btn"
-            style={{
-              background: 'rgba(45, 28, 32, 0.75)',
-              border: '1px solid rgba(212, 175, 55, 0.35)',
-              borderRadius: '8px',
-              padding: '8px 18px',
-              color: '#ffffff',
-              fontSize: '0.88rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#d4af37';
-              e.currentTarget.style.color = '#d4af37';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.35)';
-              e.currentTarget.style.color = '#ffffff';
-            }}
-          >
-            შესვლა
-          </button>
         )}
 
         <button
@@ -449,7 +422,7 @@ export default function Header({ activeSection = 'hero' }) {
               ონლაინ განაცხადი
             </button>
 
-            {user ? (
+            {user && (
               <button
                 onClick={() => {
                   setIsOpen(false);
@@ -469,22 +442,6 @@ export default function Header({ activeSection = 'hero' }) {
                 }}
               >
                 {role === 'admin' ? 'ადმინ პანელი' : role === 'teacher' ? 'პედაგოგის კაბინეტი' : 'ჩემი ანგარიში'}
-              </button>
-            ) : (
-              <button
-                onClick={handleAuthClick}
-                style={{
-                  width: '100%',
-                  padding: '11px',
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  color: '#ffffff',
-                  fontWeight: 600,
-                  borderRadius: '10px',
-                  cursor: 'pointer'
-                }}
-              >
-                შესვლა პორტალზე
               </button>
             )}
 
